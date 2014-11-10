@@ -1,36 +1,33 @@
 CREATE SEQUENCE user_id_seq;
-CREATE SEQUENCE pred_id_seq;
-CREATE SEQUENCE vote_id_seq;
-
-CREATE TABLE user(
+CREATE TABLE pt_user(
 	id INTEGER PRIMARY KEY DEFAULT nextval('user_id_seq'),
 	username varchar(50) UNIQUE,
 	password varchar,
-	created timestamp,
-	score int,
-	hit_rate int,
-	calls_graded int,
-	calls_correct int,
+	created timestamp DEFAULT CURRENT_TIMESTAMP,
+	score int DEFAULT 0,
+	hit_rate numeric DEFAULT 0.0,
+	calls_graded int DEFAULT 0,
+	calls_correct int DEFAULT 0,
 	first_name varchar(100),
 	last_name varchar(100),
-	avatar_url varchar(255)
+	avatar_url varchar(255),
+	is_pundit boolean DEFAULT FALSE
 );
+ALTER SEQUENCE user_id_seq OWNED BY pt_user.id;
 
-ALTER SEQUENCE user_id_seq OWNED BY user.id;
-
+CREATE SEQUENCE pred_id_seq;
 CREATE TABLE prediction(
 	id INTEGER PRIMARY KEY DEFAULT nextval('pred_id_seq'),
-	created timestamp,
+	created timestamp DEFAULT CURRENT_TIMESTAMP,
 	modified timestamp,
 	user_id INTEGER REFERENCES user(id)
 );
-
 ALTER SEQUENCE pred_id_seq OWNED BY pred.id;
 
+CREATE SEQUENCE vote_id_seq;
 CREATE TABLE vote(
 	id INTEGER PRIMARY KEY DEFAULT nextval('vote_id_seq'),
 	pred_id INTEGER REFERENCES prediction(id),
 	user_id INTEGER REFERENCES user(id)
-)
-
+);
 ALTER SEQUENCE vote_id_seq OWNED BY vote.id;
