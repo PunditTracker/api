@@ -38,7 +38,7 @@ func addListeners() {
 	router.HandleFunc("/v1/predictions", GetAllPredictionsHandler).Methods("GET")
 	router.HandleFunc("/v1/predictions/{id}", GetSinglePredictionHandler).Methods("GET")
 	router.HandleFunc("/v1/predictions/add", AddPredictionHandler).Methods("GET")
-
+	router.HandleFunc("/v1/predictions/latest/{subcat}", GetLatestPredictionsHandler).Methods("GET")
 }
 
 func beginServing() {

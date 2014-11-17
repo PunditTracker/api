@@ -49,6 +49,10 @@ func GetSinglePredictionHandler(w http.ResponseWriter, r *http.Request) {
 	_ := vars["id"]*/
 }
 
+func GetLatestPredictionsHandler(w http.ResponseWriter, r *http.Request) {
+
+}
+
 func AddPredictionHandler(w http.ResponseWriter, r *http.Request) {
 
 }
