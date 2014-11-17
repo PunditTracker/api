@@ -40,9 +40,9 @@ type PT_SubCategory struct {
 }
 
 type PT_Prediction struct {
-	Id          int64
-	Title       string
-	Category    PT_Category
+	Id    int64
+	Title string
+	//Category    PT_Category
 	Is_Featured bool
 	Created     time.Time
 	Creator     PT_User
@@ -81,47 +81,50 @@ func getDB() (*gorm.DB, error) {
 	return nil, e
 }
 
-func addUser(db *gorm.DB, username, password string) {
-	user := PT_User{
-		Username: username,
-		Password: password,
-		Created:  time.Now(),
-	}
+func addUser(db *gorm.DB, user PT_User) {
 	db.Save(&user)
 
 }
 
 func checkUser(db *gorm.DB, username, password string) int64 {
-	/*var uid int64
-	err := db.QueryRow("SELECT uid from pt_user where name = $1 and password = $2", username, password).Scan(&uid)
-	if err != nil {
-		return -1
-	}
-	return uid*/
+
 	return 0
 }
 
-func GetAllUsers(db *gorm.DB) {
-	/*_, err := db.Query("SELECT * FROM pt_user")
-	if err != nil {
-		return
-	}*/
-
+func GetUserByID(db *gorm.DB, uid int) PT_User {
+	var user PT_User
+	db.First(&user, uid)
+	return user
 }
 
-func GetFeaturedUsers(db *gorm.DB) {
-	//val, _ := db.Query("SELECT uid FROM prediction WHERE is_featured=TRUE")
-
+func GetPredictionByID(db *gorm.DB, uid int) PT_Prediction {
+	var pred PT_Prediction
+	db.First(&pred, uid)
+	return pred
 }
 
-func GetFeaturedPredictions(db *gorm.DB) {
-
+func GetAllUsers(db *gorm.DB) []PT_User {
+	users := []PT_User{}
+	db.Find(&users)
+	return users
 }
 
-func AddPrediction(db *gorm.DB, p PT_Prediction) {
-	/*var pid int64
-	err := db.QueryRow("INSERT INTO pt_prediction () VALUES() RETURNING id").Scan(&pid)
-	if err != nil {
-		return
-	}*/
+func GetFeaturedUsers(db *gorm.DB) []PT_User {
+	users := []PT_User{}
+	db.Where(&PT_User{Is_Featured: true}).Find(&users)
+	return users
+}
+
+func GetFeaturedPredictions(db *gorm.DB) []PT_Prediction {
+	predictions := []PT_Prediction{}
+	db.Where(&PT_Prediction{Is_Featured: true}).Find(&predictions)
+	return predictions
+}
+
+func AddPrediction(db *gorm.DB, p *PT_Prediction) {
+	db.Save(p)
+}
+
+func AddVote(db *gorm.DB, v *PT_Vote) {
+	db.Save(v)
 }
