@@ -25,8 +25,18 @@ type PT_User struct {
 }
 
 type PT_Category struct {
-	Id   int64
-	Name string
+	Id            int64
+	Name          string
+	SubCategories []PT_SubCategory
+	IsLive        bool
+}
+
+type PT_SubCategory struct {
+	Id          int64
+	Name        string
+	ParentCat   PT_Category
+	ParentCatId int64
+	IsLive      bool
 }
 
 type PT_Prediction struct {
@@ -40,10 +50,22 @@ type PT_Prediction struct {
 }
 
 type PT_Vote struct {
+	Id        int64
+	Voter     PT_User
+	VoterId   int64
+	VotedOn   PT_Prediction
+	VotedOnId int64
+	Created   time.Time
 }
 
 func SetUpDB(db *gorm.DB) {
-	db.AutoMigrate(&PT_User{})
+	db.AutoMigrate(
+		&PT_User{},
+		&PT_Category{},
+		&PT_SubCategory{},
+		&PT_Prediction{},
+		&PT_Vote{},
+	)
 }
 
 func getDB() (*gorm.DB, error) {
