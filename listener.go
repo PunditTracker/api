@@ -3,8 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/gorilla/mux"
-
-	"html/template"
 	"net/http"
 )
 
