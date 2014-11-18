@@ -1,7 +1,7 @@
 package main
 
 import (
-	_ "fmt"
+	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
 	"os"
@@ -68,6 +68,12 @@ func SetUpDB(db *gorm.DB) {
 	)
 }
 
+var (
+	DBID       = "ptdev"
+	DBUSERNAME = "pundittracker"
+	DBPASSWORD = "ptrack20!!"
+)
+
 func getDB() (*gorm.DB, error) {
 	serv := os.Getenv("SERV")
 	if serv == "local" {
@@ -76,6 +82,17 @@ func getDB() (*gorm.DB, error) {
 		db.SingularTable(true)
 		return &db, err
 		//return sql.Open("postgres", "sslmode=disable")
+	}
+	if serv == "aws" {
+		db, err := gorm.Open("postgres", "host=ptdev.ccm2e8gfsxjt.us-west-2.rds.amazonaws.com dbname=ptdev user=pundittracker password=ptrack20!!")
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			fmt.Println("worked")
+		}
+		db.DB()
+		db.SingularTable(true)
+		return &db, err
 	}
 	var e error
 	return nil, e
@@ -109,6 +126,12 @@ func GetAllUsers(db *gorm.DB) []PT_User {
 	return users
 }
 
+func GetAllPredictions(db *gorm.DB) []PT_Prediction {
+	preds := []PT_Prediction{}
+	db.Find(&preds)
+	return preds
+}
+
 func GetFeaturedUsers(db *gorm.DB) []PT_User {
 	users := []PT_User{}
 	db.Where(&PT_User{Is_Featured: true}).Find(&users)
@@ -121,10 +144,20 @@ func GetFeaturedPredictions(db *gorm.DB) []PT_Prediction {
 	return predictions
 }
 
+func GetLatestPredictions(db *gorm.DB, x int) []PT_Prediction {
+	predictions := []PT_Prediction{}
+	db.Order("created").Limit(x).Find(&predictions)
+	return predictions
+}
+
 func AddPrediction(db *gorm.DB, p *PT_Prediction) {
 	db.Save(p)
 }
 
 func AddVote(db *gorm.DB, v *PT_Vote) {
 	db.Save(v)
+}
+
+func LoginUser(db *gorm.DB, u *PT_User) {
+	db.Where("username = ? and password = ?", u.Username, u.Password).First(u)
 }
