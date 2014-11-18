@@ -3,28 +3,22 @@ package main
 import (
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/gorilla/securecookie"
+
 	"html/template"
 	"net/http"
 )
 
-var cookieHandler = securecookie.New(
-	securecookie.GenerateRandomKey(64),
-	securecookie.GenerateRandomKey(32),
-)
-
 var (
-	port      = ":8080"
-	templates = template.Must(template.ParseFiles("templates/footer.html"))
-	router    = mux.NewRouter()
+	port   = ":8080"
+	router = mux.NewRouter()
 )
 
 func addListeners() {
 
 	//Authentication Stuff
 	router.HandleFunc("/v1/auth/register", RegisterHandler).Methods("GET")
-	router.HandleFunc("/v1/auth/login", LoginHandler).Methods("POST")
-	router.HandleFunc("/v1/auth/logout", LogoutHandler).Methods("POST")
+	router.HandleFunc("/v1/auth/login", LoginHandler)   //.Methods("GET")
+	router.HandleFunc("/v1/auth/logout", LogoutHandler) //.Methods("POST")
 
 	//User stuff
 	router.HandleFunc("/v1/users", GetAllUsersHandler).Methods("GET")
