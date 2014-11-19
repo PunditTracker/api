@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-type PT_User struct {
+type PtUser struct {
 	Id                 int64
 	Username           string
 	Password           string
@@ -21,50 +21,50 @@ type PT_User struct {
 	Avatar_URL         string
 	Is_Pundit          bool
 	Is_Featured        bool
-	Predictions        []PT_Prediction
+	Predictions        []PtPrediction
 }
 
-type PT_Category struct {
+type PtCategory struct {
 	Id            int64
 	Name          string
-	SubCategories []PT_SubCategory
+	SubCategories []PtSubcategory
 	IsLive        bool
 }
 
-type PT_SubCategory struct {
+type PtSubcategory struct {
 	Id          int64
 	Name        string
-	ParentCat   PT_Category
+	ParentCat   PtCategory
 	ParentCatId int64
 	IsLive      bool
 }
 
-type PT_Prediction struct {
+type PtPrediction struct {
 	Id    int64
 	Title string
 	//Category    PT_Category
 	Is_Featured bool
 	Created     time.Time
-	Creator     PT_User
+	Creator     PtUser
 	CreatorId   int64
 }
 
-type PT_Vote struct {
+type PtVote struct {
 	Id        int64
-	Voter     PT_User
+	Voter     PtUser
 	VoterId   int64
-	VotedOn   PT_Prediction
+	VotedOn   PtPrediction
 	VotedOnId int64
 	Created   time.Time
 }
 
 func SetUpDB(db *gorm.DB) {
 	db.AutoMigrate(
-		&PT_User{},
-		&PT_Category{},
-		&PT_SubCategory{},
-		&PT_Prediction{},
-		&PT_Vote{},
+		&PtUser{},
+		&PtCategory{},
+		&PtSubcategory{},
+		&PtPrediction{},
+		&PtVote{},
 	)
 }
 
@@ -87,8 +87,6 @@ func getDB() (*gorm.DB, error) {
 		db, err := gorm.Open("postgres", "host=ptdev.ccm2e8gfsxjt.us-west-2.rds.amazonaws.com dbname=ptdev user=pundittracker password=ptrack20!!")
 		if err != nil {
 			fmt.Println(err)
-		} else {
-			fmt.Println("worked")
 		}
 		db.DB()
 		db.SingularTable(true)
@@ -98,66 +96,71 @@ func getDB() (*gorm.DB, error) {
 	return nil, e
 }
 
-func addUser(db *gorm.DB, user PT_User) {
+func AddUser(db *gorm.DB, user PtUser) {
 	db.Save(&user)
-
 }
 
-func checkUser(db *gorm.DB, username, password string) int64 {
+func CheckUser(db *gorm.DB, username, password string) int64 {
 
 	return 0
 }
 
-func GetUserByID(db *gorm.DB, uid int) PT_User {
-	var user PT_User
+func GetUserByID(db *gorm.DB, uid int) PtUser {
+	var user PtUser
 	db.First(&user, uid)
 	return user
 }
 
-func GetPredictionByID(db *gorm.DB, uid int) PT_Prediction {
-	var pred PT_Prediction
+func GetPredictionByID(db *gorm.DB, uid int) PtPrediction {
+	var pred PtPrediction
 	db.First(&pred, uid)
 	return pred
 }
 
-func GetAllUsers(db *gorm.DB) []PT_User {
-	users := []PT_User{}
+func GetAllUsers(db *gorm.DB) []PtUser {
+	users := []PtUser{}
 	db.Find(&users)
 	return users
 }
 
-func GetAllPredictions(db *gorm.DB) []PT_Prediction {
-	preds := []PT_Prediction{}
+func GetAllPredictions(db *gorm.DB) []PtPrediction {
+	preds := []PtPrediction{}
 	db.Find(&preds)
 	return preds
 }
 
-func GetFeaturedUsers(db *gorm.DB) []PT_User {
-	users := []PT_User{}
-	db.Where(&PT_User{Is_Featured: true}).Find(&users)
+func GetFeaturedUsers(db *gorm.DB) []PtUser {
+	users := []PtUser{}
+	db.Where(&PtUser{Is_Featured: true}).Find(&users)
 	return users
 }
 
-func GetFeaturedPredictions(db *gorm.DB) []PT_Prediction {
-	predictions := []PT_Prediction{}
-	db.Where(&PT_Prediction{Is_Featured: true}).Find(&predictions)
+func GetFeaturedPredictions(db *gorm.DB) []PtPrediction {
+	predictions := []PtPrediction{}
+	db.Where(&PtPrediction{Is_Featured: true}).Find(&predictions)
 	return predictions
 }
 
-func GetLatestPredictions(db *gorm.DB, x int) []PT_Prediction {
-	predictions := []PT_Prediction{}
+func GetLatestPredictions(db *gorm.DB, x int) []PtPrediction {
+	predictions := []PtPrediction{}
 	db.Order("created").Limit(x).Find(&predictions)
 	return predictions
 }
 
-func AddPrediction(db *gorm.DB, p *PT_Prediction) {
+func AddPrediction(db *gorm.DB, p *PtPrediction) {
 	db.Save(p)
 }
 
-func AddVote(db *gorm.DB, v *PT_Vote) {
+func AddVote(db *gorm.DB, v *PtVote) {
 	db.Save(v)
 }
 
-func LoginUser(db *gorm.DB, u *PT_User) {
+func LoginUser(db *gorm.DB, u *PtUser) {
 	db.Where("username = ? and password = ?", u.Username, u.Password).First(u)
+}
+
+func GetCategories(db *gorm.DB) []PtCategory {
+	categories := []PtCategory{}
+	db.Find(&categories)
+	return categories
 }
