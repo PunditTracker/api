@@ -35,7 +35,7 @@ func addListeners() {
 
 	//Category Stuff
 	router.HandleFunc("/v1/category/", GetCategoriesHandler)
-	router.HandleFunc("/v1/category/{id}/sub", GetSubCategoriesHandler)
+	router.HandleFunc("/v1/category/{id}/sub", GetSubcategoriesHandler)
 }
 
 func beginServing() {

@@ -139,5 +139,9 @@ func GetCategoriesHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, categories)
 }
 
-func GetSubCategoriesHandler(w http.ResponseWriter, r *http.Request) {
+func GetSubcategoriesHandler(w http.ResponseWriter, r *http.Request) {
+	db, _ := getDB()
+	categoryId := int64(1)
+	subcats := GetSubcategoriesWithCategoryId(db, categoryId)
+	fmt.Fprintln(w, subcats)
 }

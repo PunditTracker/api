@@ -164,3 +164,9 @@ func GetCategories(db *gorm.DB) []PtCategory {
 	db.Find(&categories)
 	return categories
 }
+
+func GetSubcategoriesWithCategoryId(db *gorm.DB, catId int64) []PtSubcategory {
+	subcats := []PtSubcategory{}
+	db.Where("parent_cat_id = ?", catId).Find(&subcats)
+	return subcats
+}
