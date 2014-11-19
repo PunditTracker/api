@@ -54,14 +54,14 @@ func GetSingleUserHandler(w http.ResponseWriter, r *http.Request) {
 	uid, _ := strconv.Atoi(vars["id"])
 	user := GetUserByID(db, uid)
 	j, _ := json.Marshal(user)
-	fmt.Fprintln(w, j)
+	fmt.Fprintln(w, string(j))
 }
 
 func GetAllPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	db, _ := getDB()
 	preds := GetAllPredictions(db)
 	j, _ := json.Marshal(preds)
-	fmt.Fprintln(w, j)
+	fmt.Fprintln(w, string(j))
 }
 
 func GetSinglePredictionHandler(w http.ResponseWriter, r *http.Request) {
@@ -70,7 +70,7 @@ func GetSinglePredictionHandler(w http.ResponseWriter, r *http.Request) {
 	uid, _ := strconv.Atoi(vars["id"])
 	prediction := GetPredictionByID(db, uid)
 	j, _ := json.Marshal(prediction)
-	fmt.Fprintln(w, j)
+	fmt.Fprintln(w, string(j))
 }
 
 func GetLatestPredictionsHandler(w http.ResponseWriter, r *http.Request) {
@@ -78,7 +78,7 @@ func GetLatestPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	//Get the 10 latest predictions
 	preds := GetLatestPredictions(db, 10)
 	j, _ := json.Marshal(preds)
-	fmt.Fprintln(w, j)
+	fmt.Fprintln(w, string(j))
 }
 
 func AddPredictionHandler(w http.ResponseWriter, r *http.Request) {
