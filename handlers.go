@@ -112,6 +112,9 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	username_val := r.FormValue("username")
 	password_val := r.FormValue("password")
+	username_val = "USER2"
+	password_val = "password2"
+
 	u := PtUser{
 		Username: username_val,
 		Password: password_val,
@@ -123,12 +126,17 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//Set up session or cookie
+	kv := map[string]string{
+		"uid": strconv.Itoa(int(u.Id)),
+	}
+	setSession(kv, w)
 
 	//u.Id is now set
 	fmt.Fprintln(w, u.Id)
 }
 
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
+	clearSession(w)
 	fmt.Fprintln(w, "logout")
 }
 
@@ -151,4 +159,12 @@ func GetPredictionsForSubcatHandler(w http.ResponseWriter, r *http.Request) {
 	preds := GetPredictionsForSubcatId(db, subCatId)
 	j, _ := json.Marshal(preds)
 	fmt.Fprintln(w, string(j))
+}
+
+func CheckAuth(w http.ResponseWriter, r *http.Request) {
+	if getSession(r)["uid"] == "" {
+		fmt.Fprintln(w, "not auth")
+	} else {
+		fmt.Fprintln(w, "is auth")
+	}
 }

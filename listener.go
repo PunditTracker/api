@@ -38,6 +38,7 @@ func addListeners() {
 	router.HandleFunc("/v1/category/", GetCategoriesHandler)
 	router.HandleFunc("/v1/category/{id}/sub", GetSubcategoriesHandler)
 
+	router.HandleFunc("/checkAuth", CheckAuth)
 }
 
 func beginServing() {
