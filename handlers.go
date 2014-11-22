@@ -124,7 +124,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	//Set up session or cookie
 
-	//SetSession(strconv.Itoa(int(u.Id)), w)
 	//u.Id is now set
 	fmt.Fprintln(w, u.Id)
 }
@@ -144,4 +143,12 @@ func GetSubcategoriesHandler(w http.ResponseWriter, r *http.Request) {
 	categoryId := int64(1)
 	subcats := GetSubcategoriesWithCategoryId(db, categoryId)
 	fmt.Fprintln(w, subcats)
+}
+
+func GetPredictionsForSubcatHandler(w http.ResponseWriter, r *http.Request) {
+	db, _ := getDB()
+	subCatId := int64(1)
+	preds := GetPredictionsForSubcatId(db, subCatId)
+	j, _ := json.Marshal(preds)
+	fmt.Fprintln(w, string(j))
 }

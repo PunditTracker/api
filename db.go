@@ -37,6 +37,7 @@ type PtSubcategory struct {
 	ParentCat   PtCategory
 	ParentCatId int64
 	IsLive      bool
+	Predictions []PtPrediction
 }
 
 type PtPrediction struct {
@@ -47,6 +48,9 @@ type PtPrediction struct {
 	Created     time.Time
 	Creator     PtUser
 	CreatorId   int64
+	Subcat      PtSubcategory
+	SubcatId    int64
+	Deadline    time.Time
 }
 
 type PtVote struct {
@@ -169,4 +173,10 @@ func GetSubcategoriesWithCategoryId(db *gorm.DB, catId int64) []PtSubcategory {
 	subcats := []PtSubcategory{}
 	db.Where("parent_cat_id = ?", catId).Find(&subcats)
 	return subcats
+}
+
+func GetPredictionsForSubcatId(db *gorm.DB, subcatId int64) []PtPrediction {
+	preds := []PtPrediction{}
+	db.Where("subcat_id = ?", subcatId).Find(&preds)
+	return preds
 }

@@ -24,11 +24,12 @@ func addListeners() {
 	router.HandleFunc("/v1/users/{id}", GetSingleUserHandler)        //.Methods("GET")
 
 	//Prediction stuff
-	router.HandleFunc("/v1/predictions", GetAllPredictionsHandler)                    //.Methods("GET")
-	router.HandleFunc("/v1/predictions/featured", GetFeaturedPredictionsHandler)      //.Methods("GET")
-	router.HandleFunc("/v1/predictions/{id:[0-9]+}", GetSinglePredictionHandler)      //.Methods("GET")
-	router.HandleFunc("/v1/predictions/add", AddPredictionHandler)                    //.Methods("GET")
-	router.HandleFunc("/v1/predictions/latest/{subcat}", GetLatestPredictionsHandler) //.Methods("GET")
+	router.HandleFunc("/v1/predictions", GetAllPredictionsHandler)                             //.Methods("GET")
+	router.HandleFunc("/v1/predictions/featured", GetFeaturedPredictionsHandler)               //.Methods("GET")
+	router.HandleFunc("/v1/predictions/{id:[0-9]+}", GetSinglePredictionHandler)               //.Methods("GET")
+	router.HandleFunc("/v1/predictions/add", AddPredictionHandler)                             //.Methods("GET")
+	router.HandleFunc("/v1/predictions/latest/{subcatid:[0-9]+}", GetLatestPredictionsHandler) //.Methods("GET")
+	router.HandleFunc("/v1/predictions/subcat/{subcatid:[0-9]+}", GetPredictionsForSubcatHandler)
 
 	//Voting stuff
 	router.HandleFunc("/v1/predictions/vote/{id}/{ud}", VoteForPredictionHandler) //.Methods("PUT")
@@ -36,6 +37,7 @@ func addListeners() {
 	//Category Stuff
 	router.HandleFunc("/v1/category/", GetCategoriesHandler)
 	router.HandleFunc("/v1/category/{id}/sub", GetSubcategoriesHandler)
+
 }
 
 func beginServing() {
