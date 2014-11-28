@@ -9,34 +9,34 @@ import (
 )
 
 type PtUser struct {
-	Id                 int64
-	Username           string
-	Password           string
-	Created            time.Time
-	Score              int
-	First_Name         string
-	Last_Name          string
-	Prediction_Graded  int
-	Prediction_Correct int
-	Avatar_URL         string
-	Is_Pundit          bool
-	Is_Featured        bool
-	Predictions        []PtPrediction
+	Id                int64
+	Username          string    `sql:"not null"`
+	Password          string    `sql:"not null"`
+	Created           time.Time `sql:"not null; DEFAULT:current_timestamp"`
+	Score             int       `sql:"not null; DEFAULT:0"`
+	PredictionGraded  int       `sql:"not null; DEFAULT:0"`
+	PredictionCorrect int       `sql:"not null; DEFAULT:0"`
+	IsPundit          bool      `sql:"not null; DEFAULT:FALSE"`
+	IsFeatured        bool      `sql:"not null; DEFAULT:FALSE"`
+	FirstName         string
+	LastName          string
+	Avatar_URL        string
+	Predictions       []PtPrediction
 }
 
 type PtCategory struct {
 	Id            int64
 	Name          string
-	SubCategories []PtSubcategory
-	IsLive        bool
+	Subcategories []PtSubcategory
+	IsLive        bool `sql:"not null; DEFAULT:FALSE"`
 }
 
 type PtSubcategory struct {
 	Id          int64
 	Name        string
 	ParentCat   PtCategory
-	ParentCatId int64
-	IsLive      bool
+	ParentCatId int64 `sql:"not null"`
+	IsLive      bool  `sql:"not null"; DEFAULT: FALSE`
 	Predictions []PtPrediction
 }
 
@@ -44,22 +44,22 @@ type PtPrediction struct {
 	Id    int64
 	Title string
 	//Category    PT_Category
-	Is_Featured bool
-	Created     time.Time
-	Creator     PtUser
-	CreatorId   int64
-	Subcat      PtSubcategory
-	SubcatId    int64
-	Deadline    time.Time
+	IsFeatured bool      `sql:"not null; DEFAULT:FALSE"`
+	Created    time.Time `sql:"not null; DEFAULT:current_timestamp"`
+	CreatorId  int64     `sql:"not null"`
+	SubcatId   int64     `sql:"not null"`
+	Creator    PtUser
+	Subcat     PtSubcategory
+	Deadline   time.Time
 }
 
 type PtVote struct {
 	Id        int64
+	VoterId   int64     `sql:"not null"`
+	VotedOnId int64     `sql:"not null"`
+	Created   time.Time `sql:"not null; DEFAULT:current_timestamp"`
 	Voter     PtUser
-	VoterId   int64
 	VotedOn   PtPrediction
-	VotedOnId int64
-	Created   time.Time
 }
 
 func SetUpDB(db *gorm.DB) {
@@ -135,13 +135,13 @@ func GetAllPredictions(db *gorm.DB) []PtPrediction {
 
 func GetFeaturedUsers(db *gorm.DB) []PtUser {
 	users := []PtUser{}
-	db.Where(&PtUser{Is_Featured: true}).Find(&users)
+	db.Where(&PtUser{IsFeatured: true}).Find(&users)
 	return users
 }
 
 func GetFeaturedPredictions(db *gorm.DB) []PtPrediction {
 	predictions := []PtPrediction{}
-	db.Where(&PtPrediction{Is_Featured: true}).Find(&predictions)
+	db.Where(&PtPrediction{IsFeatured: true}).Find(&predictions)
 	return predictions
 }
 
@@ -163,6 +163,7 @@ func LoginUser(db *gorm.DB, u *PtUser) {
 	db.Where("username = ? and password = ?", u.Username, u.Password).First(u)
 }
 
+//Category Stuff
 func GetCategories(db *gorm.DB) []PtCategory {
 	categories := []PtCategory{}
 	db.Find(&categories)
@@ -173,6 +174,14 @@ func GetSubcategoriesWithCategoryId(db *gorm.DB, catId int64) []PtSubcategory {
 	subcats := []PtSubcategory{}
 	db.Where("parent_cat_id = ?", catId).Find(&subcats)
 	return subcats
+}
+
+func GetSubcategoriesWithCategoryName(db *gorm.DB, name string) []PtSubcategory {
+	/*subcats := []PtSubcategory{}
+
+	db.Where("parent_cat_id = ?", uid).Find(&subcats)
+	return subcats*/
+	return []PtSubcategory{}
 }
 
 func GetPredictionsForSubcatId(db *gorm.DB, subcatId int64) []PtPrediction {
