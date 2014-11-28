@@ -36,7 +36,7 @@ type PtSubcategory struct {
 	Name        string
 	ParentCat   PtCategory
 	ParentCatId int64 `sql:"not null"`
-	IsLive      bool  `sql:"not null"; DEFAULT: FALSE`
+	IsLive      bool  `sql:"not null; DEFAULT: FALSE"`
 	Predictions []PtPrediction
 }
 
