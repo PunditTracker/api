@@ -44,6 +44,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	num := CheckUser(db, username_val, password_val)
 
 	if num == 0 {
+		w.WriteHeader(http.StatusUnauthorized)
 		fmt.Fprintln(w, "failed log in")
 		return
 	}
