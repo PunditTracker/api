@@ -1,6 +1,7 @@
 package main
 
 import (
+	"code.google.com/p/go.crypto/bcrypt"
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
@@ -100,12 +101,26 @@ func getDB() (*gorm.DB, error) {
 	return nil, e
 }
 
-func AddUser(db *gorm.DB, user PtUser) {
+func AddUser(db *gorm.DB, user PtUser) error {
+	passByte, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+	user.Password = string(passByte)
 	db.Save(&user)
+	return nil
 }
 
 func CheckUser(db *gorm.DB, username, password string) int64 {
-
+	user := PtUser{}
+	db.Where("username = ?", username).First(&user)
+	hashedPass := []byte(user.Password)
+	e := bcrypt.CompareHashAndPassword(hashedPass, []byte(password))
+	fmt.Println(hashedPass)
+	fmt.Println(password)
+	if e == nil {
+		return user.Id
+	}
 	return 0
 }
 

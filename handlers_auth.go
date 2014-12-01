@@ -12,16 +12,17 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "logout")
 }
 
-//Get correct form values
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
-	username_val := r.PostFormValue("username")
-	password_val := r.PostFormValue("password")
+	username_val := r.FormValue("username")
+	password_val := r.FormValue("password")
+	if username_val == "" || password_val == "" {
+		fmt.Fprintln(w, "username or password is blank")
+		return
+	}
 	db, err := getDB()
 	if err != nil {
 		return
 	}
-	username_val = "USER2"
-	password_val = "password2"
 	user := PtUser{
 		Username: username_val,
 		Password: password_val,
@@ -36,25 +37,18 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	username_val := r.FormValue("username")
 	password_val := r.FormValue("password")
-	username_val = "USER2"
-	password_val = "password2"
+	num := CheckUser(db, username_val, password_val)
 
-	u := PtUser{
-		Username: username_val,
-		Password: password_val,
-	}
-
-	LoginUser(db, &u)
-	if u.Id == 0 {
+	if num == 0 {
 		fmt.Fprintln(w, "failed log in")
 		return
 	}
 	//Set up session or cookie
 	kv := map[string]string{
-		"uid": strconv.Itoa(int(u.Id)),
+		"uid": strconv.Itoa(int(num)),
 	}
 	setSession(kv, w)
 
-	//u.Id is now set
-	fmt.Fprintln(w, u.Id)
+	//num now set
+	fmt.Fprintln(w, "logged in as", num)
 }
