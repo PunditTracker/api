@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -15,8 +16,14 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	username_val := r.FormValue("username")
 	password_val := r.FormValue("password")
-	if username_val == "" || password_val == "" {
-		fmt.Fprintln(w, "username or password is blank")
+	first_val := r.FormValue("firstname")
+	last_val := r.FormValue("lastname")
+	if username_val == "" ||
+		password_val == "" ||
+		first_val == "" ||
+		last_val == "" {
+		errMessage := "missing values"
+		http.Error(w, errMessage, http.StatusBadRequest)
 		return
 	}
 	db, err := getDB()
@@ -24,11 +31,14 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	user := PtUser{
-		Username: username_val,
-		Password: password_val,
-		Created:  time.Now(),
+		Username:  username_val,
+		Password:  password_val,
+		FirstName: first_val,
+		LastName:  last_val,
+		Created:   time.Now(),
 	}
 	AddUser(db, user)
+
 	fmt.Println("user added", username_val, password_val)
 }
 
@@ -40,8 +50,9 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	num := CheckUser(db, username_val, password_val)
 
 	if num == 0 {
-		w.WriteHeader(http.StatusUnauthorized)
-		fmt.Fprintln(w, "failed log in")
+		response := map[string]interface{}{"Status": http.StatusUnauthorized, "Message": "Login Failed"}
+		j, _ := json.Marshal(response)
+		http.Error(w, string(j), http.StatusUnauthorized)
 		return
 	}
 	//Set up session or cookie
