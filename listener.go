@@ -19,24 +19,25 @@ func addListeners() {
 	router.HandleFunc("/v1/auth/logout", LogoutHandler)     //.Methods("POST")
 
 	//User stuff
-	router.HandleFunc("/v1/users", GetAllUsersHandler)               //.Methods("GET")
-	router.HandleFunc("/v1/users/featured", GetFeaturedUsersHandler) //.Methods("GET")
-	router.HandleFunc("/v1/users/{id}", GetSingleUserHandler)        //.Methods("GET")
+	router.HandleFunc("/v1/user", GetAllUsersHandler)               //.Methods("GET")
+	router.HandleFunc("/v1/user/featured", GetFeaturedUsersHandler) //.Methods("GET")
+	router.HandleFunc("/v1/user/{id}", GetSingleUserHandler)        //.Methods("GET")
 
 	//Prediction stuff
-	router.HandleFunc("/v1/predictions", GetAllPredictionsHandler)                             //.Methods("GET")
-	router.HandleFunc("/v1/predictions/featured", GetFeaturedPredictionsHandler)               //.Methods("GET")
-	router.HandleFunc("/v1/predictions/{id:[0-9]+}", GetSinglePredictionHandler)               //.Methods("GET")
-	router.HandleFunc("/v1/predictions/add", AddPredictionHandler)                             //.Methods("GET")
-	router.HandleFunc("/v1/predictions/latest/{subcatid:[0-9]+}", GetLatestPredictionsHandler) //.Methods("GET")
-	router.HandleFunc("/v1/predictions/subcat/{subcatid:[0-9]+}", GetPredictionsForSubcatHandler)
+	router.HandleFunc("/v1/prediction", GetAllPredictionsHandler)                             //.Methods("GET")
+	router.HandleFunc("/v1/prediction/featured", GetFeaturedPredictionsHandler)               //.Methods("GET")
+	router.HandleFunc("/v1/prediction/{id:[0-9]+}", GetSinglePredictionHandler)               //.Methods("GET")
+	router.HandleFunc("/v1/prediction/add", AddPredictionHandler)                             //.Methods("GET")
+	router.HandleFunc("/v1/prediction/latest/{subcatid:[0-9]+}", GetLatestPredictionsHandler) //.Methods("GET")
+	router.HandleFunc("/v1/prediction/subcat/{subcatid:[0-9]+}", GetPredictionsForSubcatHandler)
 
 	//Voting stuff
-	router.HandleFunc("/v1/predictions/vote/{id}/{ud}", VoteForPredictionHandler) //.Methods("PUT")
+	router.HandleFunc("/v1/prediction/vote/{id}/{ud}", VoteForPredictionHandler) //.Methods("PUT")
 
 	//Category Stuff
 	router.HandleFunc("/v1/category/", GetCategoriesHandler)
-	router.HandleFunc("/v1/category/{id}/sub", GetSubcategoriesHandler)
+	router.HandleFunc("/v1/category/{id:[0-9]+}/sub", GetSubcategoriesHandler)
+	router.HandleFunc("/v1/category/{name:[a-z]+}/sub", GetSubcategoriesWithNameHandler)
 
 	router.HandleFunc("/checkAuth", CheckAuth)
 }
