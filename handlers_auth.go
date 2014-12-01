@@ -13,6 +13,7 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	username_val := r.FormValue("username")
 	password_val := r.FormValue("password")
 	if username_val == "" || password_val == "" {
@@ -33,6 +34,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	db, _ := getDB()
 	r.ParseForm()
 	username_val := r.FormValue("username")
