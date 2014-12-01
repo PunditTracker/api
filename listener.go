@@ -42,8 +42,24 @@ func addListeners() {
 	router.HandleFunc("/checkAuth", CheckAuth)
 }
 
+type PTServer struct {
+	r *mux.Router
+}
+
 func beginServing() {
 	fmt.Println("Listening and serving on port", port)
-	http.Handle("/", router)
+	http.Handle("/", &PTServer{router})
 	http.ListenAndServe(port, nil)
+}
+
+func (s *PTServer) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
+	if origin := req.Header.Get("Origin"); origin != "" {
+		rw.Header().Set("Access-Control-Allow-Origin", origin)
+		rw.Header().Add("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+		rw.Header().Set("Access-Control-Allow-Methods", "POST, PUT, GET, DELETE, PATCH")
+	}
+	if req.Method == "OPTIONS" {
+		return
+	}
+	s.r.ServeHTTP(rw, req)
 }
