@@ -19,6 +19,7 @@ type PtUser struct {
 	PredictionCorrect int       `sql:"not null; DEFAULT:0"`
 	IsPundit          bool      `sql:"not null; DEFAULT:FALSE"`
 	IsFeatured        bool      `sql:"not null; DEFAULT:FALSE"`
+	FacebookAuthToken string
 	FirstName         string
 	LastName          string
 	Avatar_URL        string
