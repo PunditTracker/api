@@ -11,7 +11,7 @@ import (
 
 type PtUser struct {
 	Id                int64
-	Username          string    `sql:"not null"`
+	Username          string    `sql:"not null;unique"`
 	Password          string    `sql:"not null"`
 	Created           time.Time `sql:"not null; DEFAULT:current_timestamp"`
 	Score             int       `sql:"not null; DEFAULT:0"`
@@ -19,7 +19,7 @@ type PtUser struct {
 	PredictionCorrect int       `sql:"not null; DEFAULT:0"`
 	IsPundit          bool      `sql:"not null; DEFAULT:FALSE"`
 	IsFeatured        bool      `sql:"not null; DEFAULT:FALSE"`
-	FacebookAuthToken string
+	FacebookAuthToken string    //`sql:"unique"`?
 	FirstName         string
 	LastName          string
 	Avatar_URL        string
@@ -209,4 +209,24 @@ func GetPredictionsForSubcatId(db *gorm.DB, subcatId int64) []PtPrediction {
 	preds := []PtPrediction{}
 	db.Where("subcat_id = ?", subcatId).Find(&preds)
 	return preds
+}
+
+func SearchPredictions(db *gorm.DB, searchString string) {
+	rows, err := db.Raw(`SELECT pid
+			FROM (SELECT pred.id as pid,
+				  to_tsvector(pred.title) as document
+			FROM pt_prediction as pred
+			GROUP BY pred.id) p_search
+			WHERE p_search.document @@ to_tsquery(?);`, searchString).Rows()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var pid int64
+		rows.Scan(&pid)
+		fmt.Println(pid)
+	}
+
 }

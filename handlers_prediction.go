@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -57,4 +58,21 @@ func GetPredictionsForSubcatHandler(w http.ResponseWriter, r *http.Request) {
 	preds := GetPredictionsForSubcatId(db, subCatId)
 	j, _ := json.Marshal(preds)
 	fmt.Fprintln(w, string(j))
+}
+
+func StringToTsQuery(input string) string {
+	words := strings.Split(input, " ")
+	toReturn := words[0]
+	for _, v := range words[1:] {
+		toReturn += " & " + v
+	}
+	fmt.Println(toReturn)
+	return toReturn
+}
+
+func SearchPredictionsHandler(w http.ResponseWriter, r *http.Request) {
+	db, _ := getDB()
+	searchString := "test title football"
+	searchString = StringToTsQuery(searchString)
+	SearchPredictions(db, searchString)
 }
