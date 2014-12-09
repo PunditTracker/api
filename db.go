@@ -102,27 +102,32 @@ func getDB() (*gorm.DB, error) {
 	return nil, e
 }
 
-func AddUser(db *gorm.DB, user PtUser) error {
+func AddUser(db *gorm.DB, user *PtUser) error {
 	passByte, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
 	}
 	user.Password = string(passByte)
-	db.Save(&user)
+	db.Save(user)
 	return nil
 }
 
 func CheckUser(db *gorm.DB, username, password string) int64 {
-	user := PtUser{}
+	var user PtUser
 	db.Where("username = ?", username).First(&user)
 	hashedPass := []byte(user.Password)
 	e := bcrypt.CompareHashAndPassword(hashedPass, []byte(password))
-	fmt.Println(hashedPass)
-	fmt.Println(password)
 	if e == nil {
 		return user.Id
 	}
 	return 0
+}
+
+func CheckUserFB(db *gorm.DB, token string) int64 {
+	var user PtUser
+	db.Where("facebook_auth_token = ?", token).First(&user)
+	fmt.Println(user)
+	return user.Id
 }
 
 func GetUserByID(db *gorm.DB, uid int) PtUser {

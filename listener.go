@@ -14,9 +14,11 @@ var (
 func addListeners() {
 
 	//Authentication Stuff
-	router.HandleFunc("/v1/auth/register", RegisterHandler) //.Methods("GET")
-	router.HandleFunc("/v1/auth/login", LoginHandler)       //.Methods("GET")
-	router.HandleFunc("/v1/auth/logout", LogoutHandler)     //.Methods("POST")
+	router.HandleFunc("/v1/auth/register", RegisterHandler)           //.Methods("GET")
+	router.HandleFunc("/v1/auth/registerfb", RegisterFacebookHandler) //.Methods("GET")
+	router.HandleFunc("/v1/auth/login", LoginHandler)                 //.Methods("GET")
+	router.HandleFunc("/v1/auth/loginfb", LoginFacebookHanlder)       //.Methods("GET")
+	router.HandleFunc("/v1/auth/logout", LogoutHandler)               //.Methods("POST")
 
 	//User stuff
 	router.HandleFunc("/v1/user", GetAllUsersHandler)               //.Methods("GET")
@@ -39,7 +41,6 @@ func addListeners() {
 	router.HandleFunc("/v1/category/{id:[0-9]+}/sub", GetSubcategoriesHandler)
 	router.HandleFunc("/v1/category/{name:[a-z]+}/sub", GetSubcategoriesWithNameHandler)
 
-	router.HandleFunc("/checkAuth", CheckAuth)
 }
 
 type PTServer struct {
