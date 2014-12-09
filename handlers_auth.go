@@ -37,9 +37,41 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		LastName:  last_val,
 		Created:   time.Now(),
 	}
-	AddUser(db, user)
+	AddUser(db, &user)
 
-	fmt.Println("user added", username_val, password_val)
+	fmt.Println("user added", user)
+}
+
+func RegisterFacebookHandler(w http.ResponseWriter, r *http.Request) {
+	fb_token := r.FormValue("fb_token")
+	username_val := r.FormValue("username")
+	password_val := r.FormValue("password")
+	first_val := r.FormValue("firstname")
+	last_val := r.FormValue("lastname")
+
+	if username_val == "" ||
+		password_val == "" ||
+		first_val == "" ||
+		last_val == "" ||
+		fb_token == "" {
+		errMessage := "missing values"
+		http.Error(w, errMessage, http.StatusBadRequest)
+		return
+	}
+
+	db, err := getDB()
+	if err != nil {
+		return
+	}
+	user := PtUser{
+		Username:          username_val,
+		Password:          password_val,
+		FacebookAuthToken: fb_token,
+		FirstName:         first_val,
+		LastName:          last_val,
+		Created:           time.Now(),
+	}
+	AddUser(db, &user)
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
@@ -50,9 +82,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	num := CheckUser(db, username_val, password_val)
 
 	if num == 0 {
-		response := map[string]interface{}{"Status": http.StatusUnauthorized, "Message": "Login Failed"}
-		j, _ := json.Marshal(response)
-		http.Error(w, string(j), http.StatusUnauthorized)
+		NotAuthedRedirect(w)
 		return
 	}
 	//Set up session or cookie
@@ -63,4 +93,32 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	//num now set
 	fmt.Fprintln(w, "logged in as", num)
+}
+
+func LoginFacebookHanlder(w http.ResponseWriter, r *http.Request) {
+	db, _ := getDB()
+	r.ParseForm()
+	token_val := r.FormValue("fb_token")
+	num := CheckUserFB(db, token_val)
+	if num == 0 {
+		NotAuthedRedirect(w)
+		return
+	}
+	kv := map[string]string{
+		"uid": strconv.Itoa(int(num)),
+	}
+	setSession(kv, w)
+	fmt.Fprintln(w, "logged in as", num)
+}
+
+func CheckAuth(w http.ResponseWriter, r *http.Request) {
+	if getSession(r)["uid"] == "" {
+		NotAuthedRedirect(w)
+	}
+}
+
+func NotAuthedRedirect(w http.ResponseWriter) {
+	response := map[string]interface{}{"Status": http.StatusUnauthorized, "Message": "Login Failed"}
+	j, _ := json.Marshal(response)
+	http.Error(w, string(j), http.StatusUnauthorized)
 }
