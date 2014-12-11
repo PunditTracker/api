@@ -19,7 +19,8 @@ type PtUser struct {
 	PredictionCorrect int       `sql:"not null; DEFAULT:0"`
 	IsPundit          bool      `sql:"not null; DEFAULT:FALSE"`
 	IsFeatured        bool      `sql:"not null; DEFAULT:FALSE"`
-	FacebookAuthToken string    //`sql:"unique"`?
+	FacebookId        string
+	FacebookAuthToken string //`sql:"unique"`?
 	FirstName         string
 	LastName          string
 	Avatar_URL        string
@@ -123,9 +124,9 @@ func CheckUser(db *gorm.DB, username, password string) int64 {
 	return 0
 }
 
-func CheckUserFB(db *gorm.DB, token string) int64 {
+func CheckUserFB(db *gorm.DB, fb_id string) int64 {
 	var user PtUser
-	db.Where("facebook_auth_token = ?", token).First(&user)
+	db.Where("facebook_id = ?", fb_id).First(&user)
 	fmt.Println(user)
 	return user.Id
 }
