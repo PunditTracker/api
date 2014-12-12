@@ -137,6 +137,12 @@ func GetUserByID(db *gorm.DB, uid int) PtUser {
 	return user
 }
 
+func GetUserPrediction(db *gorm.DB, uid int64) []PtPrediction {
+	preds := []PtPrediction{}
+	db.Where(&PtPrediction{CreatorId: uid}).Find(&preds)
+	return preds
+}
+
 func GetPredictionByID(db *gorm.DB, uid int) PtPrediction {
 	var pred PtPrediction
 	db.First(&pred, uid)

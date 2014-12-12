@@ -24,6 +24,7 @@ func addListeners() {
 	router.HandleFunc("/v1/user", GetAllUsersHandler)               //.Methods("GET")
 	router.HandleFunc("/v1/user/featured", GetFeaturedUsersHandler) //.Methods("GET")
 	router.HandleFunc("/v1/user/{id}", GetSingleUserHandler)        //.Methods("GET")
+	router.HandleFunc("/v1/user/{id}/predictions", GetUserPredictionsHandlers)
 
 	//Prediction stuff
 	router.HandleFunc("/v1/prediction", GetAllPredictionsHandler)                             //.Methods("GET")
