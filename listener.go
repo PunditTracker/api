@@ -13,6 +13,8 @@ var (
 
 func addListeners() {
 
+	router.HandleFunc("loadData", LoadTestDataHandler)
+
 	//Authentication Stuff
 	router.HandleFunc("/v1/auth/register", RegisterHandler)           //.Methods("GET")
 	router.HandleFunc("/v1/auth/registerfb", RegisterFacebookHandler) //.Methods("GET")
