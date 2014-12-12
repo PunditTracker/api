@@ -11,8 +11,9 @@ import (
 
 type PtUser struct {
 	Id                int64
-	Username          string    `sql:"not null;unique"`
+	Username          string    `sql:"not null; unique"`
 	Password          string    `sql:"not null"`
+	Email             string    `sql:"not null; unique"`
 	Created           time.Time `sql:"not null; DEFAULT:current_timestamp"`
 	Score             int       `sql:"not null; DEFAULT:0"`
 	PredictionGraded  int       `sql:"not null; DEFAULT:0"`

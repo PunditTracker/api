@@ -16,13 +16,29 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	username_val := r.FormValue("username")
 	password_val := r.FormValue("password")
-	first_val := r.FormValue("firstname")
-	last_val := r.FormValue("lastname")
+	email_val := r.FormValue("email")
+	firstname_val := r.FormValue("firstname")
+	lastname_val := r.FormValue("lastname")
 	if username_val == "" ||
 		password_val == "" ||
-		first_val == "" ||
-		last_val == "" {
-		errMessage := "missing values"
+		firstname_val == "" ||
+		lastname_val == "" {
+		errMessage := "missing values:"
+		if username_val == "" {
+			errMessage += " username"
+		}
+		if password_val == "" {
+			errMessage += " password"
+		}
+		if email_val == "" {
+			errMessage += " email"
+		}
+		if firstname_val == "" {
+			errMessage += " firstname"
+		}
+		if lastname_val == "" {
+			errMessage += " lastname"
+		}
 		http.Error(w, errMessage, http.StatusBadRequest)
 		return
 	}
@@ -33,8 +49,9 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	user := PtUser{
 		Username:  username_val,
 		Password:  password_val,
-		FirstName: first_val,
-		LastName:  last_val,
+		Email:     email_val,
+		FirstName: firstname_val,
+		LastName:  lastname_val,
 		Created:   time.Now(),
 	}
 	AddUser(db, &user)
@@ -45,6 +62,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 func RegisterFacebookHandler(w http.ResponseWriter, r *http.Request) {
 	fb_token := r.FormValue("fb_token")
 	fb_id := r.FormValue("fb_id")
+	email_val := r.FormValue("email")
 	username_val := r.FormValue("username")
 	first_val := r.FormValue("firstname")
 	last_val := r.FormValue("lastname")
@@ -52,7 +70,8 @@ func RegisterFacebookHandler(w http.ResponseWriter, r *http.Request) {
 	if username_val == "" ||
 		first_val == "" ||
 		last_val == "" ||
-		fb_token == "" {
+		fb_token == "" ||
+		email_val == "" {
 		errMessage := "missing values"
 		http.Error(w, errMessage, http.StatusBadRequest)
 		return
@@ -65,6 +84,7 @@ func RegisterFacebookHandler(w http.ResponseWriter, r *http.Request) {
 	user := PtUser{
 		Username:          username_val,
 		FacebookId:        fb_id,
+		Email:             email_val,
 		FacebookAuthToken: fb_token,
 		FirstName:         first_val,
 		LastName:          last_val,
