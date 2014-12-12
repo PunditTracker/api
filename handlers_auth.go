@@ -98,6 +98,11 @@ func LoginFacebookHandler(w http.ResponseWriter, r *http.Request) {
 	db, _ := getDB()
 	r.ParseForm()
 	fb_id_val := r.FormValue("fb_id")
+	if fb_id_val == "" {
+		NotAuthedRedirect(w)
+		return
+	}
+	fmt.Println(fb_id_val)
 	num := CheckUserFB(db, fb_id_val)
 	if num == 0 {
 		NotAuthedRedirect(w)
