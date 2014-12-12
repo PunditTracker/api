@@ -14,6 +14,7 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
 	username_val := r.FormValue("username")
 	password_val := r.FormValue("password")
 	email_val := r.FormValue("email")
@@ -60,6 +61,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func RegisterFacebookHandler(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
 	fb_token := r.FormValue("fb_token")
 	fb_id := r.FormValue("fb_id")
 	email_val := r.FormValue("email")
