@@ -61,12 +61,7 @@ func GetPredictionsForSubcatHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func StringToTsQuery(input string) string {
-	words := strings.Split(input, " ")
-	toReturn := words[0]
-	for _, v := range words[1:] {
-		toReturn += " & " + v
-	}
-	fmt.Println(toReturn)
+	toReturn := strings.Join(strings.Split(input, " "), " & ")
 	return toReturn
 }
 
