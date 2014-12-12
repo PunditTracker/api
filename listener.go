@@ -24,7 +24,6 @@ func addListeners() {
 	router.HandleFunc("/v1/user", GetAllUsersHandler)               //.Methods("GET")
 	router.HandleFunc("/v1/user/featured", GetFeaturedUsersHandler) //.Methods("GET")
 	router.HandleFunc("/v1/user/{id}", GetSingleUserHandler)        //.Methods("GET")
-	router.HandleFunc("/v1/user/{id}/predictions", GetUserPredictionsHandlers)
 
 	//Prediction stuff
 	router.HandleFunc("/v1/prediction", GetAllPredictionsHandler)                             //.Methods("GET")
@@ -34,6 +33,7 @@ func addListeners() {
 	router.HandleFunc("/v1/prediction/latest/{subcatid:[0-9]+}", GetLatestPredictionsHandler) //.Methods("GET")
 	router.HandleFunc("/v1/prediction/subcat/{subcatid:[0-9]+}", GetPredictionsForSubcatHandler)
 	router.HandleFunc("/v1/prediction/search", SearchPredictionsHandler)
+	router.HandleFunc("/v1/prediction/user/{id:[0-9]+}", GetUserPredictionsHandler)
 
 	//Voting stuff
 	router.HandleFunc("/v1/prediction/vote/{id}/{ud}", VoteForPredictionHandler) //.Methods("PUT")
@@ -41,7 +41,7 @@ func addListeners() {
 	//Category Stuff
 	router.HandleFunc("/v1/category/", GetCategoriesHandler)
 	router.HandleFunc("/v1/category/{id:[0-9]+}/sub", GetSubcategoriesHandler)
-	router.HandleFunc("/v1/category/{name:[a-z]+}/sub", GetSubcategoriesWithNameHandler)
+	router.HandleFunc("/v1/category/{name:[a-zA-Z]+}/sub", GetSubcategoriesWithNameHandler)
 
 }
 

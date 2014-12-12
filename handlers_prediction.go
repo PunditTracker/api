@@ -71,3 +71,12 @@ func SearchPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	searchString = StringToTsQuery(searchString)
 	SearchPredictions(db, searchString)
 }
+
+func GetUserPredictionsHandler(w http.ResponseWriter, r *http.Request) {
+	db, _ := getDB()
+	vars := mux.Vars(r)
+	uid, _ := strconv.Atoi(vars["id"])
+	predictions := GetUserPrediction(db, int64(uid))
+	j, _ := json.Marshal(predictions)
+	fmt.Fprintln(w, string(j))
+}

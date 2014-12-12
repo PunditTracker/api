@@ -44,16 +44,15 @@ type PtSubcategory struct {
 }
 
 type PtPrediction struct {
-	Id    int64
-	Title string
-	//Category    PT_Category
+	Id         int64
+	CreatorId  int64 `sql:"not null"`
+	SubcatId   int64 `sql:"not null"`
+	Title      string
 	IsFeatured bool      `sql:"not null; DEFAULT:FALSE"`
 	Created    time.Time `sql:"not null; DEFAULT:current_timestamp"`
-	CreatorId  int64     `sql:"not null"`
-	SubcatId   int64     `sql:"not null"`
+	Deadline   time.Time `sql:"not null"`
 	Creator    PtUser
 	Subcat     PtSubcategory
-	Deadline   time.Time
 }
 
 type PtVote struct {
@@ -138,8 +137,8 @@ func GetUserByID(db *gorm.DB, uid int) PtUser {
 }
 
 func GetUserPrediction(db *gorm.DB, uid int64) []PtPrediction {
-	preds := []PtPrediction{}
-	db.Where(&PtPrediction{CreatorId: uid}).Find(&preds)
+	var preds []PtPrediction
+	db.Where("creator_id = ?", uid).Find(&preds)
 	return preds
 }
 
@@ -156,13 +155,13 @@ func GetAllUsers(db *gorm.DB) []PtUser {
 }
 
 func GetAllPredictions(db *gorm.DB) []PtPrediction {
-	preds := []PtPrediction{}
+	var preds []PtPrediction
 	db.Find(&preds)
 	return preds
 }
 
 func GetFeaturedUsers(db *gorm.DB) []PtUser {
-	users := []PtUser{}
+	var users []PtUser
 	db.Where(&PtUser{IsFeatured: true}).Find(&users)
 	return users
 }
@@ -200,16 +199,21 @@ func GetCategories(db *gorm.DB) []PtCategory {
 
 func GetSubcategoriesWithCategoryId(db *gorm.DB, catId int64) []PtSubcategory {
 	subcats := []PtSubcategory{}
+	fmt.Println("category id")
 	db.Where("parent_cat_id = ?", catId).Find(&subcats)
 	return subcats
 }
 
 func GetSubcategoriesWithCategoryName(db *gorm.DB, name string) []PtSubcategory {
-	/*subcats := []PtSubcategory{}
-
-	db.Where("parent_cat_id = ?", uid).Find(&subcats)
-	return subcats*/
-	return []PtSubcategory{}
+	var category PtCategory
+	var subcats []PtSubcategory
+	fmt.Println("category name")
+	db.Where("name = ?", name).First(&category)
+	if category.Id == 0 {
+		return subcats
+	}
+	db.Where("parent_cat_id = ?", category.Id).Find(&subcats)
+	return subcats
 }
 
 func GetPredictionsForSubcatId(db *gorm.DB, subcatId int64) []PtPrediction {
