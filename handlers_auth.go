@@ -125,10 +125,6 @@ func LoginFacebookHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Println(user)
-	if user.FacebookId == "" {
-		NotAuthedRedirect(w)
-		return
-	}
 	var num int64
 	if user.FacebookId == "" {
 		num = CheckUser(db, user.Username, user.Password)
