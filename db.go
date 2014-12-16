@@ -127,7 +127,6 @@ func CheckUser(db *gorm.DB, username, password string) int64 {
 func CheckUserFB(db *gorm.DB, fb_id string) int64 {
 	var user PtUser
 	db.Where("facebook_id = ?", fb_id).First(&user)
-	fmt.Println(user)
 	return user.Id
 }
 

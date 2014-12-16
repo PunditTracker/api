@@ -14,93 +14,98 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-	username_val := r.FormValue("username")
-	password_val := r.FormValue("password")
-	email_val := r.FormValue("email")
-	firstname_val := r.FormValue("firstname")
-	lastname_val := r.FormValue("lastname")
-	if username_val == "" ||
-		password_val == "" ||
-		firstname_val == "" ||
-		lastname_val == "" {
-		errMessage := "missing values:"
-		if username_val == "" {
-			errMessage += " username"
+	dec := json.NewDecoder(r.Body)
+	var user PtUser
+	err := dec.Decode(&user)
+	/*
+			if username_val == "" ||
+				password_val == "" ||
+				firstname_val == "" ||
+				lastname_val == "" {
+				errMessage := "missing values:"
+				if username_val == "" {
+					errMessage += " username"
+				}
+				if password_val == "" {
+					errMessage += " password"
+				}
+				if email_val == "" {
+					errMessage += " email"
+				}
+				if firstname_val == "" {
+					errMessage += " firstname"
+				}
+				if lastname_val == "" {
+					errMessage += " lastname"
+				}
+				http.Error(w, errMessage, http.StatusBadRequest)
+				return
+			}
+		user := PtUser{
+			Username:  username_val,
+			Password:  password_val,
+			Email:     email_val,
+			FirstName: firstname_val,
+			LastName:  lastname_val,
+			Created:   time.Now(),
 		}
-		if password_val == "" {
-			errMessage += " password"
-		}
-		if email_val == "" {
-			errMessage += " email"
-		}
-		if firstname_val == "" {
-			errMessage += " firstname"
-		}
-		if lastname_val == "" {
-			errMessage += " lastname"
-		}
-		http.Error(w, errMessage, http.StatusBadRequest)
-		return
-	}
+	*/
 	db, err := getDB()
 	if err != nil {
 		return
 	}
-	user := PtUser{
-		Username:  username_val,
-		Password:  password_val,
-		Email:     email_val,
-		FirstName: firstname_val,
-		LastName:  lastname_val,
-		Created:   time.Now(),
-	}
-	AddUser(db, &user)
 
+	user.Created = time.Now()
+	AddUser(db, &user)
 	fmt.Println("user added", user)
 }
 
 func RegisterFacebookHandler(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-	fb_token := r.FormValue("fb_token")
-	fb_id := r.FormValue("fb_id")
-	email_val := r.FormValue("email")
-	username_val := r.FormValue("username")
-	first_val := r.FormValue("firstname")
-	last_val := r.FormValue("lastname")
-
-	if username_val == "" ||
-		first_val == "" ||
-		last_val == "" ||
-		fb_token == "" ||
-		email_val == "" {
-		errMessage := "missing values"
-		http.Error(w, errMessage, http.StatusBadRequest)
-		return
-	}
+	dec := json.NewDecoder(r.Body)
+	var user PtUser
+	err := dec.Decode(&user)
+	user.Created = time.Now()
+	/*
+		if username_val == "" ||
+			first_val == "" ||
+			last_val == "" ||
+			fb_token == "" ||
+			email_val == "" {
+			errMessage := "missing values"
+			http.Error(w, errMessage, http.StatusBadRequest)
+			return
+		}
+		user := PtUser{
+			Username:          username_val,
+			FacebookId:        fb_id,
+			Email:             email_val,
+			FacebookAuthToken: fb_token,
+			FirstName:         first_val,
+			LastName:          last_val,
+			Created:           time.Now(),
+		}
+	*/
 
 	db, err := getDB()
 	if err != nil {
 		return
 	}
-	user := PtUser{
-		Username:          username_val,
-		FacebookId:        fb_id,
-		Email:             email_val,
-		FacebookAuthToken: fb_token,
-		FirstName:         first_val,
-		LastName:          last_val,
-		Created:           time.Now(),
-	}
+
 	AddUser(db, &user)
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
-	db, _ := getDB()
-	r.ParseForm()
-	username_val := r.FormValue("username")
-	password_val := r.FormValue("password")
-	num := CheckUser(db, username_val, password_val)
+	db, err := getDB()
+	if err != nil {
+		return
+	}
+	var user PtUser
+	decoder := json.NewDecoder(r.Body)
+	err = decoder.Decode(&user)
+	if err != nil {
+		return
+	}
+	num := CheckUser(db, user.Username, user.Password)
 
 	if num == 0 {
 		NotAuthedRedirect(w)
@@ -117,15 +122,23 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func LoginFacebookHandler(w http.ResponseWriter, r *http.Request) {
-	db, _ := getDB()
-	r.ParseForm()
-	fb_id_val := r.FormValue("fb_id")
-	if fb_id_val == "" {
+	db, err := getDB()
+	if err != nil {
+		return
+	}
+	decoder := json.NewDecoder(r.Body)
+	var user PtUser
+	err = decoder.Decode(&user)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	if user.FacebookId == "" {
 		NotAuthedRedirect(w)
 		return
 	}
-	fmt.Println(fb_id_val)
-	num := CheckUserFB(db, fb_id_val)
+	//fmt.Println(user.FacebookId)
+	num := CheckUserFB(db, user.FacebookId)
 	if num == 0 {
 		NotAuthedRedirect(w)
 		return
