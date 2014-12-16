@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/jinzhu/gorm"
 	"net/http"
 	"time"
 )
@@ -8,6 +9,7 @@ import (
 func LoadTestDataHandler(w http.ResponseWriter, r *http.Request) {
 
 	db, _ := getDB()
+	AddBaseCategories(db)
 	AddUser(db, &PtUser{
 		Username:  "ben",
 		Password:  "pass",
@@ -70,4 +72,48 @@ func LoadTestDataHandler(w http.ResponseWriter, r *http.Request) {
 		Created:   time.Now(),
 	})
 
+}
+
+func AddBaseCategories(db *gorm.DB) {
+	AddCategory(db, PtCategory{
+		Name:   "Sports",
+		IsLive: false,
+	})
+	AddCategory(db, PtCategory{
+		Name:   "Politics",
+		IsLive: false,
+	})
+	AddCategory(db, PtCategory{
+		Name:   "Economics",
+		IsLive: false,
+	})
+	AddSubcategory(db, PtSubcategory{
+		Name:        "NBA",
+		ParentCatId: 1,
+		IsLive:      false,
+	})
+	AddSubcategory(db, PtSubcategory{
+		Name:        "NCAA Basketball",
+		ParentCatId: 1,
+		IsLive:      false,
+	})
+	AddSubcategory(db, PtSubcategory{
+		Name:        "NFL",
+		ParentCatId: 1,
+		IsLive:      false,
+	})
+	AddSubcategory(db, PtSubcategory{
+		Name:        "Supreme Court Decisions",
+		ParentCatId: 2,
+		IsLive:      false,
+	})
+}
+
+func AddCategory(db *gorm.DB, newCategory PtCategory) int64 {
+	db.Save(newCategory)
+	return newCategory.Id
+}
+func AddSubcategory(db *gorm.DB, newSub PtSubcategory) int64 {
+	db.Save(newSub)
+	return newSub.Id
 }
