@@ -75,15 +75,6 @@ func RegisterFacebookHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, errMessage, http.StatusBadRequest)
 			return
 		}
-		user := PtUser{
-			Username:          username_val,
-			FacebookId:        fb_id,
-			Email:             email_val,
-			FacebookAuthToken: fb_token,
-			FirstName:         first_val,
-			LastName:          last_val,
-			Created:           time.Now(),
-		}
 	*/
 
 	db, err := getDB()
@@ -133,12 +124,17 @@ func LoginFacebookHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		return
 	}
+	fmt.Println(user)
 	if user.FacebookId == "" {
 		NotAuthedRedirect(w)
 		return
 	}
-	//fmt.Println(user.FacebookId)
-	num := CheckUserFB(db, user.FacebookId)
+	var num int64
+	if user.FacebookId == "" {
+		num = CheckUser(db, user.Username, user.Password)
+	} else {
+		num = CheckUserFB(db, user.FacebookId)
+	}
 	if num == 0 {
 		NotAuthedRedirect(w)
 		return
