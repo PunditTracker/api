@@ -60,6 +60,7 @@ type PtVote struct {
 	Id        int64
 	VoterId   int64     `sql:"not null"`
 	VotedOnId int64     `sql:"not null"`
+	VotedFor  bool      `sql:"not null"`
 	Created   time.Time `sql:"not null; DEFAULT:current_timestamp"`
 	Voter     PtUser
 	VotedOn   PtPrediction
@@ -113,21 +114,24 @@ func AddUser(db *gorm.DB, user *PtUser) error {
 	return nil
 }
 
-func CheckUser(db *gorm.DB, username, password string) int64 {
+func CheckUser(db *gorm.DB, username, password string) PtUser {
 	var user PtUser
 	db.Where("username = ?", username).First(&user)
 	hashedPass := []byte(user.Password)
 	e := bcrypt.CompareHashAndPassword(hashedPass, []byte(password))
+	//Password accepted
 	if e == nil {
-		return user.Id
+		return user
+	} else {
+		var notUser PtUser
+		return notUser
 	}
-	return 0
 }
 
-func CheckUserFB(db *gorm.DB, fb_id string) int64 {
+func CheckUserFB(db *gorm.DB, fb_id string) PtUser {
 	var user PtUser
 	db.Where("facebook_id = ?", fb_id).First(&user)
-	return user.Id
+	return user
 }
 
 func GetUserByID(db *gorm.DB, uid int) PtUser {

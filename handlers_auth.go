@@ -98,20 +98,21 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "decode error:", err)
 		return
 	}
-	num := CheckUser(db, user.Username, user.Password)
+	authedUser := CheckUser(db, user.Username, user.Password)
 
-	if num == 0 {
+	if authedUser.Id == 0 {
 		NotAuthedRedirect(w)
 		return
 	}
 	//Set up session or cookie
 	kv := map[string]string{
-		"uid": strconv.Itoa(int(num)),
+		"uid": strconv.Itoa(int(authedUser.Id)),
 	}
 	setSession(kv, w)
 
 	//num now set
-	fmt.Fprintln(w, "logged in as", num)
+	j, err := json.Marshal(authedUser)
+	fmt.Fprintln(w, string(j))
 }
 
 func LoginFacebookHandler(w http.ResponseWriter, r *http.Request) {
@@ -128,23 +129,24 @@ func LoginFacebookHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Println(user)
-	var num int64
+	var authedUser PtUser
 	if user.FacebookId == "" {
-		num = CheckUser(db, user.Username, user.Password)
+		authedUser = CheckUser(db, user.Username, user.Password)
 	} else {
-		num = CheckUserFB(db, user.FacebookId)
+		authedUser = CheckUserFB(db, user.FacebookId)
 	}
 
 	//If not able to find user
-	if num == 0 {
+	if authedUser.Id == 0 {
 		NotAuthedRedirect(w)
 		return
 	}
 	kv := map[string]string{
-		"uid": strconv.Itoa(int(num)),
+		"uid": strconv.Itoa(int(authedUser.Id)),
 	}
 	setSession(kv, w)
-	fmt.Fprintln(w, "logged in as", num)
+	j, err := json.Marshal(authedUser)
+	fmt.Fprintln(w, string(j))
 }
 
 func CheckAuthHandler(w http.ResponseWriter, r *http.Request) {
