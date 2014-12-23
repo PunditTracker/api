@@ -95,7 +95,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	err = decoder.Decode(&user)
 	if err != nil {
-		fmt.Fprintln(w, "decode error:"err)
+		fmt.Fprintln(w, "decode error:", err)
 		return
 	}
 	num := CheckUser(db, user.Username, user.Password)
