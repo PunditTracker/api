@@ -21,6 +21,7 @@ func addListeners() {
 	router.HandleFunc("/v1/auth/login", LoginHandler)                 //.Methods("GET")
 	router.HandleFunc("/v1/auth/loginfb", LoginFacebookHandler)       //.Methods("GET")
 	router.HandleFunc("/v1/auth/logout", LogoutHandler)               //.Methods("POST")
+	router.HandleFunc("/v1/auth/check", CheckAuthHandler)
 
 	//User stuff
 	router.HandleFunc("/v1/user", GetAllUsersHandler)               //.Methods("GET")

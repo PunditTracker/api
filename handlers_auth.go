@@ -88,12 +88,14 @@ func RegisterFacebookHandler(w http.ResponseWriter, r *http.Request) {
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	db, err := getDB()
 	if err != nil {
+		fmt.Println("db err", err)
 		return
 	}
 	var user PtUser
 	decoder := json.NewDecoder(r.Body)
 	err = decoder.Decode(&user)
 	if err != nil {
+		fmt.Println(err)
 		return
 	}
 	num := CheckUser(db, user.Username, user.Password)
@@ -115,6 +117,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 func LoginFacebookHandler(w http.ResponseWriter, r *http.Request) {
 	db, err := getDB()
 	if err != nil {
+		fmt.Println("db err", err)
 		return
 	}
 	decoder := json.NewDecoder(r.Body)
@@ -142,9 +145,12 @@ func LoginFacebookHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "logged in as", num)
 }
 
-func CheckAuth(w http.ResponseWriter, r *http.Request) {
-	if getSession(r)["uid"] == "" {
+func CheckAuthHandler(w http.ResponseWriter, r *http.Request) {
+	uid := getSession(r)["uid"]
+	if uid == "" {
 		NotAuthedRedirect(w)
+	} else {
+		fmt.Println("logged in as ", uid)
 	}
 }
 
