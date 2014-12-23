@@ -88,14 +88,14 @@ func RegisterFacebookHandler(w http.ResponseWriter, r *http.Request) {
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	db, err := getDB()
 	if err != nil {
-		fmt.Println("db err", err)
+		fmt.Fprintln(w, "db err:", err)
 		return
 	}
 	var user PtUser
 	decoder := json.NewDecoder(r.Body)
 	err = decoder.Decode(&user)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Fprintln(w, "decode error:"err)
 		return
 	}
 	num := CheckUser(db, user.Username, user.Password)
@@ -117,14 +117,14 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 func LoginFacebookHandler(w http.ResponseWriter, r *http.Request) {
 	db, err := getDB()
 	if err != nil {
-		fmt.Println("db err", err)
+		fmt.Fprintln(w, "db err: ", err)
 		return
 	}
 	decoder := json.NewDecoder(r.Body)
 	var user PtUser
 	err = decoder.Decode(&user)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Fprintln(w, "json decode error: ", err)
 		return
 	}
 	fmt.Println(user)
@@ -134,6 +134,8 @@ func LoginFacebookHandler(w http.ResponseWriter, r *http.Request) {
 	} else {
 		num = CheckUserFB(db, user.FacebookId)
 	}
+
+	//If not able to find user
 	if num == 0 {
 		NotAuthedRedirect(w)
 		return
@@ -150,12 +152,12 @@ func CheckAuthHandler(w http.ResponseWriter, r *http.Request) {
 	if uid == "" {
 		NotAuthedRedirect(w)
 	} else {
-		fmt.Println("logged in as ", uid)
+		fmt.Fprintln(w, "logged in as ", uid)
 	}
 }
 
 func NotAuthedRedirect(w http.ResponseWriter) {
-	response := map[string]interface{}{"Status": http.StatusUnauthorized, "Message": "Login Failed"}
+	response := map[string]interface{}{"Status": http.StatusUnauthorized, "Message": "Not Authorized"}
 	j, _ := json.Marshal(response)
 	http.Error(w, string(j), http.StatusUnauthorized)
 }
