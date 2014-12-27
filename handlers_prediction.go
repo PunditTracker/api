@@ -80,3 +80,12 @@ func GetUserPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	j, _ := json.Marshal(predictions)
 	fmt.Fprintln(w, string(j))
 }
+
+func GetTaggedPredictionHandler(w http.ResponseWriter, r *http.Request) {
+	db, _ := getDB()
+	vars := mux.Vars(r)
+	tag := vars["tag"]
+	predictions := GetPredictionsForTag(db, tag)
+	j, _ := json.Marshal(predictions)
+	fmt.Fprintln(w, string(j))
+}

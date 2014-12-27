@@ -6,75 +6,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
 	"os"
-	"time"
 )
-
-type PtUser struct {
-	Id                int64
-	Username          string    `sql:"not null; unique"`
-	Password          string    `sql:"not null"`
-	Email             string    `sql:"not null; unique"`
-	Created           time.Time `sql:"not null; DEFAULT:current_timestamp"`
-	Score             int       `sql:"not null; DEFAULT:0"`
-	PredictionGraded  int       `sql:"not null; DEFAULT:0"`
-	PredictionCorrect int       `sql:"not null; DEFAULT:0"`
-	IsPundit          bool      `sql:"not null; DEFAULT:FALSE"`
-	IsFeatured        bool      `sql:"not null; DEFAULT:FALSE"`
-	FacebookId        string
-	FacebookAuthToken string //`sql:"unique"`?
-	FirstName         string
-	LastName          string
-	Avatar_URL        string
-	Predictions       []PtPrediction
-}
-
-type PtCategory struct {
-	Id            int64
-	Name          string
-	Subcategories []PtSubcategory
-	IsLive        bool `sql:"not null; DEFAULT:FALSE"`
-}
-
-type PtSubcategory struct {
-	Id          int64
-	Name        string
-	ParentCat   PtCategory
-	ParentCatId int64 `sql:"not null"`
-	IsLive      bool  `sql:"not null; DEFAULT: FALSE"`
-	Predictions []PtPrediction
-}
-
-type PtPrediction struct {
-	Id         int64
-	CreatorId  int64 `sql:"not null"`
-	SubcatId   int64 `sql:"not null"`
-	Title      string
-	IsFeatured bool      `sql:"not null; DEFAULT:FALSE"`
-	Created    time.Time `sql:"not null; DEFAULT:current_timestamp"`
-	Deadline   time.Time `sql:"not null"`
-	Creator    PtUser
-	Subcat     PtSubcategory
-}
-
-type PtVote struct {
-	Id        int64
-	VoterId   int64     `sql:"not null"`
-	VotedOnId int64     `sql:"not null"`
-	VotedFor  bool      `sql:"not null"`
-	Created   time.Time `sql:"not null; DEFAULT:current_timestamp"`
-	Voter     PtUser
-	VotedOn   PtPrediction
-}
-
-func SetUpDB(db *gorm.DB) {
-	db.AutoMigrate(
-		&PtUser{},
-		&PtCategory{},
-		&PtSubcategory{},
-		&PtPrediction{},
-		&PtVote{},
-	)
-}
 
 var (
 	DBID       = "ptdev"
@@ -244,4 +176,15 @@ func SearchPredictions(db *gorm.DB, searchString string) {
 		fmt.Println(pid)
 	}
 
+}
+
+func GetPredictionsForTag(db *gorm.DB, tag string) []PtPrediction {
+	predictions := []PtPrediction{}
+	db.Raw(`select p.* 
+	from prediction_tag_map pmap, pt_prediction p, pt_tag t
+	where pmap.pt_tag_id=t.id
+	and (t.tag = ?)
+	and pmap.pt_prediction_id = p.id
+	group by p.id;`, tag).Find(&predictions)
+	return predictions
 }
