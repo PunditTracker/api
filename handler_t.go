@@ -67,16 +67,19 @@ func LoadTestDataHandler(w http.ResponseWriter, r *http.Request) {
 	AddVote(db, &PtVote{
 		VoterId:   1,
 		VotedOnId: 1,
+		VoteValue: 1,
 		Created:   time.Now(),
 	})
 	AddVote(db, &PtVote{
 		VoterId:   1,
-		VotedOnId: 2,
+		VotedOnId: 1,
+		VoteValue: 2,
 		Created:   time.Now(),
 	})
 	AddVote(db, &PtVote{
 		VoterId:   1,
 		VotedOnId: 3,
+		VoteValue: 1,
 		Created:   time.Now(),
 	})
 

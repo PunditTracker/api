@@ -58,7 +58,7 @@ type PtVote struct {
 	Id        int64
 	VoterId   int64     `sql:"not null"`
 	VotedOnId int64     `sql:"not null"`
-	VotedFor  bool      `sql:"not null"`
+	VoteValue int       `sql:"not null"`
 	Created   time.Time `sql:"not null; DEFAULT:current_timestamp"`
 	Voter     PtUser
 	VotedOn   PtPrediction
