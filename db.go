@@ -188,3 +188,13 @@ func GetPredictionsForTag(db *gorm.DB, tag string) []PtPrediction {
 	group by p.id;`, tag).Find(&predictions)
 	return predictions
 }
+
+func AddBracket(db *gorm.DB, b *PtBracket) {
+	db.Save(b)
+}
+
+func GetMembersBracket(db *gorm.DB, User_Id int64) PtBracket {
+	bracket := PtBracket{}
+	db.Where("CreatorId = ?", User_Id).First(&bracket)
+	return bracket
+}

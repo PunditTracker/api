@@ -17,39 +17,11 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	dec := json.NewDecoder(r.Body)
 	var user PtUser
 	err := dec.Decode(&user)
-	/*
-			if username_val == "" ||
-				password_val == "" ||
-				firstname_val == "" ||
-				lastname_val == "" {
-				errMessage := "missing values:"
-				if username_val == "" {
-					errMessage += " username"
-				}
-				if password_val == "" {
-					errMessage += " password"
-				}
-				if email_val == "" {
-					errMessage += " email"
-				}
-				if firstname_val == "" {
-					errMessage += " firstname"
-				}
-				if lastname_val == "" {
-					errMessage += " lastname"
-				}
-				http.Error(w, errMessage, http.StatusBadRequest)
-				return
-			}
-		user := PtUser{
-			Username:  username_val,
-			Password:  password_val,
-			Email:     email_val,
-			FirstName: firstname_val,
-			LastName:  lastname_val,
-			Created:   time.Now(),
-		}
-	*/
+	if err != nil {
+		fmt.Println("Json Decode Error", err)
+		return
+	}
+
 	db, err := getDB()
 	if err != nil {
 		return

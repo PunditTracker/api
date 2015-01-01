@@ -69,6 +69,48 @@ type PtTag struct {
 	Tag string `sql:"not null"`
 }
 
+type PtBracket struct {
+	Id        int64
+	CreatorId int64     `sql:"not null"`
+	Created   time.Time `sql:"not null; DEFAULT:current_timestamp"`
+
+	FirstRound0  string
+	FirstRound1  string
+	FirstRound2  string
+	FirstRound3  string
+	FirstRound4  string
+	FirstRound5  string
+	FirstRound6  string
+	FirstRound7  string
+	FirstRound8  string
+	FirstRound9  string
+	FirstRound10 string
+	FirstRound11 string
+	FirstRound12 string
+	FirstRound13 string
+	FirstRound14 string
+	FirstRound15 string
+
+	SecondRound0 string
+	SecondRound1 string
+	SecondRound2 string
+	SecondRound3 string
+	SecondRound4 string
+	SecondRound5 string
+	SecondRound6 string
+	SecondRound7 string
+
+	ThirdRound0 string
+	ThirdRound1 string
+	ThirdRound2 string
+	ThirdRound3 string
+
+	FourthRound0 string
+	FourthRound1 string
+
+	FifthRound0 string
+}
+
 func SetUpDB(db *gorm.DB) {
 	db.AutoMigrate(
 		&PtUser{},
@@ -77,5 +119,6 @@ func SetUpDB(db *gorm.DB) {
 		&PtPrediction{},
 		&PtVote{},
 		&PtTag{},
+		&PtBracket{},
 	)
 }
