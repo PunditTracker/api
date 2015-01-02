@@ -19,7 +19,7 @@ func GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
 func GetSingleUserHandler(w http.ResponseWriter, r *http.Request) {
 	db, _ := getDB()
 	vars := mux.Vars(r)
-	uid, _ := strconv.Atoi(vars["id"])
+	uid, _ := strconv.ParseInt(vars["id"], 10, 64)
 	user := GetUserByID(db, uid)
 	j, _ := json.Marshal(user)
 	fmt.Fprintln(w, string(j))

@@ -18,8 +18,8 @@ func GetCategoriesHandler(w http.ResponseWriter, r *http.Request) {
 func GetSubcategoriesHandler(w http.ResponseWriter, r *http.Request) {
 	db, _ := getDB()
 	vars := mux.Vars(r)
-	categoryId, _ := strconv.Atoi(vars["id"])
-	subcats := GetSubcategoriesWithCategoryId(db, int64(categoryId))
+	categoryId, _ := strconv.ParseInt(vars["id"], 10, 64)
+	subcats := GetSubcategoriesWithCategoryId(db, categoryId)
 	j, _ := json.Marshal(subcats)
 	fmt.Fprintln(w, string(j))
 }

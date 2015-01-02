@@ -66,7 +66,7 @@ func CheckUserFB(db *gorm.DB, fb_id string) PtUser {
 	return user
 }
 
-func GetUserByID(db *gorm.DB, uid int) PtUser {
+func GetUserByID(db *gorm.DB, uid int64) PtUser {
 	var user PtUser
 	db.First(&user, uid)
 	return user
@@ -78,7 +78,7 @@ func GetUserPrediction(db *gorm.DB, uid int64) []PtPrediction {
 	return preds
 }
 
-func GetPredictionByID(db *gorm.DB, uid int) PtPrediction {
+func GetPredictionByID(db *gorm.DB, uid int64) PtPrediction {
 	var pred PtPrediction
 	db.First(&pred, uid)
 	return pred

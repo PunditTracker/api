@@ -25,17 +25,9 @@ func GetAllPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 func GetSinglePredictionHandler(w http.ResponseWriter, r *http.Request) {
 	db, _ := getDB()
 	vars := mux.Vars(r)
-	uid, _ := strconv.Atoi(vars["id"])
+	uid, _ := strconv.ParseInt(vars["id"], 10, 64)
 	prediction := GetPredictionByID(db, uid)
 	j, _ := json.Marshal(prediction)
-	fmt.Fprintln(w, string(j))
-}
-
-func GetLatestPredictionsHandler(w http.ResponseWriter, r *http.Request) {
-	db, _ := getDB()
-	//Get the 10 latest predictions
-	preds := GetLatestPredictions(db, 10)
-	j, _ := json.Marshal(preds)
 	fmt.Fprintln(w, string(j))
 }
 
@@ -52,9 +44,18 @@ func AddPredictionHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "add prediction")
 }
 
+func GetLatestPredictionsHandler(w http.ResponseWriter, r *http.Request) {
+	db, _ := getDB()
+	//Get the 10 latest predictions
+	preds := GetLatestPredictions(db, 10)
+	j, _ := json.Marshal(preds)
+	fmt.Fprintln(w, string(j))
+}
+
 func GetPredictionsForSubcatHandler(w http.ResponseWriter, r *http.Request) {
 	db, _ := getDB()
-	subCatId := int64(1)
+	vars := mux.Vars(r)
+	subCatId, _ := strconv.ParseInt(vars["subcatid"], 10, 64)
 	preds := GetPredictionsForSubcatId(db, subCatId)
 	j, _ := json.Marshal(preds)
 	fmt.Fprintln(w, string(j))
@@ -67,7 +68,8 @@ func StringToTsQuery(input string) string {
 
 func SearchPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	db, _ := getDB()
-	searchString := "test title football"
+	vars := mux.Vars(r)
+	searchString := vars["searchstr"]
 	searchString = StringToTsQuery(searchString)
 	SearchPredictions(db, searchString)
 }
@@ -75,7 +77,7 @@ func SearchPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 func GetUserPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	db, _ := getDB()
 	vars := mux.Vars(r)
-	uid, _ := strconv.Atoi(vars["id"])
+	uid, _ := strconv.ParseInt(vars["id"], 10, 64)
 	predictions := GetUserPrediction(db, int64(uid))
 	j, _ := json.Marshal(predictions)
 	fmt.Fprintln(w, string(j))

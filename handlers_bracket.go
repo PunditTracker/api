@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 func AddBracketHandler(w http.ResponseWriter, r *http.Request) {
@@ -16,16 +17,19 @@ func AddBracketHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Json Decode Error", err)
 		return
 	}
+	b.Created = time.Now()
 
-	db, _ := getDB()
+	db, err := getDB()
+	if err != nil {
+		fmt.Println("db error", err)
+	}
 	AddBracket(db, &b)
 }
 
 func GetBracketHandler(w http.ResponseWriter, r *http.Request) {
 	db, _ := getDB()
 	vars := mux.Vars(r)
-	num, _ := strconv.Atoi(vars["user"])
-	User_Id := int64(num)
+	User_Id, _ := strconv.ParseInt(vars["user"], 10, 64)
 	bracket := GetMembersBracket(db, User_Id)
 	j, _ := json.Marshal(bracket)
 	fmt.Fprintln(w, string(j))

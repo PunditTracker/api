@@ -15,16 +15,16 @@ func VoteForPredictionHandler(w http.ResponseWriter, r *http.Request) {
 		NotAuthedRedirect(w)
 		return
 	}
-	voterId, _ := strconv.Atoi(voterIdStr)
+	voterId, _ := strconv.ParseInt(voterIdStr, 10, 64)
 	vars := mux.Vars(r)
-	predID, _ := strconv.Atoi(vars["pred_id"])
+	predID, _ := strconv.ParseInt(vars["pred_id"], 10, 64)
 	vVal, _ := strconv.Atoi(vars["value"])
 
 	db, _ := getDB()
 	//Fill in real values here
 	vote := PtVote{
-		VoterId:   int64(voterId),
-		VotedOnId: int64(predID),
+		VoterId:   voterId,
+		VotedOnId: predID,
 		VoteValue: vVal,
 		Created:   time.Now(),
 	}
@@ -33,7 +33,7 @@ func VoteForPredictionHandler(w http.ResponseWriter, r *http.Request) {
 
 func AverageForPredictionHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	predId, _ := strconv.Atoi(vars["pred_id"])
+	predId, _ := strconv.ParseInt(vars["pred_id"], 10, 64)
 	db, _ := getDB()
 	var avg float64
 	ro := db.Debug().Raw("SELECT avg(vote_value) from (select vote_value FROM pt_vote where voted_on_id=?) as tab", predId).Row()
