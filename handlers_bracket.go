@@ -29,7 +29,7 @@ func AddBracketHandler(w http.ResponseWriter, r *http.Request) {
 func GetBracketHandler(w http.ResponseWriter, r *http.Request) {
 	db, _ := getDB()
 	vars := mux.Vars(r)
-	User_Id, _ := strconv.ParseInt(vars["user"], 10, 64)
+	User_Id, _ := strconv.ParseInt(vars["userId"], 10, 64)
 	bracket := GetMembersBracket(db, User_Id)
 	j, _ := json.Marshal(bracket)
 	fmt.Fprintln(w, string(j))

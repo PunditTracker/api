@@ -15,7 +15,7 @@ func addListeners() {
 
 	router.HandleFunc("/loadData", LoadTestDataHandler)
 
-	//Authentication Stuff
+	//Authentication
 	router.HandleFunc("/v1/auth/register", RegisterHandler)           //.Methods("GET")
 	router.HandleFunc("/v1/auth/registerfb", RegisterFacebookHandler) //.Methods("GET")
 	router.HandleFunc("/v1/auth/login", LoginHandler)                 //.Methods("GET")
@@ -23,12 +23,12 @@ func addListeners() {
 	router.HandleFunc("/v1/auth/logout", LogoutHandler)               //.Methods("POST")
 	router.HandleFunc("/v1/auth/check", CheckAuthHandler)
 
-	//User stuff
+	//User
 	router.HandleFunc("/v1/user", GetAllUsersHandler)               //.Methods("GET")
 	router.HandleFunc("/v1/user/featured", GetFeaturedUsersHandler) //.Methods("GET")
 	router.HandleFunc("/v1/user/{id}", GetSingleUserHandler)        //.Methods("GET")
 
-	//Prediction stuff
+	//Prediction
 	router.HandleFunc("/v1/prediction", GetAllPredictionsHandler)                             //.Methods("GET")
 	router.HandleFunc("/v1/prediction/featured", GetFeaturedPredictionsHandler)               //.Methods("GET")
 	router.HandleFunc("/v1/prediction/{id:[0-9]+}", GetSinglePredictionHandler)               //.Methods("GET")
@@ -40,17 +40,20 @@ func addListeners() {
 	router.HandleFunc("/v1/predictions/tag/{tag}", GetTaggedPredictionHandler)
 	router.HandleFunc("/v1/predictions/cat/{id:[0-9]+}/tag/{tag}", GetTaggedPredictionHandler)
 
-	//Voting stuff
+	//Voting
 	router.HandleFunc("/v1/prediction/vote/{pred_id:[0-9]+}/{value:[0-9]}", VoteForPredictionHandler) //.Methods("PUT")
 	router.HandleFunc("/v1/prediction/vote/{pred_id:[0-9]+}/avg", AverageForPredictionHandler)
 
-	//Category Stuff
+	//Category
 	router.HandleFunc("/v1/category/", GetCategoriesHandler)
 	router.HandleFunc("/v1/category/{id:[0-9]+}/sub", GetSubcategoriesHandler)
 	router.HandleFunc("/v1/category/{name:[a-zA-Z]+}/sub", GetSubcategoriesWithNameHandler)
 
 	//March Madness
+	router.HandleFunc("/v1/user/bracket/{userId:[0-9]+}", GetBracketHandler)
+	router.HandleFunc("/v1/user/bracket/add", AddBracketHandler)
 
+	//Admin Functons
 }
 
 type PTServer struct {
