@@ -61,8 +61,8 @@ func GetPredictionsForSubcatHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, string(j))
 }
 
-func StringToTsQuery(input string) string {
-	toReturn := strings.Join(strings.Split(input, " "), " & ")
+func StringToTsQuery(input string, connector string) string {
+	toReturn := strings.Join(strings.Split(input, " "), connector)
 	return toReturn
 }
 
@@ -70,7 +70,7 @@ func SearchPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	db, _ := getDB()
 	vars := mux.Vars(r)
 	searchString := vars["searchstr"]
-	searchString = StringToTsQuery(searchString)
+	searchString = StringToTsQuery(searchString, " & ")
 	SearchPredictions(db, searchString)
 }
 

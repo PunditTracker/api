@@ -41,6 +41,7 @@ type PtSubcategory struct {
 	Predictions []PtPrediction
 }
 
+//Status     int       `sql:"not null"`
 type PtPrediction struct {
 	Id         int64
 	CreatorId  int64     `sql:"not null"`
@@ -66,7 +67,7 @@ type PtVote struct {
 
 type PtTag struct {
 	Id  int64
-	Tag string `sql:"not null"`
+	Tag string `sql:"not null; unique"`
 }
 
 type PtBracket struct {
