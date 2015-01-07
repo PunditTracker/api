@@ -18,6 +18,7 @@ func AddBracketHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	b.Created = time.Now()
+	b.CreatorId = GetUIDOrRedirect(w, r)
 
 	db, err := getDB()
 	if err != nil {

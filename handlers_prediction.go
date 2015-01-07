@@ -12,7 +12,9 @@ import (
 
 func GetFeaturedPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	db, _ := getDB()
-	fmt.Fprintln(w, GetFeaturedPredictions(db))
+	predictions := GetFeaturedPredictions(db)
+	j, _ := json.Marshal(predictions)
+	fmt.Fprintln(w, string(j))
 }
 
 func GetAllPredictionsHandler(w http.ResponseWriter, r *http.Request) {
@@ -32,15 +34,17 @@ func GetSinglePredictionHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func AddPredictionHandler(w http.ResponseWriter, r *http.Request) {
-	db, _ := getDB()
-	title_to_add := "title"
-	cId := int64(1)
-	pred := PtPrediction{
-		Title:     title_to_add,
-		Created:   time.Now(),
-		CreatorId: cId,
+	dec := json.NewDecoder(r.Body)
+	var prediction PtPrediction
+	err := dec.Decode(&prediction)
+	if err != nil {
+		fmt.Println("Json Decode Error", err)
+		return
 	}
-	AddPrediction(db, &pred)
+	prediction.CreatorId = GetUIDOrRedirect(w, r)
+	prediction.Created = time.Now()
+	db, _ := getDB()
+	AddPrediction(db, &prediction)
 	fmt.Fprintln(w, "add prediction")
 }
 

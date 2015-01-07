@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"strings"
 )
@@ -11,6 +12,16 @@ var Tag_Helper map[string]map[string]struct{}
 
 func init() {
 	Tag_Helper = map[string]map[string]struct{}{
+		"NHL": map[string]struct{}{
+			"rangers":  struct{}{},
+			"penguins": struct{}{},
+			"redwings": struct{}{},
+			"bruins":   struct{}{},
+			"sharks":   struct{}{},
+			"sabres":   struct{}{},
+			"kings":    struct{}{},
+			"flyers":   struct{}{},
+		},
 		"NFL": map[string]struct{}{
 			//Teams
 			"cowboys":    struct{}{},
@@ -57,7 +68,9 @@ func init() {
 }
 
 func GetSuggestedTagHandler(w http.ResponseWriter, r *http.Request) {
-	predictionText := "ram and p"
+	var predictionText string
+	bodyText, _ := ioutil.ReadAll(r.Body)
+	json.Unmarshal(bodyText, predictionText)
 	predictionText = strings.ToLower(predictionText)
 	searchStrings := strings.Split(predictionText, " ")
 	tags := GetSuggestedTags(searchStrings)

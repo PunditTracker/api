@@ -122,16 +122,23 @@ func LoginFacebookHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func CheckAuthHandler(w http.ResponseWriter, r *http.Request) {
-	uid := getSession(r)["uid"]
-	if uid == "" {
-		NotAuthedRedirect(w)
-	} else {
-		fmt.Fprintln(w, "logged in as ", uid)
-	}
+	uid := GetUIDOrRedirect(w, r)
+	fmt.Fprintln(w, "logged in as ", uid)
+
 }
 
 func NotAuthedRedirect(w http.ResponseWriter) {
 	response := map[string]interface{}{"Status": http.StatusUnauthorized, "Message": "Not Authorized"}
 	j, _ := json.Marshal(response)
 	http.Error(w, string(j), http.StatusUnauthorized)
+}
+
+func GetUIDOrRedirect(w http.ResponseWriter, r *http.Request) int64 {
+	voterIdStr := getSession(r)["uid"]
+	if voterIdStr == "" {
+		NotAuthedRedirect(w)
+		return 0
+	}
+	voterId, _ := strconv.ParseInt(voterIdStr, 10, 64)
+	return voterId
 }

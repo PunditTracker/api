@@ -10,12 +10,7 @@ import (
 )
 
 func VoteForPredictionHandler(w http.ResponseWriter, r *http.Request) {
-	voterIdStr := getSession(r)["uid"]
-	if voterIdStr == "" {
-		NotAuthedRedirect(w)
-		return
-	}
-	voterId, _ := strconv.ParseInt(voterIdStr, 10, 64)
+	voterId := GetUIDOrRedirect(w, r)
 	vars := mux.Vars(r)
 	predID, _ := strconv.ParseInt(vars["pred_id"], 10, 64)
 	vVal, _ := strconv.Atoi(vars["value"])
