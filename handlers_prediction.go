@@ -45,7 +45,8 @@ func AddPredictionHandler(w http.ResponseWriter, r *http.Request) {
 	prediction.Created = time.Now()
 	db, _ := getDB()
 	AddPrediction(db, &prediction)
-	fmt.Fprintln(w, "add prediction")
+	j, _ := json.Marshal(prediction)
+	fmt.Fprintln(w, string(j))
 }
 
 func GetLatestPredictionsHandler(w http.ResponseWriter, r *http.Request) {

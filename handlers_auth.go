@@ -18,7 +18,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	var user PtUser
 	err := dec.Decode(&user)
 	if err != nil {
-		fmt.Println("Json Decode Error", err)
+		JsonDecodeError(w)
 		return
 	}
 
@@ -37,17 +37,6 @@ func RegisterFacebookHandler(w http.ResponseWriter, r *http.Request) {
 	var user PtUser
 	err := dec.Decode(&user)
 	user.Created = time.Now()
-	/*
-		if username_val == "" ||
-			first_val == "" ||
-			last_val == "" ||
-			fb_token == "" ||
-			email_val == "" {
-			errMessage := "missing values"
-			http.Error(w, errMessage, http.StatusBadRequest)
-			return
-		}
-	*/
 
 	db, err := getDB()
 	if err != nil {
@@ -60,14 +49,14 @@ func RegisterFacebookHandler(w http.ResponseWriter, r *http.Request) {
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	db, err := getDB()
 	if err != nil {
-		fmt.Fprintln(w, "db err:", err)
+		DBError(w)
 		return
 	}
 	var user PtUser
 	decoder := json.NewDecoder(r.Body)
 	err = decoder.Decode(&user)
 	if err != nil {
-		fmt.Fprintln(w, "decode error:", err)
+		JsonDecodeError(w)
 		return
 	}
 	authedUser := CheckUser(db, user.Username, user.Password)
@@ -90,14 +79,14 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 func LoginFacebookHandler(w http.ResponseWriter, r *http.Request) {
 	db, err := getDB()
 	if err != nil {
-		fmt.Fprintln(w, "db err: ", err)
+		DBError(w)
 		return
 	}
 	decoder := json.NewDecoder(r.Body)
 	var user PtUser
 	err = decoder.Decode(&user)
 	if err != nil {
-		fmt.Fprintln(w, "json decode error: ", err)
+		JsonDecodeError(w)
 		return
 	}
 	fmt.Println(user)
@@ -125,6 +114,18 @@ func CheckAuthHandler(w http.ResponseWriter, r *http.Request) {
 	uid := GetUIDOrRedirect(w, r)
 	fmt.Fprintln(w, "logged in as ", uid)
 
+}
+
+func JsonDecodeError(w http.ResponseWriter) {
+	response := map[string]interface{}{"Status": http.StatusUnauthorized, "Message": "Json Decode Error"}
+	j, _ := json.Marshal(response)
+	http.Error(w, string(j), http.StatusBadRequest)
+}
+
+func DBError(w http.ResponseWriter) {
+	response := map[string]interface{}{"Status": http.StatusUnauthorized, "Message": "Database Error"}
+	j, _ := json.Marshal(response)
+	http.Error(w, string(j), http.StatusConflict)
 }
 
 func NotAuthedRedirect(w http.ResponseWriter) {

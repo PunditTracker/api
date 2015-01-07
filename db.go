@@ -158,7 +158,8 @@ func GetPredictionsForSubcatId(db *gorm.DB, subcatId int64) []PtPrediction {
 	return preds
 }
 
-func SearchPredictions(db *gorm.DB, searchString string) {
+func SearchPredictions(db *gorm.DB, searchString string) []int64 {
+	toReturn := []int64{}
 	rows, err := db.Raw(`SELECT pid
 			FROM (SELECT pred.id as pid,
 				  to_tsvector(pred.title) as document
@@ -167,15 +168,15 @@ func SearchPredictions(db *gorm.DB, searchString string) {
 			WHERE p_search.document @@ to_tsquery(?);`, searchString).Rows()
 	if err != nil {
 		fmt.Println(err)
-		return
+		return nil
 	}
 	defer rows.Close()
 	for rows.Next() {
 		var pid int64
 		rows.Scan(&pid)
-		fmt.Println(pid)
+		toReturn = append(toReturn, pid)
 	}
-
+	return toReturn
 }
 
 func GetPredictionsForTag(db *gorm.DB, tag string) []PtPrediction {
