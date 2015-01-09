@@ -66,13 +66,14 @@ type PtPrediction struct {
 }
 
 type PtVote struct {
-	Id        int64
-	VoterId   int64     `sql:"not null"`
-	VotedOnId int64     `sql:"not null"`
-	VoteValue int       `sql:"not null"`
-	Created   time.Time `sql:"not null; DEFAULT:current_timestamp"`
-	Voter     PtUser
-	VotedOn   PtPrediction
+	Id            int64
+	VoterId       int64     `sql:"not null"`
+	VotedOnId     int64     `sql:"not null"`
+	AverageAtTime float64   `sql:"not null"`
+	VoteValue     int       `sql:"not null"`
+	Created       time.Time `sql:"not null; DEFAULT:current_timestamp"`
+	Voter         PtUser
+	VotedOn       PtPrediction
 }
 
 type PtTag struct {

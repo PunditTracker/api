@@ -200,6 +200,13 @@ func GetMembersBracket(db *gorm.DB, User_Id int64) PtBracket {
 	return bracket
 }
 
+func GetAverageVoteForPredictionId(db *gorm.DB, predId int64) float64 {
+	var avg float64
+	ro := db.Debug().Raw("SELECT avg(vote_value) from (select vote_value FROM pt_vote where voted_on_id=?) as tab", predId).Row()
+	ro.Scan(&avg)
+	return avg
+}
+
 func SetState(db *gorm.DB, predictionId int64, state PtPredictionState) {
 	prediction := PtPrediction{
 		Id: predictionId,
