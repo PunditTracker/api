@@ -41,15 +41,25 @@ type PtSubcategory struct {
 	Predictions []PtPrediction
 }
 
+type PtPredictionState int
+
+const (
+	InFuture PtPredictionState = iota
+	Ungraded
+	DidHappen
+	DidNotHappen
+)
+
 //Status     int       `sql:"not null"`
 type PtPrediction struct {
 	Id         int64
-	CreatorId  int64     `sql:"not null"`
-	SubcatId   int64     `sql:"not null"`
-	Title      string    `sql:"not null"`
-	IsFeatured bool      `sql:"not null; DEFAULT:FALSE"`
-	Created    time.Time `sql:"not null; DEFAULT:current_timestamp"`
-	Deadline   time.Time `sql:"not null"`
+	CreatorId  int64             `sql:"not null"`
+	SubcatId   int64             `sql:"not null"`
+	Title      string            `sql:"not null"`
+	State      PtPredictionState `sql:"not null";DEFAULT:0`
+	IsFeatured bool              `sql:"not null; DEFAULT:FALSE"`
+	Created    time.Time         `sql:"not null; DEFAULT:current_timestamp"`
+	Deadline   time.Time         `sql:"not null"`
 	Creator    PtUser
 	Subcat     PtSubcategory
 	Tags       []PtTag `gorm:"many2many:prediction_tag_map;"`

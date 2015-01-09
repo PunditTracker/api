@@ -57,6 +57,7 @@ func addListeners() {
 	router.HandleFunc("/v1/user/bracket/add", AddBracketHandler)
 
 	//Admin Functons
+	router.HandleFunc("/v1/admin/prediction/setstate/{predId:[0-9]+}/{state:[0-9]}", SetStateHandler)
 }
 
 type PTServer struct {

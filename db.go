@@ -199,3 +199,20 @@ func GetMembersBracket(db *gorm.DB, User_Id int64) PtBracket {
 	db.Where("CreatorId = ?", User_Id).First(&bracket)
 	return bracket
 }
+
+func SetState(db *gorm.DB, predictionId int64, state PtPredictionState) {
+	prediction := PtPrediction{
+		Id: predictionId,
+	}
+	db.First(&prediction).Update("state", state)
+}
+
+func SetScoreForPrediction(db *gorm.DB, predictionId int64, state PtPredictionState) {
+	var score int
+	if state == DidHappen {
+		score = 1
+	} else if state == DidNotHappen {
+		score = -1
+	}
+	db.Debug().Exec(`update pt_user set score=score+? WHERE id IN (select voter_id FROM pt_vote where voted_on_id=?)`, score, predictionId)
+}
