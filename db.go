@@ -2,6 +2,7 @@ package main
 
 import (
 	"code.google.com/p/go.crypto/bcrypt"
+	"errors"
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
@@ -15,6 +16,7 @@ var (
 )
 
 func getDB() (*gorm.DB, error) {
+
 	serv := os.Getenv("SERV")
 	if serv == "local" {
 		db, err := gorm.Open("postgres", "sslmode=disable")
@@ -32,8 +34,7 @@ func getDB() (*gorm.DB, error) {
 		db.SingularTable(true)
 		return &db, err
 	}
-	var e error
-	return nil, e
+	return nil, errors.New("No SERV specified")
 }
 
 func AddUser(db *gorm.DB, user *PtUser) error {
@@ -222,4 +223,16 @@ func SetScoreForPrediction(db *gorm.DB, predictionId int64, state PtPredictionSt
 		score = -1
 	}
 	db.Debug().Exec(`update pt_user set score=score+? WHERE id IN (select voter_id FROM pt_vote where voted_on_id=?)`, score, predictionId)
+}
+
+func GetLivePredictionSets(db *gorm.DB) []PtPredictionSet {
+	var predictionSets []PtPredictionSet
+	db.Where("is_live=TRUE").Find(&predictionSets)
+	return predictionSets
+}
+
+func GetLivePtHeros(db *gorm.DB) []PtHero {
+	var heros []PtHero
+	db.Model(&PtHero{}).Where("is_live=TRUE").Find(&heros)
+	return heros
 }

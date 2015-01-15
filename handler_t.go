@@ -118,6 +118,29 @@ func AddBaseCategories(db *gorm.DB) {
 		ParentCatId: 2,
 		IsLive:      false,
 	})
+	db.Save(&PtHero{
+		IsLive:       true,
+		Title:        "HERO CALLOUT",
+		PredictionId: 1,
+	})
+	db.Save(&PtHero{
+		IsLive:       true,
+		Title:        "HERO CALLOUT2",
+		PredictionId: 2,
+	})
+	db.Save(&PtPredictionSet{
+		IsLive:        true,
+		Title:         "SET ONE",
+		ImageUrl:      "something.jpg",
+		Prediction1Id: 1,
+		Prediction2Id: 2,
+		Prediction3Id: 3,
+	})
+}
+
+func AddHero(db *gorm.DB, newHero PtHero) int64 {
+	db.Save(newHero)
+	return newHero.Id
 }
 
 func AddCategory(db *gorm.DB, newCategory PtCategory) int64 {

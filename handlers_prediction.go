@@ -96,3 +96,17 @@ func GetTaggedPredictionHandler(w http.ResponseWriter, r *http.Request) {
 	j, _ := json.Marshal(predictions)
 	fmt.Fprintln(w, string(j))
 }
+
+func GetHeroPredictionHandler(w http.ResponseWriter, r *http.Request) {
+	db, _ := getDB()
+	heros := GetLivePtHeros(db)
+	j, _ := json.Marshal(heros)
+	fmt.Fprintln(w, string(j))
+}
+
+func GetPredictionSetHandler(w http.ResponseWriter, r *http.Request) {
+	db, _ := getDB()
+	predictionSets := GetLivePredictionSets(db)
+	j, _ := json.Marshal(predictionSets)
+	fmt.Fprintln(w, string(j))
+}

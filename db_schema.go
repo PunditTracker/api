@@ -44,13 +44,12 @@ type PtSubcategory struct {
 type PtPredictionState int
 
 const (
-	InFuture PtPredictionState = iota
-	Ungraded
-	DidHappen
-	DidNotHappen
+	InFuture     PtPredictionState = 0
+	Ungraded                       = 1
+	DidHappen                      = 2
+	DidNotHappen                   = 3
 )
 
-//Status     int       `sql:"not null"`
 type PtPrediction struct {
 	Id         int64
 	CreatorId  int64             `sql:"not null"`
@@ -62,6 +61,7 @@ type PtPrediction struct {
 	Deadline   time.Time         `sql:"not null"`
 	Creator    PtUser
 	Subcat     PtSubcategory
+	ImageUrl   string
 	Tags       []PtTag `gorm:"many2many:prediction_tag_map;"`
 }
 
@@ -123,8 +123,26 @@ type PtBracket struct {
 	FifthRound0 string
 }
 
+type PtPredictionSet struct {
+	Id            int64
+	IsLive        bool   `sql:"not null; DEFAULT:FALSE"`
+	Title         string `sql:"not null"`
+	ImageUrl      string `sql:"not null"`
+	Prediction1Id int64  `sql:"not null"`
+	Prediction2Id int64  `sql:"not null"`
+	Prediction3Id int64  `sql:"not null"`
+}
+
+type PtHero struct {
+	Id           int64
+	IsLive       bool   `sql:"not null; DEFAULT:FALSE"`
+	ImageUrl     string `sql:"not null"`
+	Title        string `sql:"not null"`
+	PredictionId int64  `sql:"not null"`
+}
+
 func SetUpDB(db *gorm.DB) {
-	db.AutoMigrate(
+	db.Debug().AutoMigrate(
 		&PtUser{},
 		&PtCategory{},
 		&PtSubcategory{},
@@ -132,5 +150,7 @@ func SetUpDB(db *gorm.DB) {
 		&PtVote{},
 		&PtTag{},
 		&PtBracket{},
+		&PtPredictionSet{},
+		&PtHero{},
 	)
 }

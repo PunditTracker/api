@@ -21,7 +21,6 @@ func VoteForPredictionHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	avg := GetAverageVoteForPredictionId(db, predId)
-	//Fill in real values here
 	vote := PtVote{
 		VoterId:       voterId,
 		VotedOnId:     predId,
