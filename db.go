@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
+	"log"
 	"os"
 )
 
@@ -13,6 +14,7 @@ var (
 	DBID       = "ptdev"
 	DBUSERNAME = "pundittracker"
 	DBPASSWORD = "ptrack20!!"
+	logger     = log.New(os.Stderr, "logger: ", log.LstdFlags|log.Lshortfile)
 )
 
 func getDB() (*gorm.DB, error) {
@@ -32,6 +34,8 @@ func getDB() (*gorm.DB, error) {
 		}
 		db.DB()
 		db.SingularTable(true)
+		db.LogMode(true)
+		db.SetLogger(logger)
 		return &db, err
 	}
 	return nil, errors.New("No SERV specified")
