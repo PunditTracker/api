@@ -138,9 +138,13 @@ func AddBaseCategories(db *gorm.DB) {
 	})
 }
 
-func AddHero(db *gorm.DB, newHero PtHero) int64 {
+func AddHero(db *gorm.DB, newHero *PtHero) int64 {
 	db.Save(newHero)
 	return newHero.Id
+}
+func AddPredictionSet(db *gorm.DB, newSet *PtPredictionSet) int64 {
+	db.Save(newSet)
+	return newSet.Id
 }
 
 func AddCategory(db *gorm.DB, newCategory PtCategory) int64 {

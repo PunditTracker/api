@@ -38,8 +38,6 @@ func addListeners() {
 	router.HandleFunc("/v1/prediction/search/{searchstr}", SearchPredictionsHandler)
 	router.HandleFunc("/v1/prediction/user/{id:[0-9]+}", GetUserPredictionsHandler)
 	router.HandleFunc("/v1/prediction/tag/{tag}", GetTaggedPredictionHandler)
-	router.HandleFunc("/v1/homepage/hero", GetHeroPredictionHandler)
-	router.HandleFunc("/v1/homepage/set", GetPredictionSetHandler)
 
 	//Tags
 	router.HandleFunc("/v1/predictions/cat/{id:[0-9]+}/tag/{tag}", GetTaggedPredictionHandler)
@@ -58,7 +56,13 @@ func addListeners() {
 	router.HandleFunc("/v1/user/bracket/{userId:[0-9]+}", GetBracketHandler)
 	router.HandleFunc("/v1/user/bracket/add", AddBracketHandler)
 
+	//Homepage Functions
+	router.HandleFunc("/v1/homepage/hero", GetHeroPredictionHandler)
+	router.HandleFunc("/v1/homepage/predictionSet", GetPredictionSetHandler)
+
 	//Admin Functons
+	router.HandleFunc("/v1/admin/homepage/set/hero", SetHeroHandler)
+	router.HandleFunc("/v1/admin/homepage/set/predictionSet", SetPredictionSetHandler)
 	router.HandleFunc("/v1/admin/prediction/setstate/{predId:[0-9]+}/{state:[0-9]}", SetStateHandler)
 }
 

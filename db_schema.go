@@ -22,6 +22,7 @@ type PtUser struct {
 	FirstName         string
 	LastName          string
 	Avatar_URL        string
+	Location          string
 	Predictions       []PtPrediction
 }
 
@@ -135,6 +136,7 @@ type PtPredictionSet struct {
 
 type PtHero struct {
 	Id           int64
+	LocationNum  int64  `sql:"not null"`
 	IsLive       bool   `sql:"not null; DEFAULT:FALSE"`
 	ImageUrl     string `sql:"not null"`
 	Title        string `sql:"not null"`

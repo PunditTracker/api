@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	_ "encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
@@ -21,4 +22,34 @@ func SetStateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Fprintln(w, "state set", newState)
+}
+
+func SetHeroHandler(w http.ResponseWriter, r *http.Request) {
+	//Parse the Json
+	dec := json.NewDecoder(r.Body)
+	var hero PtHero
+	err := dec.Decode(&hero)
+	if err != nil {
+		fmt.Println("Json Decode Error", err)
+		return
+	}
+
+	db, _ := getDB()
+	SetHero(db, &hero)
+	fmt.Fprintln(w, "hero set", hero)
+}
+
+func SetPredictionSetHandler(w http.ResponseWriter, r *http.Request) {
+	//Parse the Json
+	dec := json.NewDecoder(r.Body)
+	var predictionSet PtPredictionSet
+	err := dec.Decode(&predictionSet)
+	if err != nil {
+		fmt.Println("Json Decode Error", err)
+		return
+	}
+
+	db, _ := getDB()
+	SetPredictionSet(db, &predictionSet)
+	fmt.Fprintln(w, "hero set", predictionSet)
 }

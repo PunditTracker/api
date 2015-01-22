@@ -240,3 +240,11 @@ func GetLivePtHeros(db *gorm.DB) []PtHero {
 	db.Model(&PtHero{}).Where("is_live=TRUE").Find(&heros)
 	return heros
 }
+
+func SetHero(db *gorm.DB, hero *PtHero) {
+	db.Save(hero)
+}
+
+func SetPredictionSet(db *gorm.DB, predictionSet *PtPredictionSet) {
+	db.Save(predictionSet)
+}
