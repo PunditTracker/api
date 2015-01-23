@@ -28,14 +28,14 @@ type PtUser struct {
 
 type PtCategory struct {
 	Id            int64
-	Name          string
+	Name          string `sql:"not null; unique"`
 	Subcategories []PtSubcategory
 	IsLive        bool `sql:"not null; DEFAULT:FALSE"`
 }
 
 type PtSubcategory struct {
 	Id          int64
-	Name        string
+	Name        string `sql:"not null; unique"`
 	ParentCat   PtCategory
 	ParentCatId int64 `sql:"not null"`
 	IsLive      bool  `sql:"not null; DEFAULT: FALSE"`
