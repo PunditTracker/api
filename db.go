@@ -14,7 +14,7 @@ var (
 	DBID       = "ptdev"
 	DBUSERNAME = "pundittracker"
 	DBPASSWORD = "ptrack20!!"
-	logger     = log.New(os.Stderr, "logger: ", log.LstdFlags|log.Lshortfile)
+	logger     = log.New(os.Stdout, "DB: ", log.LstdFlags|log.Lshortfile)
 )
 
 func getDB() (*gorm.DB, error) {
@@ -25,7 +25,6 @@ func getDB() (*gorm.DB, error) {
 		db.DB()
 		db.SingularTable(true)
 		return &db, err
-		//return sql.Open("postgres", "sslmode=disable")
 	}
 	if serv == "aws" {
 		db, err := gorm.Open("postgres", "host=ptdev.ccm2e8gfsxjt.us-west-2.rds.amazonaws.com dbname=ptdev user=pundittracker password=ptrack20!!")

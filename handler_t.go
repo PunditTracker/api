@@ -120,11 +120,13 @@ func AddBaseCategories(db *gorm.DB) {
 	})
 	db.Save(&PtHero{
 		IsLive:       true,
+		LocationNum:  2,
 		Title:        "HERO CALLOUT",
 		PredictionId: 1,
 	})
 	db.Save(&PtHero{
 		IsLive:       true,
+		LocationNum:  3,
 		Title:        "HERO CALLOUT2",
 		PredictionId: 2,
 	})

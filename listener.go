@@ -1,9 +1,11 @@
 package main
 
 import (
-	"fmt"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"log"
 	"net/http"
+	"os"
 )
 
 var (
@@ -71,9 +73,9 @@ type PTServer struct {
 }
 
 func beginServing() {
-	fmt.Println("Listening and serving on port", port)
+	log.Println("Listening and serving on port", port)
 	http.Handle("/", &PTServer{router})
-	http.ListenAndServe(port, nil)
+	http.ListenAndServe(port, handlers.LoggingHandler(os.Stderr, router))
 }
 
 func (s *PTServer) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
@@ -86,5 +88,6 @@ func (s *PTServer) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	if req.Method == "OPTIONS" {
 		return
 	}
+
 	s.r.ServeHTTP(rw, req)
 }
