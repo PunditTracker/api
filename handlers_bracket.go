@@ -21,6 +21,7 @@ func AddBracketHandler(w http.ResponseWriter, r *http.Request) {
 	b.CreatorId = GetUIDOrRedirect(w, r)
 
 	db, err := getDB()
+	defer db.Close()
 	if err != nil {
 		fmt.Println("db error", err)
 	}
@@ -29,6 +30,7 @@ func AddBracketHandler(w http.ResponseWriter, r *http.Request) {
 
 func GetBracketHandler(w http.ResponseWriter, r *http.Request) {
 	db, _ := getDB()
+	defer db.Close()
 	vars := mux.Vars(r)
 	User_Id, _ := strconv.ParseInt(vars["userId"], 10, 64)
 	bracket := GetMembersBracket(db, User_Id)

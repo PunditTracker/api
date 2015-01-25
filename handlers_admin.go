@@ -11,6 +11,7 @@ import (
 
 func SetStateHandler(w http.ResponseWriter, r *http.Request) {
 	db, _ := getDB()
+	defer db.Close()
 	vars := mux.Vars(r)
 	predictionId, _ := strconv.ParseInt(vars["predId"], 10, 64)
 	stateVal, _ := strconv.Atoi(vars["state"])
@@ -35,6 +36,7 @@ func SetHeroHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	db, _ := getDB()
+	defer db.Close()
 	SetHero(db, &hero)
 	fmt.Fprintln(w, "hero set", hero)
 }
@@ -50,6 +52,7 @@ func SetPredictionSetHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	db, _ := getDB()
+	defer db.Close()
 	SetPredictionSet(db, &predictionSet)
 	fmt.Fprintln(w, "hero set", predictionSet)
 }

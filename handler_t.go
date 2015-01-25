@@ -9,6 +9,7 @@ import (
 func LoadTestDataHandler(w http.ResponseWriter, r *http.Request) {
 
 	db, _ := getDB()
+	defer db.Close()
 	AddBaseCategories(db)
 	AddUser(db, &PtUser{
 		Username:  "ben",

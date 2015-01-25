@@ -10,6 +10,7 @@ import (
 
 func GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
 	db, _ := getDB()
+	defer db.Close()
 	users := GetAllUsers(db)
 	j, _ := json.Marshal(users)
 	fmt.Fprintln(w, string(j))
@@ -18,6 +19,7 @@ func GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
 //Add error handling
 func GetSingleUserHandler(w http.ResponseWriter, r *http.Request) {
 	db, _ := getDB()
+	defer db.Close()
 	vars := mux.Vars(r)
 	uid, _ := strconv.ParseInt(vars["id"], 10, 64)
 	user := GetUserByID(db, uid)
@@ -27,6 +29,7 @@ func GetSingleUserHandler(w http.ResponseWriter, r *http.Request) {
 
 func GetFeaturedUsersHandler(w http.ResponseWriter, r *http.Request) {
 	db, _ := getDB()
+	defer db.Close()
 	users := GetFeaturedUsers(db)
 	j, _ := json.Marshal(users)
 	fmt.Fprintln(w, string(j))

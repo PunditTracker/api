@@ -23,6 +23,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	db, err := getDB()
+	defer db.Close()
 	if err != nil {
 		return
 	}
@@ -39,6 +40,7 @@ func RegisterFacebookHandler(w http.ResponseWriter, r *http.Request) {
 	user.Created = time.Now()
 
 	db, err := getDB()
+	defer db.Close()
 	if err != nil {
 		return
 	}
@@ -48,6 +50,7 @@ func RegisterFacebookHandler(w http.ResponseWriter, r *http.Request) {
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	db, err := getDB()
+	defer db.Close()
 	if err != nil {
 		DBError(w)
 		return
@@ -78,6 +81,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 func LoginFacebookHandler(w http.ResponseWriter, r *http.Request) {
 	db, err := getDB()
+	defer db.Close()
 	if err != nil {
 		DBError(w)
 		return

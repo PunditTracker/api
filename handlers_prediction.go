@@ -12,6 +12,7 @@ import (
 
 func GetFeaturedPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	db, _ := getDB()
+	defer db.Close()
 	predictions := GetFeaturedPredictions(db)
 	j, _ := json.Marshal(predictions)
 	fmt.Fprintln(w, string(j))
@@ -19,6 +20,7 @@ func GetFeaturedPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 
 func GetAllPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	db, _ := getDB()
+	defer db.Close()
 	preds := GetAllPredictions(db)
 	j, _ := json.Marshal(preds)
 	fmt.Fprintln(w, string(j))
@@ -26,6 +28,7 @@ func GetAllPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 
 func GetSinglePredictionHandler(w http.ResponseWriter, r *http.Request) {
 	db, _ := getDB()
+	defer db.Close()
 	vars := mux.Vars(r)
 	uid, _ := strconv.ParseInt(vars["id"], 10, 64)
 	prediction := GetPredictionByID(db, uid)
@@ -44,6 +47,7 @@ func AddPredictionHandler(w http.ResponseWriter, r *http.Request) {
 	prediction.CreatorId = GetUIDOrRedirect(w, r)
 	prediction.Created = time.Now()
 	db, _ := getDB()
+	defer db.Close()
 	AddPrediction(db, &prediction)
 	j, _ := json.Marshal(prediction)
 	fmt.Fprintln(w, string(j))
@@ -51,6 +55,7 @@ func AddPredictionHandler(w http.ResponseWriter, r *http.Request) {
 
 func GetLatestPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	db, _ := getDB()
+	defer db.Close()
 	//Get the 10 latest predictions
 	preds := GetLatestPredictions(db, 10)
 	j, _ := json.Marshal(preds)
@@ -59,6 +64,7 @@ func GetLatestPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 
 func GetPredictionsForSubcatHandler(w http.ResponseWriter, r *http.Request) {
 	db, _ := getDB()
+	defer db.Close()
 	vars := mux.Vars(r)
 	subCatId, _ := strconv.ParseInt(vars["subcatid"], 10, 64)
 	preds := GetPredictionsForSubcatId(db, subCatId)
@@ -73,6 +79,7 @@ func StringToTsQuery(input string, connector string) string {
 
 func SearchPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	db, _ := getDB()
+	defer db.Close()
 	vars := mux.Vars(r)
 	searchString := vars["searchstr"]
 	searchString = StringToTsQuery(searchString, " & ")
@@ -81,6 +88,7 @@ func SearchPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 
 func GetUserPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	db, _ := getDB()
+	defer db.Close()
 	vars := mux.Vars(r)
 	uid, _ := strconv.ParseInt(vars["id"], 10, 64)
 	predictions := GetUserPrediction(db, int64(uid))
@@ -90,6 +98,7 @@ func GetUserPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 
 func GetTaggedPredictionHandler(w http.ResponseWriter, r *http.Request) {
 	db, _ := getDB()
+	defer db.Close()
 	vars := mux.Vars(r)
 	tag := vars["tag"]
 	predictions := GetPredictionsForTag(db, tag)
@@ -99,6 +108,7 @@ func GetTaggedPredictionHandler(w http.ResponseWriter, r *http.Request) {
 
 func GetHeroPredictionHandler(w http.ResponseWriter, r *http.Request) {
 	db, _ := getDB()
+	defer db.Close()
 	heros := GetLivePtHeros(db)
 	j, _ := json.Marshal(heros)
 	fmt.Fprintln(w, string(j))
@@ -106,6 +116,7 @@ func GetHeroPredictionHandler(w http.ResponseWriter, r *http.Request) {
 
 func GetPredictionSetHandler(w http.ResponseWriter, r *http.Request) {
 	db, _ := getDB()
+	defer db.Close()
 	predictionSets := GetLivePredictionSets(db)
 	j, _ := json.Marshal(predictionSets)
 	fmt.Fprintln(w, string(j))
