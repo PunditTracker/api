@@ -75,7 +75,8 @@ type PTServer struct {
 func beginServing() {
 	log.Println("Listening and serving on port", port)
 	http.Handle("/", &PTServer{router})
-	http.ListenAndServe(port, handlers.LoggingHandler(os.Stderr, router))
+	//http.ListenAndServe(port, handlers.LoggingHandler(os.Stderr, router))
+	http.ListenAndServe(port, nil)
 }
 
 func (s *PTServer) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
