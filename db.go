@@ -83,8 +83,8 @@ func GetUserPrediction(db *gorm.DB, uid int64) []PtPrediction {
 }
 
 func GetPredictionByID(db *gorm.DB, uid int64) PtPrediction {
-	var pred PtPrediction
-	db.First(&pred, uid)
+	pred := PtPrediction{}
+	db.Where("id = ?", uid).First(&pred)
 	return pred
 }
 

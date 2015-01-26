@@ -132,6 +132,9 @@ type PtPredictionSet struct {
 	Prediction1Id int64  `sql:"not null"`
 	Prediction2Id int64  `sql:"not null"`
 	Prediction3Id int64  `sql:"not null"`
+	Prediction1   PtPrediction
+	Prediction2   PtPrediction
+	Prediction3   PtPrediction
 }
 
 type PtHero struct {

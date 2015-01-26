@@ -44,14 +44,14 @@ func LoadTestDataHandler(w http.ResponseWriter, r *http.Request) {
 		CreatorId: 1,
 		SubcatId:  0,
 		Title:     "X Will Win the Super Bowl",
-		Tags: []PtTag{
+		/*Tags: []PtTag{
 			{
 				Tag: "Sports",
 			},
 			{
 				Tag: "NFL",
 			},
-		},
+		},*/
 		IsFeatured: true,
 		Deadline:   time.Now(),
 	})

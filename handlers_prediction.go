@@ -125,6 +125,13 @@ func GetPredictionSetHandler(w http.ResponseWriter, r *http.Request) {
 	db, _ := getDB()
 	defer db.Close()
 	predictionSets := GetLivePredictionSets(db)
+	db, _ = getDB()
+	for i, _ := range predictionSets {
+		db.First(&predictionSets[i].Prediction1, predictionSets[i].Prediction1Id)
+		db.First(&predictionSets[i].Prediction2, predictionSets[i].Prediction2Id)
+		db.First(&predictionSets[i].Prediction3, predictionSets[i].Prediction3Id)
+	}
+
 	j, _ := json.Marshal(predictionSets)
 	fmt.Fprintln(w, string(j))
 }
