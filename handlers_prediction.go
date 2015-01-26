@@ -11,9 +11,16 @@ import (
 )
 
 func GetFeaturedPredictionsHandler(w http.ResponseWriter, r *http.Request) {
+	//vars := mux.Vars(r)
+	//limit, e := strconv.Atoi(vars["limit"])
+	/*if e != nil {
+		return
+	}*/
+	limit := 5
+
 	db, _ := getDB()
 	defer db.Close()
-	predictions := GetFeaturedPredictions(db)
+	predictions := GetFeaturedPredictions(db, limit)
 	j, _ := json.Marshal(predictions)
 	fmt.Fprintln(w, string(j))
 }

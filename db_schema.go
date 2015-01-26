@@ -55,7 +55,7 @@ type PtPrediction struct {
 	Id         int64
 	CreatorId  int64             `sql:"not null"`
 	SubcatId   int64             `sql:"not null"`
-	Title      string            `sql:"not null"`
+	Title      string            `sql:"not null; unique"`
 	State      PtPredictionState `sql:"not null";DEFAULT:0`
 	IsFeatured bool              `sql:"not null; DEFAULT:FALSE"`
 	Created    time.Time         `sql:"not null; DEFAULT:current_timestamp"`

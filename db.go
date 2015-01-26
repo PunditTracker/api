@@ -106,9 +106,9 @@ func GetFeaturedUsers(db *gorm.DB) []PtUser {
 	return users
 }
 
-func GetFeaturedPredictions(db *gorm.DB) []PtPrediction {
-	predictions := []PtPrediction{}
-	db.Where(&PtPrediction{IsFeatured: true}).Find(&predictions)
+func GetFeaturedPredictions(db *gorm.DB, l int) []PtPrediction {
+	var predictions []PtPrediction
+	db.Where(&PtPrediction{IsFeatured: true}).Limit(l).Find(&predictions)
 	return predictions
 }
 

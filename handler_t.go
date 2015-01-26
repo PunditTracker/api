@@ -12,20 +12,22 @@ func LoadTestDataHandler(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 	AddBaseCategories(db)
 	AddUser(db, &PtUser{
-		Username:  "ben",
-		Password:  "pass",
-		FirstName: "ben",
-		LastName:  "levy",
-		Email:     "emailthree",
-		Created:   time.Now(),
+		Username:   "ben",
+		Password:   "pass",
+		FirstName:  "ben",
+		LastName:   "levy",
+		Email:      "emailthree",
+		IsFeatured: true,
+		Created:    time.Now(),
 	})
 	AddUser(db, &PtUser{
-		Username:  "howie",
-		Password:  "password",
-		FirstName: "howard",
-		LastName:  "akumiah",
-		Email:     "emailtwo",
-		Created:   time.Now(),
+		Username:   "howie",
+		Password:   "password",
+		FirstName:  "howard",
+		LastName:   "akumiah",
+		Email:      "emailtwo",
+		IsFeatured: true,
+		Created:    time.Now(),
 	})
 	AddUser(db, &PtUser{
 		Username:          "jake",
@@ -34,6 +36,7 @@ func LoadTestDataHandler(w http.ResponseWriter, r *http.Request) {
 		Email:             "emailone",
 		FacebookId:        "fbid",
 		FacebookAuthToken: "auth",
+		IsFeatured:        true,
 		Created:           time.Now(),
 	})
 
@@ -49,20 +52,23 @@ func LoadTestDataHandler(w http.ResponseWriter, r *http.Request) {
 				Tag: "NFL",
 			},
 		},
-		Deadline: time.Now(),
+		IsFeatured: true,
+		Deadline:   time.Now(),
 	})
 
 	AddPrediction(db, &PtPrediction{
-		CreatorId: 2,
-		SubcatId:  0,
-		Title:     "Prediction Two",
-		Deadline:  time.Now(),
+		CreatorId:  2,
+		SubcatId:   0,
+		Title:      "Prediction Two",
+		IsFeatured: true,
+		Deadline:   time.Now(),
 	})
 	AddPrediction(db, &PtPrediction{
-		CreatorId: 3,
-		SubcatId:  0,
-		Title:     "Prediction Three",
-		Deadline:  time.Now(),
+		CreatorId:  3,
+		SubcatId:   0,
+		Title:      "Prediction Three",
+		IsFeatured: true,
+		Deadline:   time.Now(),
 	})
 
 	AddVote(db, &PtVote{
