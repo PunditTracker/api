@@ -9,7 +9,7 @@ import (
 type PtUser struct {
 	Id                int64
 	Username          string    `sql:"not null; unique"`
-	Password          string    `sql:"not null"`
+	Password          string    `sql:"not null" json:"-"`
 	Email             string    `sql:"not null; unique"`
 	Created           time.Time `sql:"not null; DEFAULT:current_timestamp"`
 	Score             int       `sql:"not null; DEFAULT:0"`
