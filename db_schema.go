@@ -54,6 +54,7 @@ const (
 type PtPrediction struct {
 	Id         int64
 	CreatorId  int64             `sql:"not null"`
+	CategoryId int64             `sql:"not null"`
 	SubcatId   int64             `sql:"not null"`
 	Title      string            `sql:"not null; unique"`
 	State      PtPredictionState `sql:"not null";DEFAULT:0`
@@ -61,6 +62,7 @@ type PtPrediction struct {
 	Created    time.Time         `sql:"not null; DEFAULT:current_timestamp"`
 	Deadline   time.Time         `sql:"not null"`
 	Creator    PtUser
+	Category   PtCategory
 	Subcat     PtSubcategory
 	ImageUrl   string
 	Tags       []PtTag `gorm:"many2many:prediction_tag_map;"`
