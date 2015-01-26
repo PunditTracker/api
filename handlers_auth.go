@@ -15,8 +15,8 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	dec := json.NewDecoder(r.Body)
-	var user PtUser
-	err := dec.Decode(&user)
+	var userMap map[string]string
+	err := dec.Decode(&userMap)
 	if err != nil {
 		JsonDecodeError(w)
 		return
@@ -27,6 +27,9 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
+	var user PtUser
+	user.Username = userMap["Username"]
+	user.Password = userMap["Password"]
 
 	user.Created = time.Now()
 	AddUser(db, &user)
@@ -55,14 +58,14 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		DBError(w)
 		return
 	}
-	var user PtUser
+	userMap := map[string]string{}
 	decoder := json.NewDecoder(r.Body)
-	err = decoder.Decode(&user)
+	err = decoder.Decode(&userMap)
 	if err != nil {
 		JsonDecodeError(w)
 		return
 	}
-	authedUser := CheckUser(db, user.Username, user.Password)
+	authedUser := CheckUser(db, userMap["Username"], userMap["Password"])
 
 	if authedUser.Id == 0 {
 		NotAuthedRedirect(w)
