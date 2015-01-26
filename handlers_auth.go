@@ -28,8 +28,8 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var user PtUser
-	user.Username = userMap["Username"]
-	user.Password = userMap["Password"]
+	user.Username = userMap["username"]
+	user.Password = userMap["password"]
 
 	user.Created = time.Now()
 	AddUser(db, &user)
@@ -65,7 +65,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		JsonDecodeError(w)
 		return
 	}
-	authedUser := CheckUser(db, userMap["Username"], userMap["Password"])
+	authedUser := CheckUser(db, userMap["username"], userMap["password"])
 
 	if authedUser.Id == 0 {
 		NotAuthedRedirect(w)
@@ -90,18 +90,18 @@ func LoginFacebookHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	decoder := json.NewDecoder(r.Body)
-	var user PtUser
-	err = decoder.Decode(&user)
+	var userMap map[string]string
+	err = decoder.Decode(&userMap)
 	if err != nil {
 		JsonDecodeError(w)
 		return
 	}
-	fmt.Println(user)
+	fmt.Println(userMap)
 	var authedUser PtUser
-	if user.FacebookId == "" {
-		authedUser = CheckUser(db, user.Username, user.Password)
+	if userMap["facebookId"] == "" {
+		authedUser = CheckUser(db, userMap["username"], userMap["password"])
 	} else {
-		authedUser = CheckUserFB(db, user.FacebookId)
+		authedUser = CheckUserFB(db, userMap["facebookId"])
 	}
 
 	//If not able to find user
