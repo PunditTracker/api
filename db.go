@@ -14,11 +14,10 @@ var (
 	DBID       = "ptdev"
 	DBUSERNAME = "pundittracker"
 	DBPASSWORD = "ptrack20!!"
-	logger     = log.New(os.Stdout, "DB: ", log.LstdFlags|log.Lshortfile)
+	db_logger  *log.Logger
 )
 
 func getDB() (*gorm.DB, error) {
-
 	serv := os.Getenv("SERV")
 	if serv == "local" {
 		db, err := gorm.Open("postgres", "sslmode=disable")
@@ -34,7 +33,7 @@ func getDB() (*gorm.DB, error) {
 		db.DB()
 		db.SingularTable(true)
 		db.LogMode(true)
-		db.SetLogger(logger)
+		db.SetLogger(db_logger)
 		return &db, err
 	}
 	return nil, errors.New("No SERV specified")

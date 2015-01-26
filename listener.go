@@ -5,7 +5,6 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
-	"os"
 )
 
 var (
@@ -76,7 +75,7 @@ func beginServing() {
 	log.Println("Listening and serving on port", port)
 	serv := &PTServer{router}
 	http.Handle("/", serv)
-	http.ListenAndServe(port, handlers.LoggingHandler(os.Stderr, serv))
+	http.ListenAndServe(port, handlers.LoggingHandler(request_f, serv))
 	//http.ListenAndServe(port, nil)
 }
 
