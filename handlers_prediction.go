@@ -69,6 +69,16 @@ func GetLatestPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, string(j))
 }
 
+func GetPredictionsForCategoryHandler(w http.ResponseWriter, r *http.Request) {
+	db, _ := getDB()
+	defer db.Close()
+	vars := mux.Vars(r)
+	catId, _ := strconv.ParseInt(vars["catid"], 10, 64)
+	preds := GetPredictionsForCategoryId(db, catId)
+	j, _ := json.Marshal(preds)
+	fmt.Fprintln(w, string(j))
+}
+
 func GetPredictionsForSubcatHandler(w http.ResponseWriter, r *http.Request) {
 	db, _ := getDB()
 	defer db.Close()

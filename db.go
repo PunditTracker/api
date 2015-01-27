@@ -161,6 +161,12 @@ func GetPredictionsForSubcatId(db *gorm.DB, subcatId int64) []PtPrediction {
 	return preds
 }
 
+func GetPredictionsForCategoryId(db *gorm.DB, catId int64) []PtPrediction {
+	preds := []PtPrediction{}
+	db.Where("category_id = ?", catId).Find(&preds)
+	return preds
+}
+
 func SearchPredictions(db *gorm.DB, searchString string) []int64 {
 	toReturn := []int64{}
 	rows, err := db.Raw(`SELECT pid
