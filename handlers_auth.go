@@ -119,6 +119,9 @@ func LoginFacebookHandler(w http.ResponseWriter, r *http.Request) {
 
 func CheckAuthHandler(w http.ResponseWriter, r *http.Request) {
 	uid := GetUIDOrRedirect(w, r)
+	if uid == 0 {
+		return
+	}
 	db, _ := getDB()
 	var user PtUser
 	db.First(&user, uid)
