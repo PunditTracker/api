@@ -85,6 +85,7 @@ func (s *PTServer) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 		rw.Header().Set("Access-Control-Allow-Origin", origin)
 		rw.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 		rw.Header().Set("Access-Control-Allow-Methods", "POST, PUT, GET, DELETE, PATCH")
+		rw.Header().Set("Access-Control-Allow-Credentials", "true")
 		rw.Header().Set("Content-Type", "application/json")
 	}
 	if req.Method == "OPTIONS" {
