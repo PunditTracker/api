@@ -123,6 +123,7 @@ func CheckAuthHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	db, _ := getDB()
+	defer db.Close()
 	var user PtUser
 	db.First(&user, uid)
 	j, _ := json.Marshal(user)
