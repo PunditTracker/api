@@ -38,7 +38,11 @@ func SetHeroHandler(w http.ResponseWriter, r *http.Request) {
 	db, _ := getDB()
 	defer db.Close()
 	SetHero(db, &hero)
-	fmt.Fprintln(w, "hero set", hero)
+	j, err := json.Marshal(hero)
+	if err != nil {
+		fmt.Println("Json Decode Error", err)
+	}
+	fmt.Fprintln(w, string(j))
 }
 
 func SetPredictionSetHandler(w http.ResponseWriter, r *http.Request) {
@@ -54,5 +58,9 @@ func SetPredictionSetHandler(w http.ResponseWriter, r *http.Request) {
 	db, _ := getDB()
 	defer db.Close()
 	SetPredictionSet(db, &predictionSet)
-	fmt.Fprintln(w, "hero set", predictionSet)
+	j, err := json.Marshal(predictionSet)
+	if err != nil {
+		fmt.Println("Json Decode Error", err)
+	}
+	fmt.Fprintln(w, string(j))
 }
