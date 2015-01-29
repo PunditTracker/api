@@ -34,3 +34,14 @@ func GetFeaturedUsersHandler(w http.ResponseWriter, r *http.Request) {
 	j, _ := json.Marshal(users)
 	fmt.Fprintln(w, string(j))
 }
+
+func GetSingleUserForNameHandler(w http.ResponseWriter, r *http.Request) {
+	db, _ := getDB()
+	defer db.Close()
+	var user PtUser
+	vars := mux.Vars(r)
+	username := vars["name"]
+	db.Where("username = ?", username).First(&user)
+	j, _ := json.Marshal(user)
+	fmt.Fprintln(w, string(j))
+}

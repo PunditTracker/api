@@ -25,9 +25,10 @@ func addListeners() {
 	router.HandleFunc("/v1/auth/check", CheckAuthHandler)
 
 	//User
-	router.HandleFunc("/v1/user", GetAllUsersHandler)               //.Methods("GET")
-	router.HandleFunc("/v1/user/featured", GetFeaturedUsersHandler) //.Methods("GET")
-	router.HandleFunc("/v1/user/{id}", GetSingleUserHandler)        //.Methods("GET")
+	router.HandleFunc("/v1/user", GetAllUsersHandler)                              //.Methods("GET")
+	router.HandleFunc("/v1/user/featured", GetFeaturedUsersHandler)                //.Methods("GET")
+	router.HandleFunc("/v1/user/{id:[0-9]+}", GetSingleUserHandler)                //.Methods("GET")
+	router.HandleFunc("/v1/user/{name:[a-zA-Z0-9]+}", GetSingleUserForNameHandler) //.Methods("GET")
 
 	//Prediction
 	router.HandleFunc("/v1/prediction", GetAllPredictionsHandler)                             //.Methods("GET")
@@ -52,7 +53,7 @@ func addListeners() {
 	//Category
 	router.HandleFunc("/v1/category/", GetCategoriesHandler)
 	router.HandleFunc("/v1/category/{id:[0-9]+}/sub", GetSubcategoriesHandler)
-	router.HandleFunc("/v1/category/{name:[a-zA-Z]+}/sub", GetSubcategoriesWithNameHandler)
+	router.HandleFunc("/v1/category/{name:[a-zA-Z0-9]+}/sub", GetSubcategoriesWithNameHandler)
 
 	//March Madness
 	router.HandleFunc("/v1/user/bracket/{userId:[0-9]+}", GetBracketHandler)
