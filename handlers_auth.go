@@ -13,12 +13,23 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "logout")
 }
 
+func isStringAllNumbers(s string) bool {
+	_, err := strconv.Atoi(s)
+	if err != nil {
+		return false
+	}
+	return true
+}
+
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	dec := json.NewDecoder(r.Body)
 	var userMap map[string]string
 	err := dec.Decode(&userMap)
 	if err != nil {
 		JsonDecodeError(w)
+		return
+	}
+	if isStringAllNumbers(userMap["username"]) {
 		return
 	}
 
@@ -40,6 +51,9 @@ func RegisterFacebookHandler(w http.ResponseWriter, r *http.Request) {
 	dec := json.NewDecoder(r.Body)
 	var user PtUser
 	err := dec.Decode(&user)
+	if isStringAllNumbers(user.Username) {
+		return
+	}
 	user.Created = time.Now()
 
 	db, err := getDB()
