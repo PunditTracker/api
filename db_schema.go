@@ -1,16 +1,50 @@
 package main
 
 import (
+	"errors"
+	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
+	"os"
 	"time"
 )
 
+func init() {
+	db, err := getDB()
+	defer db.Close()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	SetUpDB(db)
+}
+
+func getDB() (*gorm.DB, error) {
+	serv := os.Getenv("SERV")
+	if serv == "local" {
+		db, err := gorm.Open("postgres", "sslmode=disable")
+		db.DB()
+		db.SingularTable(true)
+		return &db, err
+	}
+	if serv == "aws" {
+		db, err := gorm.Open("postgres", "host=ptdev.ccm2e8gfsxjt.us-west-2.rds.amazonaws.com dbname=ptdev user=pundittracker password=ptrack20!!")
+		if err != nil {
+			fmt.Println(err)
+		}
+		db.DB()
+		db.SingularTable(true)
+		db.LogMode(true)
+		return &db, err
+	}
+	return nil, errors.New("No SERV specified")
+}
+
 type PtUser struct {
 	Id                int64
-	Username          string    `sql:"not null; unique"`
-	Password          string    `sql:"not null" json:"-"`
-	Email             string    `sql:"not null; unique"`
+	Username          string `sql:"not null; unique"`
+	Password          string `sql:"not null" json:"-"`
+	Email             string
 	Created           time.Time `sql:"not null; DEFAULT:current_timestamp"`
 	Score             int       `sql:"not null; DEFAULT:0"`
 	PredictionGraded  int       `sql:"not null; DEFAULT:0"`
@@ -18,7 +52,7 @@ type PtUser struct {
 	IsPundit          bool      `sql:"not null; DEFAULT:FALSE"`
 	IsFeatured        bool      `sql:"not null; DEFAULT:FALSE"`
 	FacebookId        string
-	FacebookAuthToken string //`sql:"unique"`?
+	FacebookAuthToken string
 	FirstName         string
 	LastName          string
 	Avatar_URL        string
@@ -56,7 +90,7 @@ type PtPrediction struct {
 	CreatorId  int64             `sql:"not null"`
 	CategoryId int64             `sql:"not null"`
 	SubcatId   int64             `sql:"not null"`
-	Title      string            `sql:"not null; unique"`
+	Title      string            `sql:"not null"`
 	State      PtPredictionState `sql:"not null";DEFAULT:0`
 	IsFeatured bool              `sql:"not null; DEFAULT:FALSE"`
 	Created    time.Time         `sql:"not null; DEFAULT:current_timestamp"`

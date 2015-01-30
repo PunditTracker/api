@@ -2,12 +2,10 @@ package main
 
 import (
 	"code.google.com/p/go.crypto/bcrypt"
-	"errors"
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
 	"log"
-	"os"
 )
 
 var (
@@ -16,28 +14,6 @@ var (
 	DBPASSWORD = "ptrack20!!"
 	db_logger  *log.Logger
 )
-
-func getDB() (*gorm.DB, error) {
-	serv := os.Getenv("SERV")
-	if serv == "local" {
-		db, err := gorm.Open("postgres", "sslmode=disable")
-		db.DB()
-		db.SingularTable(true)
-		return &db, err
-	}
-	if serv == "aws" {
-		db, err := gorm.Open("postgres", "host=ptdev.ccm2e8gfsxjt.us-west-2.rds.amazonaws.com dbname=ptdev user=pundittracker password=ptrack20!!")
-		if err != nil {
-			fmt.Println(err)
-		}
-		db.DB()
-		db.SingularTable(true)
-		db.LogMode(true)
-		db.SetLogger(db_logger)
-		return &db, err
-	}
-	return nil, errors.New("No SERV specified")
-}
 
 func AddUser(db *gorm.DB, user *PtUser) error {
 	passByte, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
