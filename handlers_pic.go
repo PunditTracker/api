@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/mitchellh/goamz/aws"
 	"github.com/mitchellh/goamz/s3"
@@ -9,10 +10,12 @@ import (
 )
 
 func uploadImageHandler(w http.ResponseWriter, r *http.Request) {
-	uid := GetUIDOrRedirect(w, r)
+	/*uid := GetUIDOrRedirect(w, r)
 	if uid == 0 {
 		return
-	}
+	}*/
+
+	uid := 1
 	r.ParseForm()
 	file, _, err := r.FormFile("file")
 	if err != nil {
@@ -28,7 +31,11 @@ func uploadImageHandler(w http.ResponseWriter, r *http.Request) {
 	uniquestring := fmt.Sprintf("prof_pic/%d", uid)
 
 	link := putImageOnS3(b, uniquestring)
-	fmt.Println("put at" + link)
+	j, _ := json.Marshal(&map[string]interface{}{
+		"Message": "Successful Upload",
+		"link":    link,
+	})
+	fmt.Fprintln(w, string(j))
 }
 
 func fileformHandler(w http.ResponseWriter, r *http.Request) {
