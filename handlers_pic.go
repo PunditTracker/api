@@ -10,7 +10,6 @@ import (
 
 func uploadImageHandler(w http.ResponseWriter, r *http.Request) {
 	uid := GetUIDOrRedirect(w, r)
-	uid = 1
 	if uid == 0 {
 		return
 	}
@@ -27,14 +26,16 @@ func uploadImageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	uniquestring := fmt.Sprintf("prof_pic/%d", uid)
-	putImageOnS3(b, uniquestring)
+
+	link := putImageOnS3(b, uniquestring)
+	fmt.Println("put at" + link)
 }
 
 func fileformHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, `<html><body><form enctype="multipart/form-data" action='/v1/putprofpic' method='post'><input type='file' name='file'><input type='submit'></form></body>`)
 }
 
-func putImageOnS3(data []byte, uniqueIdentifier string) {
+func putImageOnS3(data []byte, uniqueIdentifier string) string {
 	auth, err := aws.EnvAuth()
 	if err != nil {
 		panic(err.Error())
@@ -46,4 +47,5 @@ func putImageOnS3(data []byte, uniqueIdentifier string) {
 	if err != nil {
 		panic(err.Error())
 	}
+	return "https://s3-us-west-1.amazonaws.com/profpics.assets.foretellr.com/" + uniqueIdentifier
 }
