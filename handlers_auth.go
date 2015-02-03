@@ -152,15 +152,22 @@ func JsonDecodeError(w http.ResponseWriter) {
 }
 
 func DBError(w http.ResponseWriter) {
-	response := map[string]interface{}{"Status": http.StatusUnauthorized, "Message": "Database Error"}
+	response := map[string]interface{}{"Status": http.StatusConflict, "Message": "Database Error"}
 	j, _ := json.Marshal(response)
 	http.Error(w, string(j), http.StatusConflict)
 }
 
 func NotAuthedRedirect(w http.ResponseWriter) {
-	response := map[string]interface{}{"Status": http.StatusUnauthorized, "Message": "Not Authorized"}
-	j, _ := json.Marshal(response)
-	http.Error(w, string(j), http.StatusUnauthorized)
+	http.Error(w, GetJsonError(http.StatusUnauthorized, "Not Authorized"), http.StatusUnauthorized)
+}
+
+func GetJsonError(status int, message string) string {
+	response := map[string]interface{}{"Status": status, "Message": message}
+	j, err := json.Marshal(response)
+	if err != nil {
+		j = []byte("Json Failed")
+	}
+	return string(j)
 }
 
 func GetUIDOrRedirect(w http.ResponseWriter, r *http.Request) int64 {
