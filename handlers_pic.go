@@ -10,12 +10,10 @@ import (
 )
 
 func uploadImageHandler(w http.ResponseWriter, r *http.Request) {
-	/*uid := GetUIDOrRedirect(w, r)
+	uid := GetUIDOrRedirect(w, r)
 	if uid == 0 {
 		return
-	}*/
-
-	uid := 1
+	}
 	r.ParseForm()
 	file, _, err := r.FormFile("file")
 	if err != nil {
@@ -31,6 +29,14 @@ func uploadImageHandler(w http.ResponseWriter, r *http.Request) {
 	uniquestring := fmt.Sprintf("prof_pic/%d", uid)
 
 	link := putImageOnS3(b, uniquestring)
+	db, _ := getDB()
+	defer db.Close()
+
+	var user PtUser
+	db.First(&user, uid)
+	user.Avatar_URL = link
+	db.Save(&user)
+
 	j, _ := json.Marshal(&map[string]interface{}{
 		"Message": "Successful Upload",
 		"link":    link,
@@ -49,10 +55,12 @@ func putImageOnS3(data []byte, uniqueIdentifier string) string {
 	}
 	s := s3.New(auth, aws.USWest)
 
-	b := s.Bucket("profpics.assets.foretellr.com")
+	bucketName := "assets.foretellr.com"
+
+	b := s.Bucket(bucketName)
 	err = b.Put(uniqueIdentifier, data, "png", s3.PublicReadWrite)
 	if err != nil {
 		panic(err.Error())
 	}
-	return "https://s3-us-west-1.amazonaws.com/profpics.assets.foretellr.com/" + uniqueIdentifier
+	return fmt.Sprintf("https://s3-us-west-1.amazonaws.com/%s/%s", bucketName, uniqueIdentifier)
 }
