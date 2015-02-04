@@ -179,7 +179,9 @@ type PtHero struct {
 	IsLive       bool   `sql:"not null; DEFAULT:FALSE"`
 	ImageUrl     string `sql:"not null"`
 	Title        string `sql:"not null"`
-	PredictionId int64  `sql:"not null"`
+	PredictionId int64
+	ButtonText   string
+	ButtonUrl    string
 }
 
 func SetUpDB(db *gorm.DB) {
