@@ -79,7 +79,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		JsonDecodeError(w)
 		return
 	}
-	authedUser := CheckUser(db, userMap["username"], userMap["password"])
+	authedUser := CheckUser(db, userMap["email"], userMap["password"])
 
 	if authedUser.Id == 0 {
 		NotAuthedRedirect(w)
@@ -113,7 +113,7 @@ func LoginFacebookHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(userMap)
 	var authedUser PtUser
 	if userMap["facebookId"] == "" {
-		authedUser = CheckUser(db, userMap["username"], userMap["password"])
+		authedUser = CheckUser(db, userMap["email"], userMap["password"])
 	} else {
 		authedUser = CheckUserFB(db, userMap["facebookId"])
 	}
@@ -142,6 +142,14 @@ func CheckAuthHandler(w http.ResponseWriter, r *http.Request) {
 	db.First(&user, uid)
 	j, _ := json.Marshal(user)
 	fmt.Fprintln(w, string(j))
+}
+
+func UsernameDoesNotExistError(w http.ResponseWriter) {
+	JsonError(w, http.StatusUnauthorized, "Username does not exist")
+}
+
+func IncorrectPasswordError(w http.ResponseWriter) {
+	JsonError(w, http.StatusUnauthorized, "Incorrect Password")
 }
 
 func JsonDecodeError(w http.ResponseWriter) {

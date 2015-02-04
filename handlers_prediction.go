@@ -100,7 +100,9 @@ func SearchPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	searchString := vars["searchstr"]
 	searchString = StringToTsQuery(searchString, " & ")
-	SearchPredictions(db, searchString)
+	predictions := SearchPredictions(db, searchString)
+	j, _ := json.Marshal(predictions)
+	fmt.Fprintln(w, string(j))
 }
 
 func GetUserPredictionsHandler(w http.ResponseWriter, r *http.Request) {

@@ -50,10 +50,3 @@ func ResetSession(w http.ResponseWriter, r *http.Request) {
 func ViewSession(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, getSession(r))
 }
-
-func LoginSession(w http.ResponseWriter, r *http.Request) {
-	v := map[string]string{
-		"uid": "52",
-	}
-	setSession(v, w)
-}

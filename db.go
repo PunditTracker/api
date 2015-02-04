@@ -27,7 +27,7 @@ func AddUser(db *gorm.DB, user *PtUser) error {
 
 func CheckUser(db *gorm.DB, username, password string) PtUser {
 	var user PtUser
-	db.Where("username = ?", username).First(&user)
+	db.Where("email = ?", username).First(&user)
 	hashedPass := []byte(user.Password)
 	e := bcrypt.CompareHashAndPassword(hashedPass, []byte(password))
 	//Password accepted
@@ -99,10 +99,6 @@ func AddPrediction(db *gorm.DB, p *PtPrediction) {
 
 func AddVote(db *gorm.DB, v *PtVote) {
 	db.Save(v)
-}
-
-func LoginUser(db *gorm.DB, u *PtUser) {
-	db.Where("username = ? and password = ?", u.Username, u.Password).First(u)
 }
 
 //Category Stuff
