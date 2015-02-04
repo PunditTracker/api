@@ -29,7 +29,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		JsonDecodeError(w)
 		return
 	}
-	if isStringAllNumbers(userMap["username"]) {
+	if isStringAllNumbers(userMap["email"]) {
 		return
 	}
 
@@ -39,12 +39,14 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var user PtUser
-	user.Username = userMap["username"]
+	user.Email = userMap["email"]
 	user.Password = userMap["password"]
 
 	user.Created = time.Now()
 	AddUser(db, &user)
-	fmt.Println("user added", user)
+	db.First(&user, user.Id)
+	j, _ := json.Marshal(user)
+	fmt.Fprintln(w, string(j))
 }
 
 func RegisterFacebookHandler(w http.ResponseWriter, r *http.Request) {
@@ -63,6 +65,9 @@ func RegisterFacebookHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	AddUser(db, &user)
+	db.First(&user, user.Id)
+	j, _ := json.Marshal(user)
+	fmt.Fprintln(w, string(j))
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
