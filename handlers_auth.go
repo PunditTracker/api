@@ -142,32 +142,28 @@ func CheckAuthHandler(w http.ResponseWriter, r *http.Request) {
 	db.First(&user, uid)
 	j, _ := json.Marshal(user)
 	fmt.Fprintln(w, string(j))
-
 }
 
 func JsonDecodeError(w http.ResponseWriter) {
-	response := map[string]interface{}{"Status": http.StatusUnauthorized, "Message": "Json Decode Error"}
-	j, _ := json.Marshal(response)
-	http.Error(w, string(j), http.StatusBadRequest)
+	JsonError(w, http.StatusUnauthorized, "Json Decode Error")
 }
 
 func DBError(w http.ResponseWriter) {
-	response := map[string]interface{}{"Status": http.StatusConflict, "Message": "Database Error"}
-	j, _ := json.Marshal(response)
-	http.Error(w, string(j), http.StatusConflict)
+	JsonError(w, http.StatusConflict, "Database Error")
 }
 
 func NotAuthedRedirect(w http.ResponseWriter) {
-	http.Error(w, GetJsonError(http.StatusUnauthorized, "Not Authorized"), http.StatusUnauthorized)
+	JsonError(w, http.StatusUnauthorized, "Not Authorized")
 }
 
-func GetJsonError(status int, message string) string {
+func JsonError(w http.ResponseWriter, status int, message string) {
+	w.WriteHeader(status)
 	response := map[string]interface{}{"Status": status, "Message": message}
 	j, err := json.Marshal(response)
 	if err != nil {
 		j = []byte("Json Failed")
 	}
-	return string(j)
+	fmt.Fprintln(w, string(j))
 }
 
 func GetUIDOrRedirect(w http.ResponseWriter, r *http.Request) int64 {
