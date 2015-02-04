@@ -53,9 +53,6 @@ func RegisterFacebookHandler(w http.ResponseWriter, r *http.Request) {
 	dec := json.NewDecoder(r.Body)
 	var user PtUser
 	err := dec.Decode(&user)
-	if isStringAllNumbers(user.Username) {
-		return
-	}
 	user.Created = time.Now()
 
 	db, err := getDB()

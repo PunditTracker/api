@@ -42,7 +42,6 @@ func getDB() (*gorm.DB, error) {
 
 type PtUser struct {
 	Id                int64
-	Username          string `sql:"not null; unique"`
 	Password          string `sql:"not null" json:"-"`
 	Email             string
 	Created           time.Time `sql:"not null; DEFAULT:current_timestamp"`

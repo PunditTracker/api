@@ -25,14 +25,13 @@ func addListeners() {
 	router.HandleFunc("/v1/auth/check", CheckAuthHandler)
 
 	//User
-	router.HandleFunc("/v1/user", GetAllUsersHandler)                              //.Methods("GET")
-	router.HandleFunc("/v1/user/featured", GetFeaturedUsersHandler)                //.Methods("GET")
-	router.HandleFunc("/v1/user/{id:[0-9]+}", GetSingleUserHandler)                //.Methods("GET")
-	router.HandleFunc("/v1/user/{name:[a-zA-Z0-9]+}", GetSingleUserForNameHandler) //.Methods("GET")
+	router.HandleFunc("/v1/user", GetAllUsersHandler)               //.Methods("GET")
+	router.HandleFunc("/v1/user/featured", GetFeaturedUsersHandler) //.Methods("GET")
+	router.HandleFunc("/v1/user/{id:[0-9]+}", GetSingleUserHandler) //.Methods("GET")
+	//router.HandleFunc("/v1/user/{name:[a-zA-Z0-9]+}", GetSingleUserForNameHandler) //.Methods("GET")
 
 	//Image Functions
 	router.HandleFunc("/v1/putprofpic", uploadImageHandler)
-	//	router.HandleFunc("/v1/fileform", fileformHandler)
 
 	//Prediction
 	router.HandleFunc("/v1/prediction", GetAllPredictionsHandler)                             //.Methods("GET")

@@ -25,9 +25,9 @@ func AddUser(db *gorm.DB, user *PtUser) error {
 	return nil
 }
 
-func CheckUser(db *gorm.DB, username, password string) PtUser {
+func CheckUser(db *gorm.DB, email, password string) PtUser {
 	var user PtUser
-	db.Where("email = ?", username).First(&user)
+	db.Where("email = ?", email).First(&user)
 	hashedPass := []byte(user.Password)
 	e := bcrypt.CompareHashAndPassword(hashedPass, []byte(password))
 	//Password accepted

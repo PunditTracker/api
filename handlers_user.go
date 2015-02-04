@@ -35,6 +35,8 @@ func GetFeaturedUsersHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, string(j))
 }
 
+/*
+
 func GetSingleUserForNameHandler(w http.ResponseWriter, r *http.Request) {
 	db, _ := getDB()
 	defer db.Close()
@@ -44,4 +46,4 @@ func GetSingleUserForNameHandler(w http.ResponseWriter, r *http.Request) {
 	db.Where("username = ?", username).First(&user)
 	j, _ := json.Marshal(user)
 	fmt.Fprintln(w, string(j))
-}
+}*/
