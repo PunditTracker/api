@@ -9,7 +9,27 @@ import (
 	"net/http"
 )
 
-func uploadImageHandler(w http.ResponseWriter, r *http.Request) {
+func AdminUploadImageHandler(w http.ResponseWriter, r *http.Request) {
+
+	r.ParseForm()
+	file, _, err := r.FormFile("image")
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	defer file.Close()
+	data, err := ioutil.ReadAll(file)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	something := "some"
+	uniquestring := fmt.Sprintf("images/%s", something)
+	bucketName := "assets.foretellr.com"
+	link := putImageOnS3(bucketName, data, uniquestring)
+	fmt.Fprintln(w, link)
+}
+
+func UploadImageHandler(w http.ResponseWriter, r *http.Request) {
 	uid := GetUIDOrRedirect(w, r)
 	if uid == 0 {
 		return
@@ -28,7 +48,8 @@ func uploadImageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	uniquestring := fmt.Sprintf("prof_pic/%d", uid)
 
-	link := putImageOnS3(b, uniquestring)
+	bucketName := "assets.foretellr.com"
+	link := putImageOnS3(bucketName, b, uniquestring)
 	db, _ := getDB()
 	defer db.Close()
 
@@ -48,17 +69,14 @@ func fileformHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, `<html><body><form enctype="multipart/form-data" action='/v1/putprofpic' method='post'><input type='file' name='file'><input type='submit'></form></body>`)
 }
 
-func putImageOnS3(data []byte, uniqueIdentifier string) string {
+func putImageOnS3(bucketName string, data []byte, uniqueIdentifier string) string {
 	auth, err := aws.EnvAuth()
 	if err != nil {
 		panic(err.Error())
 	}
 	s := s3.New(auth, aws.USWest)
-
-	bucketName := "assets.foretellr.com"
-
 	b := s.Bucket(bucketName)
-	err = b.Put(uniqueIdentifier, data, "png", s3.PublicReadWrite)
+	err = b.Put(uniqueIdentifier, data, "image/png", s3.PublicReadWrite)
 	if err != nil {
 		panic(err.Error())
 	}

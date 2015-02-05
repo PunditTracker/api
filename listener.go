@@ -31,7 +31,7 @@ func addListeners() {
 	//router.HandleFunc("/v1/user/{name:[a-zA-Z0-9]+}", GetSingleUserForNameHandler) //.Methods("GET")
 
 	//Image Functions
-	router.HandleFunc("/v1/putprofpic", uploadImageHandler)
+	router.HandleFunc("/v1/putprofpic", UploadImageHandler)
 
 	//Prediction
 	router.HandleFunc("/v1/prediction", GetAllPredictionsHandler)                             //.Methods("GET")
@@ -70,6 +70,7 @@ func addListeners() {
 	router.HandleFunc("/v1/admin/homepage/set/hero", SetHeroHandler)
 	router.HandleFunc("/v1/admin/homepage/set/predictionSet", SetPredictionSetHandler)
 	router.HandleFunc("/v1/admin/prediction/setstate/{predId:[0-9]+}/{state:[0-9]}", SetStateHandler)
+	router.HandleFunc("/v1/admin/addimage", AdminUploadImageHandler)
 }
 
 type PTServer struct {
