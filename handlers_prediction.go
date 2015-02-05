@@ -18,7 +18,10 @@ func GetFeaturedPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	}*/
 	limit := 5
 
-	db, _ := getDB()
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
 	defer db.Close()
 	predictions := GetFeaturedPredictions(db, limit)
 	j, _ := json.Marshal(predictions)
@@ -26,7 +29,10 @@ func GetFeaturedPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetAllPredictionsHandler(w http.ResponseWriter, r *http.Request) {
-	db, _ := getDB()
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
 	defer db.Close()
 	preds := GetAllPredictions(db)
 	j, _ := json.Marshal(preds)
@@ -34,7 +40,10 @@ func GetAllPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetSinglePredictionHandler(w http.ResponseWriter, r *http.Request) {
-	db, _ := getDB()
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
 	defer db.Close()
 	vars := mux.Vars(r)
 	uid, _ := strconv.ParseInt(vars["id"], 10, 64)
@@ -53,7 +62,10 @@ func AddPredictionHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	prediction.CreatorId = GetUIDOrRedirect(w, r)
 	prediction.Created = time.Now()
-	db, _ := getDB()
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
 	defer db.Close()
 	AddPrediction(db, &prediction)
 	j, _ := json.Marshal(prediction)
@@ -61,7 +73,10 @@ func AddPredictionHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetLatestPredictionsHandler(w http.ResponseWriter, r *http.Request) {
-	db, _ := getDB()
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
 	defer db.Close()
 	//Get the 10 latest predictions
 	preds := GetLatestPredictions(db, 10)
@@ -70,7 +85,10 @@ func GetLatestPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetPredictionsForCategoryHandler(w http.ResponseWriter, r *http.Request) {
-	db, _ := getDB()
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
 	defer db.Close()
 	vars := mux.Vars(r)
 	catId, _ := strconv.ParseInt(vars["catid"], 10, 64)
@@ -80,7 +98,10 @@ func GetPredictionsForCategoryHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetPredictionsForSubcatHandler(w http.ResponseWriter, r *http.Request) {
-	db, _ := getDB()
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
 	defer db.Close()
 	vars := mux.Vars(r)
 	subCatId, _ := strconv.ParseInt(vars["subcatid"], 10, 64)
@@ -95,7 +116,10 @@ func StringToTsQuery(input string, connector string) string {
 }
 
 func SearchPredictionsHandler(w http.ResponseWriter, r *http.Request) {
-	db, _ := getDB()
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
 	defer db.Close()
 	vars := mux.Vars(r)
 	searchString := vars["searchstr"]
@@ -106,7 +130,10 @@ func SearchPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetUserPredictionsHandler(w http.ResponseWriter, r *http.Request) {
-	db, _ := getDB()
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
 	defer db.Close()
 	vars := mux.Vars(r)
 	uid, _ := strconv.ParseInt(vars["id"], 10, 64)
@@ -116,7 +143,10 @@ func GetUserPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetTaggedPredictionHandler(w http.ResponseWriter, r *http.Request) {
-	db, _ := getDB()
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
 	defer db.Close()
 	vars := mux.Vars(r)
 	tag := vars["tag"]
@@ -126,7 +156,10 @@ func GetTaggedPredictionHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetHeroPredictionHandler(w http.ResponseWriter, r *http.Request) {
-	db, _ := getDB()
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
 	defer db.Close()
 	heros := GetLivePtHeros(db)
 	j, _ := json.Marshal(heros)
@@ -134,10 +167,13 @@ func GetHeroPredictionHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetPredictionSetHandler(w http.ResponseWriter, r *http.Request) {
-	db, _ := getDB()
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
 	defer db.Close()
+
 	predictionSets := GetLivePredictionSets(db)
-	db, _ = getDB()
 	for i, _ := range predictionSets {
 		db.First(&predictionSets[i].Prediction1, predictionSets[i].Prediction1Id)
 		db.First(&predictionSets[i].Prediction2, predictionSets[i].Prediction2Id)

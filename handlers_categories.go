@@ -9,7 +9,10 @@ import (
 )
 
 func GetCategoriesHandler(w http.ResponseWriter, r *http.Request) {
-	db, _ := getDB()
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
 	defer db.Close()
 	categories := GetCategories(db)
 	j, _ := json.Marshal(categories)
@@ -17,7 +20,10 @@ func GetCategoriesHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetSubcategoriesHandler(w http.ResponseWriter, r *http.Request) {
-	db, _ := getDB()
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
 	defer db.Close()
 	vars := mux.Vars(r)
 	categoryId, _ := strconv.ParseInt(vars["id"], 10, 64)
@@ -27,7 +33,10 @@ func GetSubcategoriesHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetSubcategoriesWithNameHandler(w http.ResponseWriter, r *http.Request) {
-	db, _ := getDB()
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
 	defer db.Close()
 	vars := mux.Vars(r)
 	categoryName := vars["name"]

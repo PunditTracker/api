@@ -9,7 +9,10 @@ import (
 )
 
 func GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
-	db, _ := getDB()
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
 	defer db.Close()
 	users := GetAllUsers(db)
 	j, _ := json.Marshal(users)
@@ -18,7 +21,10 @@ func GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
 
 //Add error handling
 func GetSingleUserHandler(w http.ResponseWriter, r *http.Request) {
-	db, _ := getDB()
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
 	defer db.Close()
 	vars := mux.Vars(r)
 	uid, _ := strconv.ParseInt(vars["id"], 10, 64)
@@ -28,7 +34,10 @@ func GetSingleUserHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetFeaturedUsersHandler(w http.ResponseWriter, r *http.Request) {
-	db, _ := getDB()
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
 	defer db.Close()
 	users := GetFeaturedUsers(db)
 	j, _ := json.Marshal(users)
@@ -38,7 +47,10 @@ func GetFeaturedUsersHandler(w http.ResponseWriter, r *http.Request) {
 /*
 
 func GetSingleUserForNameHandler(w http.ResponseWriter, r *http.Request) {
-	db, _ := getDB()
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
 	defer db.Close()
 	var user PtUser
 	vars := mux.Vars(r)

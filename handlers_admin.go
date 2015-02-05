@@ -10,7 +10,10 @@ import (
 )
 
 func SetStateHandler(w http.ResponseWriter, r *http.Request) {
-	db, _ := getDB()
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
 	defer db.Close()
 	vars := mux.Vars(r)
 	predictionId, _ := strconv.ParseInt(vars["predId"], 10, 64)
@@ -34,8 +37,10 @@ func SetHeroHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Json Decode Error", err)
 		return
 	}
-
-	db, _ := getDB()
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
 	defer db.Close()
 	SetHero(db, &hero)
 	j, err := json.Marshal(hero)
@@ -55,7 +60,10 @@ func SetPredictionSetHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	db, _ := getDB()
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
 	defer db.Close()
 	SetPredictionSet(db, &predictionSet)
 	j, err := json.Marshal(predictionSet)

@@ -34,11 +34,12 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	db, err := getDB()
-	defer db.Close()
-	if err != nil {
+	db := GetDBOrPrintError(w)
+	if db == nil {
 		return
 	}
+	defer db.Close()
+
 	var user PtUser
 	user.Email = userMap["email"]
 	user.Password = userMap["password"]
@@ -55,13 +56,16 @@ func RegisterFacebookHandler(w http.ResponseWriter, r *http.Request) {
 	dec := json.NewDecoder(r.Body)
 	var user PtUser
 	err := dec.Decode(&user)
+	if err != nil {
+		JsonDecodeError(w)
+	}
 	user.Created = time.Now()
 
-	db, err := getDB()
-	defer db.Close()
-	if err != nil {
+	db := GetDBOrPrintError(w)
+	if db == nil {
 		return
 	}
+	defer db.Close()
 
 	SetPassword(db, &user)
 	db.First(&user, user.Id)
@@ -70,15 +74,14 @@ func RegisterFacebookHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
-	db, err := getDB()
-	defer db.Close()
-	if err != nil {
-		DBError(w)
+	db := GetDBOrPrintError(w)
+	if db == nil {
 		return
 	}
+	defer db.Close()
 	userMap := map[string]string{}
 	decoder := json.NewDecoder(r.Body)
-	err = decoder.Decode(&userMap)
+	err := decoder.Decode(&userMap)
 	if err != nil {
 		JsonDecodeError(w)
 		return
@@ -101,15 +104,14 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func LoginFacebookHandler(w http.ResponseWriter, r *http.Request) {
-	db, err := getDB()
-	defer db.Close()
-	if err != nil {
-		DBError(w)
+	db := GetDBOrPrintError(w)
+	if db == nil {
 		return
 	}
+	defer db.Close()
 	decoder := json.NewDecoder(r.Body)
 	var userMap map[string]string
-	err = decoder.Decode(&userMap)
+	err := decoder.Decode(&userMap)
 	if err != nil {
 		JsonDecodeError(w)
 		return
@@ -140,8 +142,13 @@ func CheckAuthHandler(w http.ResponseWriter, r *http.Request) {
 	if uid == 0 {
 		return
 	}
-	db, _ := getDB()
+
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
 	defer db.Close()
+
 	var user PtUser
 	db.First(&user, uid)
 	j, _ := json.Marshal(user)
@@ -161,9 +168,9 @@ func ForgotPasswordEndpoint(w http.ResponseWriter, r *http.Request) {
 
 	//Send an email to the user
 	var user PtUser
-	db, err := getDB()
-	if err != nil {
-		DBError(w)
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
 	}
 	defer db.Close()
 	db.Where("email=?", toEmail).First(&user)
@@ -197,10 +204,11 @@ func ResetPasswordEndpoint(w http.ResponseWriter, r *http.Request) {
 	resetKey := argMap["resetKey"]
 	newPassword := argMap["newpass"]
 	uid := 1
-	db, err := getDB()
-	if err != nil {
-		DBError(w)
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
 	}
+	defer db.Close()
 	var user PtUser
 	db.First(&user, uid)
 
@@ -215,36 +223,6 @@ func ResetPasswordEndpoint(w http.ResponseWriter, r *http.Request) {
 	}
 	user.Password = newPassword
 	SetPassword(db, &user)
-}
-
-func UsernameDoesNotExistError(w http.ResponseWriter) {
-	JsonError(w, http.StatusUnauthorized, "Username does not exist")
-}
-
-func IncorrectPasswordError(w http.ResponseWriter) {
-	JsonError(w, http.StatusUnauthorized, "Incorrect Password")
-}
-
-func JsonDecodeError(w http.ResponseWriter) {
-	JsonError(w, http.StatusUnauthorized, "Json Decode Error")
-}
-
-func DBError(w http.ResponseWriter) {
-	JsonError(w, http.StatusConflict, "Database Error")
-}
-
-func NotAuthedRedirect(w http.ResponseWriter) {
-	JsonError(w, http.StatusUnauthorized, "Not Authorized")
-}
-
-func JsonError(w http.ResponseWriter, status int, message string) {
-	w.WriteHeader(status)
-	response := map[string]interface{}{"Status": status, "Message": message}
-	j, err := json.Marshal(response)
-	if err != nil {
-		j = []byte("Json Failed")
-	}
-	fmt.Fprintln(w, string(j))
 }
 
 func GetUIDOrRedirect(w http.ResponseWriter, r *http.Request) int64 {

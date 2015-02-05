@@ -51,7 +51,10 @@ func UploadImageHandler(w http.ResponseWriter, r *http.Request) {
 	bucketName := "assets.foretellr.com"
 	contType := h.Header.Get("Content-Type")
 	link := putImageOnS3(bucketName, b, contType, uniquestring)
-	db, _ := getDB()
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
 	defer db.Close()
 
 	var user PtUser

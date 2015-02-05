@@ -50,6 +50,7 @@ type PtUser struct {
 	Score             int       `sql:"not null; DEFAULT:0"`
 	PredictionGraded  int       `sql:"not null; DEFAULT:0"`
 	PredictionCorrect int       `sql:"not null; DEFAULT:0"`
+	IsAdmin           bool      `sql:"not null; DEFAULT:FALSE"`
 	IsPundit          bool      `sql:"not null; DEFAULT:FALSE"`
 	IsFeatured        bool      `sql:"not null; DEFAULT:FALSE"`
 	FacebookId        string
