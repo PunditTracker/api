@@ -197,7 +197,7 @@ func ForgotPasswordEndpoint(w http.ResponseWriter, r *http.Request) {
 	user.ResetKey = uuid.New()
 	user.ResetValidUntil = time.Now().Add(time.Hour)
 	db.Save(&user)
-	message := "Please goto " + fmt.Sprintf("foretellr.com/reset/%s/%s", user.Id, user.ResetKey)
+	message := "Please goto " + fmt.Sprintf("foretellr.com/reset/%d/%s", user.Id, user.ResetKey)
 
 	_, err = ses.EnvConfig.SendEmail(
 		fromEmail,
