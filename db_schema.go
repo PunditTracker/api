@@ -42,8 +42,10 @@ func getDB() (*gorm.DB, error) {
 
 type PtUser struct {
 	Id                int64
-	Password          string `sql:"not null" json:"-"`
-	Email             string
+	Password          string    `sql:"not null" json:"-"`
+	ResetKey          string    `json:"-"`
+	ResetValidUntil   time.Time `json:"-"`
+	Email             string    `sql:"not null"`
 	Created           time.Time `sql:"not null; DEFAULT:current_timestamp"`
 	Score             int       `sql:"not null; DEFAULT:0"`
 	PredictionGraded  int       `sql:"not null; DEFAULT:0"`

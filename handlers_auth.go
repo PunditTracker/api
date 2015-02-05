@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/sourcegraph/go-ses"
 	"net/http"
 	"strconv"
 	"time"
@@ -43,7 +44,8 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	user.Password = userMap["password"]
 
 	user.Created = time.Now()
-	AddUser(db, &user)
+	SetPassword(db, &user)
+
 	db.First(&user, user.Id)
 	j, _ := json.Marshal(user)
 	fmt.Fprintln(w, string(j))
@@ -61,7 +63,7 @@ func RegisterFacebookHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	AddUser(db, &user)
+	SetPassword(db, &user)
 	db.First(&user, user.Id)
 	j, _ := json.Marshal(user)
 	fmt.Fprintln(w, string(j))
@@ -144,6 +146,75 @@ func CheckAuthHandler(w http.ResponseWriter, r *http.Request) {
 	db.First(&user, uid)
 	j, _ := json.Marshal(user)
 	fmt.Fprintln(w, string(j))
+}
+
+func ForgotPasswordEndpoint(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var argMap map[string]string
+	err := decoder.Decode(&argMap)
+	if err != nil {
+		JsonDecodeError(w)
+		return
+	}
+	fromEmail := "PasswordRecovery"
+	toEmail := argMap["email"]
+
+	//Send an email to the user
+	var user PtUser
+	db, err := getDB()
+	if err != nil {
+		DBError(w)
+	}
+	defer db.Close()
+	db.Where("email=?", toEmail).First(&user)
+
+	user.ResetKey = ""
+	user.ResetValidUntil = time.Now().Add(time.Hour)
+	db.Save(&user)
+
+	_, err = ses.EnvConfig.SendEmail(
+		fromEmail,
+		toEmail,
+		"Password Recovery- Click link to reset",
+		"Please goto ",
+	)
+	if err == nil {
+		//Sent email
+	} else {
+		// Error sending email
+	}
+
+}
+
+func ResetPasswordEndpoint(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var argMap map[string]string
+	err := decoder.Decode(&argMap)
+	if err != nil {
+		JsonDecodeError(w)
+		return
+	}
+	resetKey := argMap["resetKey"]
+	newPassword := argMap["newpass"]
+	uid := 1
+	db, err := getDB()
+	if err != nil {
+		DBError(w)
+	}
+	var user PtUser
+	db.First(&user, uid)
+
+	if time.Now().After(user.ResetValidUntil) {
+		JsonError(w, http.StatusUnauthorized, "reset key expired")
+		return
+	}
+
+	if user.ResetKey != resetKey {
+		JsonError(w, http.StatusUnauthorized, "reset key incorrect")
+		return
+	}
+	user.Password = newPassword
+	SetPassword(db, &user)
 }
 
 func UsernameDoesNotExistError(w http.ResponseWriter) {

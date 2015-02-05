@@ -15,7 +15,7 @@ var (
 	db_logger  *log.Logger
 )
 
-func AddUser(db *gorm.DB, user *PtUser) error {
+func SetPassword(db *gorm.DB, user *PtUser) error {
 	passByte, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
