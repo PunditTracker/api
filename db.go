@@ -21,7 +21,7 @@ func SetPassword(db *gorm.DB, user *PtUser) error {
 		return err
 	}
 	user.Password = string(passByte)
-	db.Save(user)
+	db.Save(&user)
 	return nil
 }
 
