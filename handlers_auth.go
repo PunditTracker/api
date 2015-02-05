@@ -43,7 +43,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	var user PtUser
 	user.Email = userMap["email"]
 	user.Password = userMap["password"]
-
+	user.ResetValidUntil = time.Now()
 	user.Created = time.Now()
 	SetPassword(db, &user)
 
@@ -61,7 +61,7 @@ func RegisterFacebookHandler(w http.ResponseWriter, r *http.Request) {
 		JsonDecodeError(w)
 	}
 	user.Created = time.Now()
-
+	user.ResetValidUntil = time.Now()
 	db := GetDBOrPrintError(w)
 	if db == nil {
 		return
@@ -193,6 +193,10 @@ func ForgotPasswordEndpoint(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 	db.Where("email=?", toEmail).First(&user)
+	if user.Id == 0 {
+		NoUserWithEmailError(w)
+		return
+	}
 
 	user.ResetKey = uuid.New()
 	user.ResetValidUntil = time.Now().Add(time.Hour)

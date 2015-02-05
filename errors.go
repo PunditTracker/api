@@ -16,6 +16,10 @@ func GetDBOrPrintError(w http.ResponseWriter) *gorm.DB {
 	return db
 }
 
+func NoUserWithEmailError(w http.ResponseWriter) {
+	JsonError(w, http.StatusBadRequest, "no user with that email")
+}
+
 func NoIdIncludedError(w http.ResponseWriter) {
 	JsonError(w, http.StatusBadRequest, "No id provided")
 }
