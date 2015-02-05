@@ -12,7 +12,7 @@ import (
 func AdminUploadImageHandler(w http.ResponseWriter, r *http.Request) {
 
 	r.ParseForm()
-	file, _, err := r.FormFile("image")
+	file, h, err := r.FormFile("image")
 	if err != nil {
 		fmt.Println(err.Error())
 		return
@@ -22,10 +22,10 @@ func AdminUploadImageHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-	something := "some"
-	uniquestring := fmt.Sprintf("images/%s", something)
+	uniquestring := fmt.Sprintf("images/%s", h.Filename)
 	bucketName := "assets.foretellr.com"
-	link := putImageOnS3(bucketName, data, uniquestring)
+	contType := h.Header.Get("Content-Type")
+	link := putImageOnS3(bucketName, data, contType, uniquestring)
 	fmt.Fprintln(w, link)
 }
 
@@ -35,7 +35,7 @@ func UploadImageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	r.ParseForm()
-	file, _, err := r.FormFile("file")
+	file, h, err := r.FormFile("file")
 	if err != nil {
 		fmt.Println(err.Error())
 		return
@@ -49,7 +49,8 @@ func UploadImageHandler(w http.ResponseWriter, r *http.Request) {
 	uniquestring := fmt.Sprintf("prof_pic/%d", uid)
 
 	bucketName := "assets.foretellr.com"
-	link := putImageOnS3(bucketName, b, uniquestring)
+	contType := h.Header.Get("Content-Type")
+	link := putImageOnS3(bucketName, b, contType, uniquestring)
 	db, _ := getDB()
 	defer db.Close()
 
@@ -69,14 +70,14 @@ func fileformHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, `<html><body><form enctype="multipart/form-data" action='/v1/putprofpic' method='post'><input type='file' name='file'><input type='submit'></form></body>`)
 }
 
-func putImageOnS3(bucketName string, data []byte, uniqueIdentifier string) string {
+func putImageOnS3(bucketName string, data []byte, imageType string, uniqueIdentifier string) string {
 	auth, err := aws.EnvAuth()
 	if err != nil {
 		panic(err.Error())
 	}
 	s := s3.New(auth, aws.USWest)
 	b := s.Bucket(bucketName)
-	err = b.Put(uniqueIdentifier, data, "image/png", s3.PublicReadWrite)
+	err = b.Put(uniqueIdentifier, data, imageType, s3.PublicReadWrite)
 	if err != nil {
 		panic(err.Error())
 	}
