@@ -4,6 +4,7 @@ import (
 	"code.google.com/p/go-uuid/uuid"
 	"encoding/json"
 	"fmt"
+	"github.com/gorilla/mux"
 	"github.com/sourcegraph/go-ses"
 	"log"
 	"net/http"
@@ -196,32 +197,40 @@ func ForgotPasswordEndpoint(w http.ResponseWriter, r *http.Request) {
 	user.ResetKey = uuid.New()
 	user.ResetValidUntil = time.Now().Add(time.Hour)
 	db.Save(&user)
+	message := "Please goto " + fmt.Sprintf("foretellr.com/reset/%s/%s", user.Id, user.ResetKey)
 
 	_, err = ses.EnvConfig.SendEmail(
 		fromEmail,
 		toEmail,
 		"Password Recovery- Click link to reset",
-		"Please goto "+fmt.Sprintf("foretellr.com/v1/auth/%s", user.ResetKey),
+		message,
 	)
+	fmt.Println("mess: ", message)
 	if err == nil {
-		//Sent email
+		j, _ := json.Marshal(map[string]string{"Message": "email sent"})
+		fmt.Fprintln(w, string(j))
 	} else {
-		// Error sending email
+		j, _ := json.Marshal(map[string]string{"Message": "email failed: " + err.Error()})
+		fmt.Fprintln(w, string(j))
 	}
 
 }
 
 func ResetPasswordEndpoint(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	uid, err := strconv.ParseInt(vars["id"], 10, 64)
+	if err != nil {
+		NoIdIncludedError(w)
+	}
+	resetKey := vars["resetKey"]
 	decoder := json.NewDecoder(r.Body)
 	var argMap map[string]string
-	err := decoder.Decode(&argMap)
+	err = decoder.Decode(&argMap)
 	if err != nil {
 		JsonDecodeError(w)
 		return
 	}
-	resetKey := argMap["resetKey"]
-	newPassword := argMap["newpass"]
-	uid := 1
+	newPassword := argMap["password"]
 	db := GetDBOrPrintError(w)
 	if db == nil {
 		return

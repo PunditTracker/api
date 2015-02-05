@@ -16,6 +16,10 @@ func GetDBOrPrintError(w http.ResponseWriter) *gorm.DB {
 	return db
 }
 
+func NoIdIncludedError(w http.ResponseWriter) {
+	JsonError(w, http.StatusBadRequest, "No id provided")
+}
+
 func UsernameDoesNotExistError(w http.ResponseWriter) {
 	JsonError(w, http.StatusUnauthorized, "Username does not exist")
 }

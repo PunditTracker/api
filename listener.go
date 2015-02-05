@@ -24,6 +24,10 @@ func addListeners() {
 	router.HandleFunc("/v1/auth/logout", LogoutHandler)               //.Methods("POST")
 	router.HandleFunc("/v1/auth/check", CheckAuthHandler)
 
+	//Forgot Password Workflow
+	router.HandleFunc("/v1/auth/forgot", ForgotPasswordEndpoint)
+	router.HandleFunc("/v1/auth/reset/{id:[0-9]}/{resetKey}", ResetPasswordEndpoint)
+
 	//User
 	router.HandleFunc("/v1/user", GetAllUsersHandler)               //.Methods("GET")
 	router.HandleFunc("/v1/user/featured", GetFeaturedUsersHandler) //.Methods("GET")
