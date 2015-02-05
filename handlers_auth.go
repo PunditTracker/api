@@ -1,9 +1,11 @@
 package main
 
 import (
+	"code.google.com/p/go-uuid/uuid"
 	"encoding/json"
 	"fmt"
 	"github.com/sourcegraph/go-ses"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -30,9 +32,6 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		JsonDecodeError(w)
 		return
 	}
-	if isStringAllNumbers(userMap["email"]) {
-		return
-	}
 
 	db := GetDBOrPrintError(w)
 	if db == nil {
@@ -50,6 +49,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	db.First(&user, user.Id)
 	j, _ := json.Marshal(user)
 	fmt.Fprintln(w, string(j))
+	SendWelcomeEmail(&user)
 }
 
 func RegisterFacebookHandler(w http.ResponseWriter, r *http.Request) {
@@ -71,6 +71,24 @@ func RegisterFacebookHandler(w http.ResponseWriter, r *http.Request) {
 	db.First(&user, user.Id)
 	j, _ := json.Marshal(user)
 	fmt.Fprintln(w, string(j))
+	SendWelcomeEmail(&user)
+}
+
+func SendWelcomeEmail(user *PtUser) {
+	fromEmail := "noreply@pundittracker.com"
+	toEmail := user.Email
+
+	_, err := ses.EnvConfig.SendEmail(
+		fromEmail,
+		toEmail,
+		"Welcome to Pundit Tracker",
+		"welcome!",
+	)
+	if err != nil {
+		log.Println(err)
+	} else {
+		log.Println("Welcome message sent to:", user.Email)
+	}
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
@@ -163,7 +181,7 @@ func ForgotPasswordEndpoint(w http.ResponseWriter, r *http.Request) {
 		JsonDecodeError(w)
 		return
 	}
-	fromEmail := "PasswordRecovery"
+	fromEmail := "noreply@pundittracker.com"
 	toEmail := argMap["email"]
 
 	//Send an email to the user
@@ -175,7 +193,7 @@ func ForgotPasswordEndpoint(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 	db.Where("email=?", toEmail).First(&user)
 
-	user.ResetKey = ""
+	user.ResetKey = uuid.New()
 	user.ResetValidUntil = time.Now().Add(time.Hour)
 	db.Save(&user)
 
@@ -183,7 +201,7 @@ func ForgotPasswordEndpoint(w http.ResponseWriter, r *http.Request) {
 		fromEmail,
 		toEmail,
 		"Password Recovery- Click link to reset",
-		"Please goto ",
+		"Please goto "+fmt.Sprintf("foretellr.com/v1/auth/%s", user.ResetKey),
 	)
 	if err == nil {
 		//Sent email
