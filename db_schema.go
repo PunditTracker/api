@@ -43,7 +43,7 @@ func getDB() (*gorm.DB, error) {
 type PtUser struct {
 	Id                int64
 	Password          string    `sql:"not null" json:"-"`
-	ResetKey          string    `json:"-"`
+	ResetKey          string    `json:"-" sql:"DEFAULT:null"`
 	ResetValidUntil   time.Time `json:"-"`
 	Email             string    `sql:"not null"`
 	Created           time.Time `sql:"not null; DEFAULT:current_timestamp"`
