@@ -30,7 +30,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	var userMap map[string]string
 	err := dec.Decode(&userMap)
 	if err != nil {
-		JsonDecodeError(w)
+		JsonDecodeError(w, err)
 		return
 	}
 
@@ -58,7 +58,7 @@ func RegisterFacebookHandler(w http.ResponseWriter, r *http.Request) {
 	var user PtUser
 	err := dec.Decode(&user)
 	if err != nil {
-		JsonDecodeError(w)
+		JsonDecodeError(w, err)
 	}
 	user.Created = time.Now()
 	user.ResetValidUntil = time.Now()
@@ -102,7 +102,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&userMap)
 	if err != nil {
-		JsonDecodeError(w)
+		JsonDecodeError(w, err)
 		return
 	}
 	authedUser := CheckUser(db, userMap["email"], userMap["password"])
@@ -135,7 +135,7 @@ func LoginFacebookHandler(w http.ResponseWriter, r *http.Request) {
 	var userMap map[string]string
 	err := decoder.Decode(&userMap)
 	if err != nil {
-		JsonDecodeError(w)
+		JsonDecodeError(w, err)
 		return
 	}
 	fmt.Println(userMap)
@@ -185,7 +185,7 @@ func ForgotPasswordEndpoint(w http.ResponseWriter, r *http.Request) {
 	var argMap map[string]string
 	err := decoder.Decode(&argMap)
 	if err != nil {
-		JsonDecodeError(w)
+		JsonDecodeError(w, err)
 		return
 	}
 	fromEmail := "noreply@pundittracker.com"
@@ -237,7 +237,7 @@ func ResetPasswordEndpoint(w http.ResponseWriter, r *http.Request) {
 	var argMap map[string]string
 	err = decoder.Decode(&argMap)
 	if err != nil {
-		JsonDecodeError(w)
+		JsonDecodeError(w, err)
 		return
 	}
 	newPassword := argMap["password"]

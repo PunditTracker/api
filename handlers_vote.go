@@ -15,10 +15,11 @@ func VoteForPredictionHandler(w http.ResponseWriter, r *http.Request) {
 	predId, _ := strconv.ParseInt(vars["pred_id"], 10, 64)
 	vVal, _ := strconv.Atoi(vars["value"])
 
-	db, err := getDB()
-	if err != nil {
-		DBError(w)
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
 	}
+	defer db.Close()
 
 	avg := GetAverageVoteForPredictionId(db, predId)
 	vote := PtVote{
@@ -34,10 +35,11 @@ func VoteForPredictionHandler(w http.ResponseWriter, r *http.Request) {
 func AverageForPredictionHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	predId, _ := strconv.ParseInt(vars["pred_id"], 10, 64)
-	db, err := getDB()
-	if err != nil {
-		DBError(w)
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
 	}
+	defer db.Close()
 	avg := GetAverageVoteForPredictionId(db, predId)
 	response := map[string]interface{}{
 		"predictionId": predId,

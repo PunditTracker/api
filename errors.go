@@ -4,13 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/jinzhu/gorm"
+	"log"
 	"net/http"
 )
 
 func GetDBOrPrintError(w http.ResponseWriter) *gorm.DB {
 	db, err := getDB()
 	if err != nil {
-		DBError(w)
+		DBError(w, err)
 		return nil
 	}
 	return db
@@ -36,12 +37,14 @@ func IncorrectPasswordError(w http.ResponseWriter) {
 	JsonError(w, http.StatusUnauthorized, "Incorrect Password")
 }
 
-func JsonDecodeError(w http.ResponseWriter) {
-	JsonError(w, http.StatusUnauthorized, "Json Decode Error")
+func JsonDecodeError(w http.ResponseWriter, err error) {
+	JsonError(w, http.StatusUnauthorized, "Json Decode Error: "+err.Error())
+	log.Println("jsonDecerr: " + err.Error())
 }
 
-func DBError(w http.ResponseWriter) {
-	JsonError(w, http.StatusConflict, "Database Error")
+func DBError(w http.ResponseWriter, err error) {
+	JsonError(w, http.StatusConflict, "Database Error: "+err.Error())
+	log.Println("dberr: " + err.Error())
 }
 
 func NotAuthedRedirect(w http.ResponseWriter) {

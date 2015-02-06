@@ -53,7 +53,7 @@ func SetHeroHandler(w http.ResponseWriter, r *http.Request) {
 	SetHero(db, &hero)
 	j, err := json.Marshal(hero)
 	if err != nil {
-		fmt.Println("Json Decode Error", err)
+		JsonDecodeError(w, err)
 	}
 	fmt.Fprintln(w, string(j))
 }
@@ -68,7 +68,7 @@ func SetPredictionSetHandler(w http.ResponseWriter, r *http.Request) {
 	var predictionSet PtPredictionSet
 	err := dec.Decode(&predictionSet)
 	if err != nil {
-		fmt.Println("Json Decode Error", err)
+		JsonDecodeError(w, err)
 		return
 	}
 
@@ -80,7 +80,7 @@ func SetPredictionSetHandler(w http.ResponseWriter, r *http.Request) {
 	SetPredictionSet(db, &predictionSet)
 	j, err := json.Marshal(predictionSet)
 	if err != nil {
-		fmt.Println("Json Decode Error", err)
+		JsonDecodeError(w, err)
 	}
 	fmt.Fprintln(w, string(j))
 }
