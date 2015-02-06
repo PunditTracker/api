@@ -10,6 +10,10 @@ import (
 )
 
 func SetStateHandler(w http.ResponseWriter, r *http.Request) {
+	if IsAdminOrRedirect(w, r) {
+		NoCredentialError(w)
+		return
+	}
 	db := GetDBOrPrintError(w)
 	if db == nil {
 		return
@@ -29,6 +33,10 @@ func SetStateHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func SetHeroHandler(w http.ResponseWriter, r *http.Request) {
+	if IsAdminOrRedirect(w, r) {
+		NoCredentialError(w)
+		return
+	}
 	//Parse the Json
 	dec := json.NewDecoder(r.Body)
 	var hero PtHero
@@ -51,6 +59,10 @@ func SetHeroHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func SetPredictionSetHandler(w http.ResponseWriter, r *http.Request) {
+	if IsAdminOrRedirect(w, r) {
+		NoCredentialError(w)
+		return
+	}
 	//Parse the Json
 	dec := json.NewDecoder(r.Body)
 	var predictionSet PtPredictionSet

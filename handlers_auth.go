@@ -115,6 +115,9 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	kv := map[string]string{
 		"uid": strconv.Itoa(int(authedUser.Id)),
 	}
+	if authedUser.IsAdmin {
+		kv["isadmin"] = "true"
+	}
 	setSession(kv, w)
 
 	//num now set
@@ -150,6 +153,9 @@ func LoginFacebookHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	kv := map[string]string{
 		"uid": strconv.Itoa(int(authedUser.Id)),
+	}
+	if authedUser.IsAdmin {
+		kv["isadmin"] = "true"
 	}
 	setSession(kv, w)
 	j, err := json.Marshal(authedUser)
@@ -264,4 +270,14 @@ func GetUIDOrRedirect(w http.ResponseWriter, r *http.Request) int64 {
 	}
 	voterId, _ := strconv.ParseInt(voterIdStr, 10, 64)
 	return voterId
+}
+
+//IsAdminOrRedirect returns true if it redirects
+func IsAdminOrRedirect(w http.ResponseWriter, r *http.Request) bool {
+	isAdmin := getSession(r)["isadmin"]
+	if isAdmin != "true" {
+		NotAuthedRedirect(w)
+		return true
+	}
+	return false
 }

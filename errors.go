@@ -16,6 +16,10 @@ func GetDBOrPrintError(w http.ResponseWriter) *gorm.DB {
 	return db
 }
 
+func NoCredentialError(w http.ResponseWriter) {
+	JsonError(w, http.StatusUnauthorized, "Not logged in as admin")
+}
+
 func NoUserWithEmailError(w http.ResponseWriter) {
 	JsonError(w, http.StatusBadRequest, "no user with that email")
 }
