@@ -56,7 +56,7 @@ func UploadImageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	uniquestring := fmt.Sprintf("/prof_pic/%d", uid)
 
-	bucketName := "assets.foretellr.com"
+	bucketName := "assets.pundittracker.com"
 	contType := h.Header.Get("Content-Type")
 	link, err := putImageOnS3(bucketName, b, contType, uniquestring)
 	if err != nil {
@@ -93,7 +93,7 @@ func putImageOnS3(bucketName string, data []byte, imageType string, uniqueIdenti
 		log.Println(err.Error())
 		return "", err
 	}
-	s := s3.New(auth, aws.USWest)
+	s := s3.New(auth, aws.USEast)
 	b := s.Bucket(bucketName)
 	err = b.Put(uniqueIdentifier, data, imageType, s3.PublicReadWrite)
 	if err != nil {
