@@ -81,13 +81,15 @@ func fileformHandler(w http.ResponseWriter, r *http.Request) {
 func putImageOnS3(bucketName string, data []byte, imageType string, uniqueIdentifier string) string {
 	auth, err := aws.EnvAuth()
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
+		return ""
 	}
 	s := s3.New(auth, aws.USWest)
 	b := s.Bucket(bucketName)
 	err = b.Put(uniqueIdentifier, data, imageType, s3.PublicReadWrite)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
+		return ""
 	}
 	return fmt.Sprintf("https://s3-us-west-1.amazonaws.com/%s/%s", bucketName, uniqueIdentifier)
 }
