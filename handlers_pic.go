@@ -100,5 +100,5 @@ func putImageOnS3(bucketName string, data []byte, imageType string, uniqueIdenti
 		log.Println(err.Error())
 		return "", err
 	}
-	return fmt.Sprintf("https://s3-us-west-1.amazonaws.com/%s/%s", bucketName, uniqueIdentifier), nil
+	return fmt.Sprintf("https://s3.amazonaws.com/%s/%s", bucketName, uniqueIdentifier), nil
 }
