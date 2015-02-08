@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"log/syslog"
 	"os"
 )
 
