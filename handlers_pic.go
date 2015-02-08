@@ -39,12 +39,14 @@ func UploadImageHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	file, h, err := r.FormFile("file")
 	if err != nil {
+		fmt.Fprintln(w, "formfile error", err.Error())
 		log.Println("formfile error", err.Error())
 		return
 	}
 	defer file.Close()
 	b, err := ioutil.ReadAll(file)
 	if err != nil {
+		fmt.Fprintln(w, "readfile error", err.Error())
 		log.Println("readfile error", err.Error())
 		return
 	}
