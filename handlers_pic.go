@@ -24,7 +24,7 @@ func AdminUploadImageHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println(err.Error())
 	}
 	uniquestring := fmt.Sprintf("images/%s", h.Filename)
-	bucketName := "assets.foretellr.com"
+	bucketName := "assets.pundittracker.com"
 	contType := h.Header.Get("Content-Type")
 	link, err := putImageOnS3(bucketName, data, contType, uniquestring)
 	if err != nil {
@@ -54,7 +54,7 @@ func UploadImageHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("readfile error", err.Error())
 		return
 	}
-	uniquestring := fmt.Sprintf("/prof_pic/%d", uid)
+	uniquestring := fmt.Sprintf("prof_pic/%d", uid)
 
 	bucketName := "assets.pundittracker.com"
 	contType := h.Header.Get("Content-Type")
