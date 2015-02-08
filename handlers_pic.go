@@ -26,7 +26,11 @@ func AdminUploadImageHandler(w http.ResponseWriter, r *http.Request) {
 	uniquestring := fmt.Sprintf("images/%s", h.Filename)
 	bucketName := "assets.foretellr.com"
 	contType := h.Header.Get("Content-Type")
-	link := putImageOnS3(bucketName, data, contType, uniquestring)
+	link, err := putImageOnS3(bucketName, data, contType, uniquestring)
+	if err != nil {
+		log.Println("upload error:", err.Error())
+		fmt.Fprintln(w, "upload error:", err.Error())
+	}
 	fmt.Fprintln(w, link)
 }
 
@@ -54,7 +58,12 @@ func UploadImageHandler(w http.ResponseWriter, r *http.Request) {
 
 	bucketName := "assets.foretellr.com"
 	contType := h.Header.Get("Content-Type")
-	link := putImageOnS3(bucketName, b, contType, uniquestring)
+	link, err := putImageOnS3(bucketName, b, contType, uniquestring)
+	if err != nil {
+		log.Println("upload error:", err.Error())
+		fmt.Fprintln(w, "upload error:", err.Error())
+		return
+	}
 	log.Println(link)
 	db := GetDBOrPrintError(w)
 	if db == nil {
@@ -78,18 +87,18 @@ func fileformHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, `<html><body><form enctype="multipart/form-data" action='/v1/putprofpic' method='post'><input type='file' name='file'><input type='submit'></form></body>`)
 }
 
-func putImageOnS3(bucketName string, data []byte, imageType string, uniqueIdentifier string) string {
+func putImageOnS3(bucketName string, data []byte, imageType string, uniqueIdentifier string) (string, error) {
 	auth, err := aws.EnvAuth()
 	if err != nil {
 		log.Println(err.Error())
-		return ""
+		return "", err
 	}
 	s := s3.New(auth, aws.USWest)
 	b := s.Bucket(bucketName)
 	err = b.Put(uniqueIdentifier, data, imageType, s3.PublicReadWrite)
 	if err != nil {
 		log.Println(err.Error())
-		return ""
+		return "", err
 	}
-	return fmt.Sprintf("https://s3-us-west-1.amazonaws.com/%s/%s", bucketName, uniqueIdentifier)
+	return fmt.Sprintf("https://s3-us-west-1.amazonaws.com/%s/%s", bucketName, uniqueIdentifier), nil
 }
