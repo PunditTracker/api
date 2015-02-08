@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	port   = ":3000"
+	port   = ":8080"
 	router = mux.NewRouter()
 )
 

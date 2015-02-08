@@ -41,6 +41,8 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	var user PtUser
+	user.FirstName = userMap["firstname"]
+	user.LastName = userMap["lastname"]
 	user.Email = userMap["email"]
 	user.Password = userMap["password"]
 	user.ResetValidUntil = time.Now()
