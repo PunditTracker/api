@@ -15,13 +15,13 @@ func AdminUploadImageHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	file, h, err := r.FormFile("image")
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Println(err.Error())
 		return
 	}
 	defer file.Close()
 	data, err := ioutil.ReadAll(file)
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Println(err.Error())
 	}
 	uniquestring := fmt.Sprintf("images/%s", h.Filename)
 	bucketName := "assets.foretellr.com"
@@ -31,7 +31,7 @@ func AdminUploadImageHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func UploadImageHandler(w http.ResponseWriter, r *http.Request) {
-	log.Println("being upload image handler")
+	log.Println("begin upload image handler")
 	uid := GetUIDOrRedirect(w, r)
 	if uid == 0 {
 		return
@@ -39,13 +39,13 @@ func UploadImageHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	file, h, err := r.FormFile("file")
 	if err != nil {
-		log.Println(err.Error())
+		log.Println("formfile error", err.Error())
 		return
 	}
 	defer file.Close()
 	b, err := ioutil.ReadAll(file)
 	if err != nil {
-		log.Println(err.Error())
+		log.Println("readfile error", err.Error())
 		return
 	}
 	uniquestring := fmt.Sprintf("/prof_pic/%d", uid)
