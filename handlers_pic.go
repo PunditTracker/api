@@ -46,11 +46,12 @@ func UploadImageHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err.Error())
 		return
 	}
-	uniquestring := fmt.Sprintf("prof_pic/%d", uid)
+	uniquestring := fmt.Sprintf("/prof_pic/%d", uid)
 
 	bucketName := "assets.foretellr.com"
 	contType := h.Header.Get("Content-Type")
 	link := putImageOnS3(bucketName, b, contType, uniquestring)
+	fmt.Println(link)
 	db := GetDBOrPrintError(w)
 	if db == nil {
 		return
