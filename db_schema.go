@@ -34,7 +34,7 @@ func getDB() (*gorm.DB, error) {
 		}
 		db.DB()
 		db.SingularTable(true)
-		db.LogMode(true)
+		db.LogMode(false)
 		return &db, err
 	}
 	return nil, errors.New("No SERV specified")
