@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"log/syslog"
 	"os"
 )
 
@@ -10,6 +11,10 @@ var (
 )
 
 func init() {
+	logwriter, e := syslog.New(syslog.LOG_NOTICE, "sys")
+	if e == nil {
+		log.SetOutput(logwriter)
+	}
 
 	db_f, err := os.OpenFile("db_log.txt", os.O_RDWR|os.O_APPEND|os.O_CREATE, 0660)
 	if err != nil {
