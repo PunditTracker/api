@@ -11,11 +11,11 @@ import (
 
 func init() {
 	db, err := getDB()
-	defer db.Close()
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
+	defer db.Close()
 	SetUpDB(db)
 }
 
