@@ -48,6 +48,9 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	SetPassword(db, &user)
 
 	db.First(&user, user.Id)
+
+	setSessionForUser(w, &user)
+
 	j, _ := json.Marshal(user)
 	fmt.Fprintln(w, string(j))
 	SendWelcomeEmail(&user)
@@ -70,6 +73,7 @@ func RegisterFacebookHandler(w http.ResponseWriter, r *http.Request) {
 
 	SetPassword(db, &user)
 	db.First(&user, user.Id)
+	setSessionForUser(w, &user)
 	j, _ := json.Marshal(user)
 	fmt.Fprintln(w, string(j))
 	SendWelcomeEmail(&user)
@@ -92,6 +96,17 @@ func SendWelcomeEmail(user *PtUser) {
 	}
 }
 
+func setSessionForUser(w http.ResponseWriter, authedUser *PtUser) {
+	//Set up session or cookie
+	kv := map[string]string{
+		"uid": strconv.Itoa(int(authedUser.Id)),
+	}
+	if authedUser.IsAdmin {
+		kv["isadmin"] = "true"
+	}
+	setSession(kv, w)
+}
+
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	db := GetDBOrPrintError(w)
 	if db == nil {
@@ -111,14 +126,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		NotAuthedRedirect(w)
 		return
 	}
-	//Set up session or cookie
-	kv := map[string]string{
-		"uid": strconv.Itoa(int(authedUser.Id)),
-	}
-	if authedUser.IsAdmin {
-		kv["isadmin"] = "true"
-	}
-	setSession(kv, w)
+	setSessionForUser(w, &authedUser)
 
 	//num now set
 	j, err := json.Marshal(authedUser)
