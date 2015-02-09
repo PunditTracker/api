@@ -51,6 +51,14 @@ func NotAuthedRedirect(w http.ResponseWriter) {
 	JsonError(w, http.StatusUnauthorized, "Not Authorized")
 }
 
+func MustResetPasswordError(w http.ResponseWriter) {
+	JsonError(w, http.StatusExpectationFailed, "User must reset password")
+}
+
+func UserAlreadyExistsError(w http.ResponseWriter) {
+	JsonError(w, http.StatusConflict, "User already exists")
+}
+
 func JsonError(w http.ResponseWriter, status int, message string) {
 	w.WriteHeader(status)
 	response := map[string]interface{}{"Status": status, "Message": message}
