@@ -18,23 +18,23 @@ func GetDBOrPrintError(w http.ResponseWriter) *gorm.DB {
 }
 
 func NoCredentialError(w http.ResponseWriter) {
-	JsonError(w, http.StatusUnauthorized, "Not logged in as admin")
+	JsonError(w, http.StatusUnauthorized, "Not logged in as an admin.")
 }
 
 func NoUserWithEmailError(w http.ResponseWriter) {
-	JsonError(w, http.StatusBadRequest, "no user with that email")
+	JsonError(w, http.StatusBadRequest, "No user exists with that email address.")
 }
 
 func NoIdIncludedError(w http.ResponseWriter) {
-	JsonError(w, http.StatusBadRequest, "No id provided")
+	JsonError(w, http.StatusBadRequest, "No ID provided.")
 }
 
 func UsernameDoesNotExistError(w http.ResponseWriter) {
-	JsonError(w, http.StatusUnauthorized, "Username does not exist")
+	JsonError(w, http.StatusUnauthorized, "That username does not exist.")
 }
 
 func IncorrectPasswordError(w http.ResponseWriter) {
-	JsonError(w, http.StatusUnauthorized, "Incorrect Password")
+	JsonError(w, http.StatusUnauthorized, "That password is incorrect.")
 }
 
 func JsonDecodeError(w http.ResponseWriter, err error) {
@@ -48,15 +48,15 @@ func DBError(w http.ResponseWriter, err error) {
 }
 
 func NotAuthedRedirect(w http.ResponseWriter) {
-	JsonError(w, http.StatusUnauthorized, "Not Authorized")
+	JsonError(w, http.StatusUnauthorized, "Not authorized.")
 }
 
 func MustResetPasswordError(w http.ResponseWriter) {
-	JsonError(w, http.StatusExpectationFailed, "User must reset password")
+	JsonError(w, http.StatusExpectationFailed, "Due to a recent server change, your password has been reset. Please check your email for instructions and a link to choose your new password.")
 }
 
 func UserAlreadyExistsError(w http.ResponseWriter) {
-	JsonError(w, http.StatusConflict, "User already exists")
+	JsonError(w, http.StatusConflict, "That user already exists.")
 }
 
 func JsonError(w http.ResponseWriter, status int, message string) {
