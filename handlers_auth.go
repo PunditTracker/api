@@ -245,10 +245,7 @@ func ForgotPassword(w http.ResponseWriter, toEmail string) {
 		message,
 	)
 	log.Println("mess: ", message)
-	if err == nil {
-		j, _ := json.Marshal(map[string]string{"Message": "email sent"})
-		fmt.Fprintln(w, string(j))
-	} else {
+	if err != nil {
 		j, _ := json.Marshal(map[string]string{"Message": "email failed: " + err.Error()})
 		fmt.Fprintln(w, string(j))
 	}
