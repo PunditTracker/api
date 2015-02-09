@@ -218,6 +218,7 @@ func ForgotPasswordEndpoint(w http.ResponseWriter, r *http.Request) {
 }
 
 func ForgotPassword(w http.ResponseWriter, toEmail string) {
+	log.Println("Forgot password begin")
 	fromEmail := "noreply@pundittracker.com"
 	db := GetDBOrPrintError(w)
 	if db == nil {
@@ -226,6 +227,7 @@ func ForgotPassword(w http.ResponseWriter, toEmail string) {
 	defer db.Close()
 	var user PtUser
 	db.Where("email=?", toEmail).First(&user)
+	log.Println(user)
 	if user.Id == 0 {
 		NoUserWithEmailError(w)
 		return
