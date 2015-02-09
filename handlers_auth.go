@@ -130,7 +130,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if checkEmailForExistence(w, db, userMap["email"]) {
+	if checkEmailForNonePassword(w, db, userMap["email"]) {
 		return
 	}
 
@@ -160,7 +160,7 @@ func LoginFacebookHandler(w http.ResponseWriter, r *http.Request) {
 		JsonDecodeError(w, err)
 		return
 	}
-	if checkEmailForExistence(w, db, userMap["email"]) {
+	if checkEmailForNonePassword(w, db, userMap["email"]) {
 		return
 	}
 	var authedUser PtUser

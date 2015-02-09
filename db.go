@@ -244,3 +244,14 @@ func checkEmailForExistence(w http.ResponseWriter, db *gorm.DB, email string) bo
 	}
 	return false
 }
+
+func checkEmailForNonePassword(w http.ResponseWriter, db *gorm.DB, email string) bool {
+	var testUser PtUser
+	db.Where("email = ?", email).First(&testUser)
+	if testUser.Id != 0 && testUser.Password == "NONE" {
+		ForgotPassword(w, email)
+		MustResetPasswordError(w)
+		return true
+	}
+	return false
+}
