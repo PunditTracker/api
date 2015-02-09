@@ -41,20 +41,10 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	var user PtUser
-	var testUser PtUser
 	user.Email = userMap["email"]
-	db.Where("email = ?", user.Email).First(&testUser)
-	if testUser.Id != 0 {
-		if testUser.Password == "NONE" {
-			ForgotPassword(w, user.Email)
-			MustResetPasswordError(w)
-			return
-		} else {
-			UserAlreadyExistsError(w)
-			return
-		}
+	if checkEmailForExistence(w, db, user.Email) {
+		return
 	}
-
 	user.FirstName = userMap["firstName"]
 	user.LastName = userMap["lastName"]
 	user.Password = userMap["password"]
@@ -78,14 +68,18 @@ func RegisterFacebookHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		JsonDecodeError(w, err)
 	}
-	user.Created = time.Now()
-	user.ResetValidUntil = time.Now()
 	db := GetDBOrPrintError(w)
 	if db == nil {
 		return
 	}
 	defer db.Close()
 
+	if checkEmailForExistence(w, db, user.Email) {
+		return
+	}
+
+	user.Created = time.Now()
+	user.ResetValidUntil = time.Now()
 	SetPassword(db, &user)
 	db.First(&user, user.Id)
 	setSessionForUser(w, &user)
@@ -135,6 +129,11 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		JsonDecodeError(w, err)
 		return
 	}
+
+	if checkEmailForExistence(w, db, userMap["email"]) {
+		return
+	}
+
 	authedUser := CheckUser(db, userMap["email"], userMap["password"])
 
 	if authedUser.Id == 0 {
@@ -161,7 +160,9 @@ func LoginFacebookHandler(w http.ResponseWriter, r *http.Request) {
 		JsonDecodeError(w, err)
 		return
 	}
-	log.Println(userMap)
+	if checkEmailForExistence(w, db, userMap["email"]) {
+		return
+	}
 	var authedUser PtUser
 	if userMap["facebookId"] == "" {
 		authedUser = CheckUser(db, userMap["email"], userMap["password"])

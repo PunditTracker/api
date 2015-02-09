@@ -6,6 +6,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
 	"log"
+	"net/http"
 )
 
 var (
@@ -226,4 +227,20 @@ func SetHero(db *gorm.DB, hero *PtHero) {
 
 func SetPredictionSet(db *gorm.DB, predictionSet *PtPredictionSet) {
 	db.Save(predictionSet)
+}
+
+func checkEmailForExistence(w http.ResponseWriter, db *gorm.DB, email string) bool {
+	var testUser PtUser
+	db.Where("email = ?", email).First(&testUser)
+	if testUser.Id != 0 {
+		if testUser.Password == "NONE" {
+			ForgotPassword(w, email)
+			MustResetPasswordError(w)
+			return true
+		} else {
+			UserAlreadyExistsError(w)
+			return true
+		}
+	}
+	return false
 }
