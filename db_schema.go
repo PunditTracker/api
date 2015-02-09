@@ -63,19 +63,9 @@ type PtUser struct {
 }
 
 type PtCategory struct {
-	Id            int64
-	Name          string `sql:"not null; unique"`
-	Subcategories []PtSubcategory
-	IsLive        bool `sql:"not null; DEFAULT:FALSE"`
-}
-
-type PtSubcategory struct {
-	Id          int64
-	Name        string `sql:"not null; unique"`
-	ParentCat   PtCategory
-	ParentCatId int64 `sql:"not null"`
-	IsLive      bool  `sql:"not null; DEFAULT: FALSE"`
-	Predictions []PtPrediction
+	Id     int64
+	Name   string `sql:"not null; unique"`
+	IsLive bool   `sql:"not null; DEFAULT:FALSE"`
 }
 
 type PtPredictionState int
@@ -91,7 +81,6 @@ type PtPrediction struct {
 	Id         int64
 	CreatorId  int64             `sql:"not null"`
 	CategoryId int64             `sql:"not null"`
-	SubcatId   int64             `sql:"not null"`
 	Title      string            `sql:"not null"`
 	State      PtPredictionState `sql:"not null";DEFAULT:0`
 	IsFeatured bool              `sql:"not null; DEFAULT:FALSE"`
@@ -189,7 +178,6 @@ func SetUpDB(db *gorm.DB) {
 	db.Debug().AutoMigrate(
 		&PtUser{},
 		&PtCategory{},
-		&PtSubcategory{},
 		&PtPrediction{},
 		&PtVote{},
 		&PtTag{},

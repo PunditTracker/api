@@ -112,31 +112,6 @@ func GetCategories(db *gorm.DB) []PtCategory {
 	return categories
 }
 
-func GetSubcategoriesWithCategoryId(db *gorm.DB, catId int64) []PtSubcategory {
-	subcats := []PtSubcategory{}
-	fmt.Println("category id")
-	db.Where("parent_cat_id = ?", catId).Find(&subcats)
-	return subcats
-}
-
-func GetSubcategoriesWithCategoryName(db *gorm.DB, name string) []PtSubcategory {
-	var category PtCategory
-	var subcats []PtSubcategory
-	fmt.Println("category name")
-	db.Where("name = ?", name).First(&category)
-	if category.Id == 0 {
-		return subcats
-	}
-	db.Where("parent_cat_id = ?", category.Id).Find(&subcats)
-	return subcats
-}
-
-func GetPredictionsForSubcatId(db *gorm.DB, subcatId int64) []PtPrediction {
-	preds := []PtPrediction{}
-	db.Where("subcat_id = ?", subcatId).Find(&preds)
-	return preds
-}
-
 func GetPredictionsForCategoryId(db *gorm.DB, catId int64) []PtPrediction {
 	preds := []PtPrediction{}
 	db.Where("category_id = ?", catId).Find(&preds)

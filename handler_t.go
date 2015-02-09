@@ -41,7 +41,6 @@ func LoadTestDataHandler(w http.ResponseWriter, r *http.Request) {
 
 	AddPrediction(db, &PtPrediction{
 		CreatorId: 1,
-		SubcatId:  0,
 		Title:     "X Will Win the Super Bowl",
 		/*Tags: []PtTag{
 			{
@@ -57,14 +56,12 @@ func LoadTestDataHandler(w http.ResponseWriter, r *http.Request) {
 
 	AddPrediction(db, &PtPrediction{
 		CreatorId:  2,
-		SubcatId:   0,
 		Title:      "Prediction Two",
 		IsFeatured: true,
 		Deadline:   time.Now(),
 	})
 	AddPrediction(db, &PtPrediction{
 		CreatorId:  3,
-		SubcatId:   0,
 		Title:      "Prediction Three",
 		IsFeatured: true,
 		Deadline:   time.Now(),
@@ -104,26 +101,6 @@ func AddBaseCategories(db *gorm.DB) {
 		Name:   "Economics",
 		IsLive: false,
 	})
-	AddSubcategory(db, PtSubcategory{
-		Name:        "NBA",
-		ParentCatId: 1,
-		IsLive:      false,
-	})
-	AddSubcategory(db, PtSubcategory{
-		Name:        "NCAA Basketball",
-		ParentCatId: 1,
-		IsLive:      false,
-	})
-	AddSubcategory(db, PtSubcategory{
-		Name:        "NFL",
-		ParentCatId: 1,
-		IsLive:      false,
-	})
-	AddSubcategory(db, PtSubcategory{
-		Name:        "Supreme Court Decisions",
-		ParentCatId: 2,
-		IsLive:      false,
-	})
 	db.Save(&PtHero{
 		IsLive:       true,
 		LocationNum:  2,
@@ -158,8 +135,4 @@ func AddPredictionSet(db *gorm.DB, newSet *PtPredictionSet) int64 {
 func AddCategory(db *gorm.DB, newCategory PtCategory) int64 {
 	db.Save(newCategory)
 	return newCategory.Id
-}
-func AddSubcategory(db *gorm.DB, newSub PtSubcategory) int64 {
-	db.Save(newSub)
-	return newSub.Id
 }

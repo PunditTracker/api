@@ -97,19 +97,6 @@ func GetPredictionsForCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, string(j))
 }
 
-func GetPredictionsForSubcatHandler(w http.ResponseWriter, r *http.Request) {
-	db := GetDBOrPrintError(w)
-	if db == nil {
-		return
-	}
-	defer db.Close()
-	vars := mux.Vars(r)
-	subCatId, _ := strconv.ParseInt(vars["subcatid"], 10, 64)
-	preds := GetPredictionsForSubcatId(db, subCatId)
-	j, _ := json.Marshal(preds)
-	fmt.Fprintln(w, string(j))
-}
-
 func StringToTsQuery(input string, connector string) string {
 	toReturn := strings.Join(strings.Split(input, " "), connector)
 	return toReturn

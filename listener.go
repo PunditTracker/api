@@ -44,7 +44,7 @@ func addListeners() {
 	router.HandleFunc("/v1/prediction/add", AddPredictionHandler)                             //.Methods("GET")
 	router.HandleFunc("/v1/prediction/latest/{subcatid:[0-9]+}", GetLatestPredictionsHandler) //.Methods("GET")
 	router.HandleFunc("/v1/prediction/category/{catid:[0-9]+}", GetPredictionsForCategoryHandler)
-	router.HandleFunc("/v1/prediction/subcat/{subcatid:[0-9]+}", GetPredictionsForSubcatHandler)
+
 	router.HandleFunc("/v1/prediction/search/{searchstr}", SearchPredictionsHandler)
 	router.HandleFunc("/v1/prediction/user/{id:[0-9]+}", GetUserPredictionsHandler)
 	router.HandleFunc("/v1/prediction/tag/{tag}", GetTaggedPredictionHandler)
@@ -59,8 +59,6 @@ func addListeners() {
 
 	//Category
 	router.HandleFunc("/v1/category", GetCategoriesHandler)
-	router.HandleFunc("/v1/category/{id:[0-9]+}/sub", GetSubcategoriesHandler)
-	router.HandleFunc("/v1/category/{name:[a-zA-Z0-9]+}/sub", GetSubcategoriesWithNameHandler)
 
 	//March Madness
 	router.HandleFunc("/v1/user/bracket/{userId:[0-9]+}", GetBracketHandler)
