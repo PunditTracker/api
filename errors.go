@@ -8,6 +8,10 @@ import (
 	"net/http"
 )
 
+func notFoundHandler(w http.ResponseWriter, r *http.Request) {
+	NotFoundError(w)
+}
+
 func GetDBOrPrintError(w http.ResponseWriter) *gorm.DB {
 	db, err := getDB()
 	if err != nil {
@@ -15,6 +19,10 @@ func GetDBOrPrintError(w http.ResponseWriter) *gorm.DB {
 		return nil
 	}
 	return db
+}
+
+func NotFoundError(w http.ResponseWriter) {
+	JsonError(w, http.StatusNotFound, "Not Found")
 }
 
 func NoCredentialError(w http.ResponseWriter) {

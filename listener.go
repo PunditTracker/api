@@ -26,7 +26,7 @@ func addListeners() {
 
 	//Forgot Password Workflow
 	router.HandleFunc("/v1/auth/forgot", ForgotPasswordEndpoint)
-	router.HandleFunc("/v1/auth/reset/{id:[0-9]}/{resetKey}", ResetPasswordEndpoint)
+	router.HandleFunc("/v1/auth/reset/{id:[0-9]+}/{resetKey}", ResetPasswordEndpoint)
 
 	//User
 	router.HandleFunc("/v1/user", GetAllUsersHandler)               //.Methods("GET")
@@ -72,6 +72,8 @@ func addListeners() {
 	router.HandleFunc("/v1/admin/homepage/set/predictionSet", SetPredictionSetHandler)
 	router.HandleFunc("/v1/admin/prediction/setstate/{predId:[0-9]+}/{state:[0-9]}", SetStateHandler)
 	router.HandleFunc("/v1/admin/addimage", AdminUploadImageHandler)
+
+	router.NotFoundHandler = http.HandlerFunc(notFoundHandler)
 }
 
 type PTServer struct {
