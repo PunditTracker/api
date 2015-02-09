@@ -85,7 +85,7 @@ type PtPrediction struct {
 	State      PtPredictionState `sql:"not null";DEFAULT:0`
 	IsFeatured bool              `sql:"not null; DEFAULT:FALSE"`
 	Created    time.Time         `sql:"not null; DEFAULT:current_timestamp"`
-	Deadline   time.Time         `sql:"not null"`
+	Deadline   time.Time
 	ImageUrl   string
 	Creator    PtUser
 	Category   PtCategory `json:"-"`
