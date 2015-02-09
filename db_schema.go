@@ -87,14 +87,6 @@ const (
 	DidNotHappen                   = 3
 )
 
-/*
-category: "Sports"
-deadline: "2016-12-12T00:00:00.000Z"
-subcat: "NFL"
-tags: ["NFL"]
-title: "Test prediction."
-*/
-
 type PtPrediction struct {
 	Id         int64
 	CreatorId  int64             `sql:"not null"`
@@ -105,11 +97,10 @@ type PtPrediction struct {
 	IsFeatured bool              `sql:"not null; DEFAULT:FALSE"`
 	Created    time.Time         `sql:"not null; DEFAULT:current_timestamp"`
 	Deadline   time.Time         `sql:"not null"`
+	ImageUrl   string
 	Creator    PtUser
 	Category   PtCategory `json:"-"`
-	Subcat     PtSubcategory
-	ImageUrl   string
-	Tags       []PtTag `gorm:"many2many:prediction_tag_map;"`
+	Tags       []PtTag    `gorm:"many2many:prediction_tag_map;"`
 }
 
 type PtVote struct {

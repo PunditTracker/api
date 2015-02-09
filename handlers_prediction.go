@@ -57,7 +57,7 @@ func AddPredictionHandler(w http.ResponseWriter, r *http.Request) {
 	var prediction PtPrediction
 	err := dec.Decode(&prediction)
 	if err != nil {
-		fmt.Println("Json Decode Error", err)
+		JsonDecodeError(w, err)
 		return
 	}
 	prediction.CreatorId = GetUIDOrRedirect(w, r)
