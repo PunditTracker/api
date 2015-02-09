@@ -45,7 +45,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	user.Email = userMap["email"]
 	db.Where("email = ?", user.Email).First(&testUser)
 	if testUser.Id != 0 {
-		if user.Password == "NONE" {
+		if testUser.Password == "NONE" {
 			ForgotPassword(w, user.Email)
 			MustResetPasswordError(w)
 			return
