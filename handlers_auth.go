@@ -41,10 +41,12 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	var user PtUser
+	var testUser PtUser
 	user.Email = userMap["email"]
-	db.Where("email = ?", user.Email).First(&user)
-	if user.Id != 0 {
+	db.Where("email = ?", user.Email).First(&testUser)
+	if testUser.Id != 0 {
 		if user.Password == "NONE" {
+			ForgotPassword(w, user.Email)
 			MustResetPasswordError(w)
 			return
 		} else {
@@ -209,16 +211,20 @@ func ForgotPasswordEndpoint(w http.ResponseWriter, r *http.Request) {
 		JsonDecodeError(w, err)
 		return
 	}
-	fromEmail := "noreply@pundittracker.com"
 	toEmail := argMap["email"]
 
 	//Send an email to the user
-	var user PtUser
+	ForgotPassword(w, toEmail)
+}
+
+func ForgotPassword(w http.ResponseWriter, toEmail string) {
+	fromEmail := "noreply@pundittracker.com"
 	db := GetDBOrPrintError(w)
 	if db == nil {
 		return
 	}
 	defer db.Close()
+	var user PtUser
 	db.Where("email=?", toEmail).First(&user)
 	if user.Id == 0 {
 		NoUserWithEmailError(w)
@@ -230,7 +236,7 @@ func ForgotPasswordEndpoint(w http.ResponseWriter, r *http.Request) {
 	db.Save(&user)
 	message := "Please goto " + fmt.Sprintf("foretellr.com/reset/%d/%s", user.Id, user.ResetKey)
 
-	_, err = ses.EnvConfig.SendEmail(
+	_, err := ses.EnvConfig.SendEmail(
 		fromEmail,
 		toEmail,
 		"Password Recovery- Click link to reset",
@@ -244,7 +250,6 @@ func ForgotPasswordEndpoint(w http.ResponseWriter, r *http.Request) {
 		j, _ := json.Marshal(map[string]string{"Message": "email failed: " + err.Error()})
 		fmt.Fprintln(w, string(j))
 	}
-
 }
 
 func ResetPasswordEndpoint(w http.ResponseWriter, r *http.Request) {
