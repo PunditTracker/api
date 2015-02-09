@@ -58,7 +58,7 @@ func addListeners() {
 	router.HandleFunc("/v1/prediction/vote/{pred_id:[0-9]+}/avg", AverageForPredictionHandler)
 
 	//Category
-	router.HandleFunc("/v1/category/", GetCategoriesHandler)
+	router.HandleFunc("/v1/category", GetCategoriesHandler)
 	router.HandleFunc("/v1/category/{id:[0-9]+}/sub", GetSubcategoriesHandler)
 	router.HandleFunc("/v1/category/{name:[a-zA-Z0-9]+}/sub", GetSubcategoriesWithNameHandler)
 
