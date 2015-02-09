@@ -87,6 +87,14 @@ const (
 	DidNotHappen                   = 3
 )
 
+/*
+category: "Sports"
+deadline: "2016-12-12T00:00:00.000Z"
+subcat: "NFL"
+tags: ["NFL"]
+title: "Test prediction."
+*/
+
 type PtPrediction struct {
 	Id         int64
 	CreatorId  int64             `sql:"not null"`
