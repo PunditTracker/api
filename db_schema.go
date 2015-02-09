@@ -98,7 +98,7 @@ type PtPrediction struct {
 	Created    time.Time         `sql:"not null; DEFAULT:current_timestamp"`
 	Deadline   time.Time         `sql:"not null"`
 	Creator    PtUser
-	Category   PtCategory
+	Category   PtCategory `json:"-"`
 	Subcat     PtSubcategory
 	ImageUrl   string
 	Tags       []PtTag `gorm:"many2many:prediction_tag_map;"`
