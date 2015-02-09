@@ -38,11 +38,10 @@ func addListeners() {
 	router.HandleFunc("/v1/putprofpic", UploadImageHandler)
 
 	//Prediction
-	router.HandleFunc("/v1/prediction", GetAllPredictionsHandler)                             //.Methods("GET")
-	router.HandleFunc("/v1/prediction/featured", GetFeaturedPredictionsHandler)               //.Methods("GET")
-	router.HandleFunc("/v1/prediction/{id:[0-9]+}", GetSinglePredictionHandler)               //.Methods("GET")
-	router.HandleFunc("/v1/prediction/add", AddPredictionHandler)                             //.Methods("GET")
-	router.HandleFunc("/v1/prediction/latest/{subcatid:[0-9]+}", GetLatestPredictionsHandler) //.Methods("GET")
+	router.HandleFunc("/v1/prediction", GetAllPredictionsHandler)               //.Methods("GET")
+	router.HandleFunc("/v1/prediction/featured", GetFeaturedPredictionsHandler) //.Methods("GET")
+	router.HandleFunc("/v1/prediction/{id:[0-9]+}", GetSinglePredictionHandler) //.Methods("GET")
+	router.HandleFunc("/v1/prediction/add", AddPredictionHandler)               //.Methods("GET")
 	router.HandleFunc("/v1/prediction/category/{catid:[0-9]+}", GetPredictionsForCategoryHandler)
 
 	router.HandleFunc("/v1/prediction/search/{searchstr}", SearchPredictionsHandler)
