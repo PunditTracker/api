@@ -161,7 +161,7 @@ func LoginFacebookHandler(w http.ResponseWriter, r *http.Request) {
 		JsonDecodeError(w, err)
 		return
 	}
-	fmt.Println(userMap)
+	log.Println(userMap)
 	var authedUser PtUser
 	if userMap["facebookId"] == "" {
 		authedUser = CheckUser(db, userMap["email"], userMap["password"])
@@ -244,7 +244,7 @@ func ForgotPassword(w http.ResponseWriter, toEmail string) {
 		"Password Recovery- Click link to reset",
 		message,
 	)
-	fmt.Println("mess: ", message)
+	log.Println("mess: ", message)
 	if err == nil {
 		j, _ := json.Marshal(map[string]string{"Message": "email sent"})
 		fmt.Fprintln(w, string(j))
