@@ -45,6 +45,10 @@ func IncorrectPasswordError(w http.ResponseWriter) {
 	JsonError(w, http.StatusUnauthorized, "That password is incorrect.")
 }
 
+func MultiVoteError(w http.ResponseWriter) {
+	JsonError(w, http.StatusConflict, "Cannot vote on a prediction twice.")
+}
+
 func JsonDecodeError(w http.ResponseWriter, err error) {
 	JsonError(w, http.StatusUnauthorized, "Json Decode Error: "+err.Error())
 	log.Println("jsonDecerr: " + err.Error())

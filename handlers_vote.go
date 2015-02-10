@@ -36,6 +36,10 @@ func VoteForPredictionHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer db.Close()
+	if VoteExists(db, voterId, predId) {
+		MultiVoteError(w)
+		return
+	}
 
 	avg := GetAverageVoteForPredictionId(db, predId)
 	vote := PtVote{

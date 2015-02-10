@@ -240,6 +240,12 @@ func checkEmailForNonePassword(w http.ResponseWriter, db *gorm.DB, email string)
 	return false
 }
 
+func VoteExists(db *gorm.DB, uid, pid int64) bool {
+	var v PtVote
+	db.Where("voter_id = ? and voted_on_id = ?", uid, pid).First(&v)
+	return v.Id != 0
+}
+
 //Returns -1 if vote doesnt exist, otherwise returns the value of the vote
 func UpdateVoteValue(db *gorm.DB, uid int64, pred *PtPrediction) {
 	var v PtVote
