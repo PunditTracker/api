@@ -172,11 +172,15 @@ func LoginFacebookHandler(w http.ResponseWriter, r *http.Request) {
 	var authedUser PtUser
 	if userMap["facebookId"] == "" {
 		authedUser, err = CheckUser(db, userMap["email"], userMap["password"])
-		if err.Error() == "no user" {
-			NoUserWithEmailError(w)
-		}
-		if err.Error() == "wrong pass" {
-			IncorrectPasswordError(w)
+		if err != nil {
+			if err.Error() == "no user" {
+				NoUserWithEmailError(w)
+				return
+			}
+			if err.Error() == "wrong pass" {
+				IncorrectPasswordError(w)
+				return
+			}
 		}
 	} else {
 		authedUser = CheckUserFB(db, userMap["facebookId"])
