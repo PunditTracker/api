@@ -67,6 +67,11 @@ func AddPredictionHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer db.Close()
+	for _, t := range prediction.Tags {
+		prediction.TagStructs = append(prediction.TagStructs, PtTag{
+			Tag: t,
+		})
+	}
 	AddPrediction(db, &prediction)
 	j, _ := json.Marshal(prediction)
 	fmt.Fprintln(w, string(j))

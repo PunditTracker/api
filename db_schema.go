@@ -89,7 +89,8 @@ type PtPrediction struct {
 	ImageUrl   string
 	Creator    PtUser
 	Category   PtCategory `json:"-"`
-	Tags       []PtTag    `gorm:"many2many:prediction_tag_map;"`
+	Tags       []string   `sql:"-"`
+	TagStructs []PtTag    `gorm:"many2many:prediction_tag_map;"`
 }
 
 type PtVote struct {
