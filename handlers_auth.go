@@ -134,7 +134,13 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	authedUser := CheckUser(db, userMap["email"], userMap["password"])
+	authedUser, err := CheckUser(db, userMap["email"], userMap["password"])
+	if err.Error() == "no user" {
+		NoUserWithEmailError(w)
+	}
+	if err.Error() == "wrong pass" {
+		IncorrectPasswordError(w)
+	}
 
 	if authedUser.Id == 0 {
 		NotAuthedRedirect(w)
@@ -165,7 +171,13 @@ func LoginFacebookHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	var authedUser PtUser
 	if userMap["facebookId"] == "" {
-		authedUser = CheckUser(db, userMap["email"], userMap["password"])
+		authedUser, err = CheckUser(db, userMap["email"], userMap["password"])
+		if err.Error() == "no user" {
+			NoUserWithEmailError(w)
+		}
+		if err.Error() == "wrong pass" {
+			IncorrectPasswordError(w)
+		}
 	} else {
 		authedUser = CheckUserFB(db, userMap["facebookId"])
 	}

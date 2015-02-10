@@ -2,6 +2,7 @@ package main
 
 import (
 	"code.google.com/p/go.crypto/bcrypt"
+	"errors"
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
 	"log"
@@ -28,17 +29,19 @@ func SetPassword(db *gorm.DB, user *PtUser) error {
 	return nil
 }
 
-func CheckUser(db *gorm.DB, email, password string) PtUser {
+func CheckUser(db *gorm.DB, email, password string) (PtUser, error) {
 	var user PtUser
 	db.Where("email = ?", email).First(&user)
+	if user.Id == 0 {
+		return PtUser{}, errors.New("no user")
+	}
 	hashedPass := []byte(user.Password)
 	e := bcrypt.CompareHashAndPassword(hashedPass, []byte(password))
 	//Password accepted
 	if e == nil {
-		return user
+		return user, nil
 	} else {
-		var notUser PtUser
-		return notUser
+		return PtUser{}, errors.New("wrong password")
 	}
 }
 
