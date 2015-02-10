@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
 	"log"
@@ -186,4 +187,9 @@ func SetUpDB(db *gorm.DB) {
 		&PtPredictionSet{},
 		&PtHero{},
 	)
+}
+
+func (p *PtPrediction) AfterFind(tx *gorm.DB) {
+	tx.First(&p.Creator, p.CreatorId)
+	fmt.Println(p.Creator)
 }
