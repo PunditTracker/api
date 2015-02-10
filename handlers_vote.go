@@ -9,6 +9,20 @@ import (
 	"time"
 )
 
+func GetVoteHandler(w http.ResponseWriter, r *http.Request) {
+	uid := GetUIDOrRedirect(w, r)
+	vars := mux.Vars(r)
+	predId, _ := strconv.ParseInt(vars["pred_id"], 10, 64)
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
+	defer db.Close()
+	v := GetVote(db, uid, predId)
+	j, _ := json.Marshal(v)
+	fmt.Fprintln(w, string(j))
+}
+
 func VoteForPredictionHandler(w http.ResponseWriter, r *http.Request) {
 	voterId := GetUIDOrRedirect(w, r)
 	vars := mux.Vars(r)

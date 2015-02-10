@@ -239,3 +239,9 @@ func checkEmailForNonePassword(w http.ResponseWriter, db *gorm.DB, email string)
 	}
 	return false
 }
+
+func GetVote(db *gorm.DB, uid, pid int64) PtVote {
+	var v PtVote
+	db.Where("voter_id = ? and voted_on_id = ?", uid, pid).First(&v)
+	return v
+}
