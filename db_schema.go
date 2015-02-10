@@ -90,7 +90,7 @@ type PtPrediction struct {
 	Creator    PtUser
 	Category   PtCategory `json:"-"`
 	Tags       []string   `sql:"-"`
-	TagStructs []PtTag    `gorm:"many2many:prediction_tag_map;"`
+	TagVal     []PtTag    `gorm:"many2many:prediction_tag_map;"`
 }
 
 type PtVote struct {

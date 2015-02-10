@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -68,10 +69,11 @@ func AddPredictionHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 	for _, t := range prediction.Tags {
-		prediction.TagStructs = append(prediction.TagStructs, PtTag{
+		prediction.TagVal = append(prediction.TagVal, PtTag{
 			Tag: t,
 		})
 	}
+	log.Println("add prediction", prediction)
 	AddPrediction(db, &prediction)
 	j, _ := json.Marshal(prediction)
 	fmt.Fprintln(w, string(j))
