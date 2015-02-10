@@ -138,6 +138,16 @@ func SearchPredictions(db *gorm.DB, searchString string) []int64 {
 	return toReturn
 }
 
+func GetTagsForPrediction(db *gorm.DB, pid int64) []string {
+	ptTags := []PtTag{}
+	db.Raw(`select t.* from prediction_tag_map pmap, pt_prediction p, pt_tag t where (pmap.pt_prediction_id = ?) and pmap.pt_tag_id=t.id group by t.id`, pid).Find(&ptTags)
+	toReturn := []string{}
+	for _, t := range ptTags {
+		toReturn = append(toReturn, t.Tag)
+	}
+	return toReturn
+}
+
 func GetPredictionsForTag(db *gorm.DB, tag string) []PtPrediction {
 	predictions := []PtPrediction{}
 	db.Raw(`select p.* 

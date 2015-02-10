@@ -190,7 +190,6 @@ func SetUpDB(db *gorm.DB) {
 }
 
 func (p *PtPrediction) AfterFind(tx *gorm.DB) {
-	log.Println("after find")
-	tx.Debug().First(&p.Creator, p.CreatorId)
-	log.Println(p)
+	tx.First(&p.Creator, p.CreatorId)
+	p.Tags = GetTagsForPrediction(tx, p.Id)
 }

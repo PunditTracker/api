@@ -42,14 +42,14 @@ func LoadTestDataHandler(w http.ResponseWriter, r *http.Request) {
 	AddPrediction(db, &PtPrediction{
 		CreatorId: 1,
 		Title:     "X Will Win the Super Bowl",
-		/*Tags: []PtTag{
+		TagVal: []PtTag{
 			{
 				Tag: "Sports",
 			},
 			{
 				Tag: "NFL",
 			},
-		},*/
+		},
 		IsFeatured: true,
 		Deadline:   time.Now(),
 	})
