@@ -2,9 +2,9 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
+	"log"
 	"os"
 	"time"
 )
@@ -12,7 +12,7 @@ import (
 func init() {
 	db, err := getDB()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return
 	}
 	defer db.Close()
@@ -30,7 +30,7 @@ func getDB() (*gorm.DB, error) {
 	if serv == "aws" {
 		db, err := gorm.Open("postgres", "host=ptdev.ccm2e8gfsxjt.us-west-2.rds.amazonaws.com dbname=ptdev user=pundittracker password=ptrack20!!")
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
 		db.DB()
 		db.SingularTable(true)

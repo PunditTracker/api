@@ -2,7 +2,6 @@ package main
 
 import (
 	"code.google.com/p/go.crypto/bcrypt"
-	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
 	"log"
@@ -127,7 +126,7 @@ func SearchPredictions(db *gorm.DB, searchString string) []int64 {
 			GROUP BY pred.id) p_search
 			WHERE p_search.document @@ to_tsquery(?);`, searchString).Rows()
 	if err != nil {
-		fmt.Println(err)
+		log.Println("err in search", err)
 		return nil
 	}
 	defer rows.Close()

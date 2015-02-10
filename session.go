@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gorilla/securecookie"
+	"log"
 	"net/http"
 )
 
@@ -12,11 +13,9 @@ var cookieHandler = securecookie.New(
 
 func getSession(request *http.Request) map[string]string {
 	cookieValue := make(map[string]string)
-	if cookie, err := request.Cookie("session"); err != nil {
-		fmt.Println(err)
-	} else {
+	if cookie, err := request.Cookie("session"); err == nil {
 		if err := cookieHandler.Decode("session", cookie.Value, &cookieValue); err == nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
 	}
 	return cookieValue

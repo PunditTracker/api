@@ -42,7 +42,7 @@ func SetHeroHandler(w http.ResponseWriter, r *http.Request) {
 	var hero PtHero
 	err := dec.Decode(&hero)
 	if err != nil {
-		fmt.Println("Json Decode Error", err)
+		JsonDecodeError(w, err)
 		return
 	}
 	db := GetDBOrPrintError(w)

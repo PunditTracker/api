@@ -1,11 +1,12 @@
 package main
 
 import (
-	"fmt"
+	"log"
 )
 
 func main() {
+	log.Println("Start Main")
 	addListeners()
 	beginServing()
-	fmt.Println("post serve")
+	log.Println("End Main")
 }
