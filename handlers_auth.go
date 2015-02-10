@@ -303,6 +303,15 @@ func GetUIDOrRedirect(w http.ResponseWriter, r *http.Request) int64 {
 	return voterId
 }
 
+func GetUIDOrZero(r *http.Request) int64 {
+	voterIdStr := getSession(r)["uid"]
+	if voterIdStr == "" {
+		return 0
+	}
+	voterId, _ := strconv.ParseInt(voterIdStr, 10, 64)
+	return voterId
+}
+
 //IsAdminOrRedirect returns true if it redirects
 func IsAdminOrRedirect(w http.ResponseWriter, r *http.Request) bool {
 	isAdmin := getSession(r)["isadmin"]

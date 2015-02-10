@@ -25,6 +25,12 @@ func GetFeaturedPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 	predictions := GetFeaturedPredictions(db, limit)
+	uid := GetUIDOrZero(r)
+	if uid != 0 {
+		for i, _ := range predictions {
+			UpdateVoteValue(db, uid, &predictions[i])
+		}
+	}
 	j, _ := json.Marshal(predictions)
 	fmt.Fprintln(w, string(j))
 }
@@ -35,8 +41,14 @@ func GetAllPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer db.Close()
-	preds := GetAllPredictions(db)
-	j, _ := json.Marshal(preds)
+	predictions := GetAllPredictions(db)
+	uid := GetUIDOrZero(r)
+	if uid != 0 {
+		for i, _ := range predictions {
+			UpdateVoteValue(db, uid, &predictions[i])
+		}
+	}
+	j, _ := json.Marshal(predictions)
 	fmt.Fprintln(w, string(j))
 }
 
@@ -49,6 +61,7 @@ func GetSinglePredictionHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	uid, _ := strconv.ParseInt(vars["id"], 10, 64)
 	prediction := GetPredictionByID(db, uid)
+	UpdateVoteValue(db, GetUIDOrZero(r), &prediction)
 	j, _ := json.Marshal(prediction)
 	fmt.Fprintln(w, string(j))
 }
@@ -86,8 +99,15 @@ func GetLatestPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 	//Get the 10 latest predictions
-	preds := GetLatestPredictions(db, 10)
-	j, _ := json.Marshal(preds)
+	predictions := GetLatestPredictions(db, 10)
+	uid := GetUIDOrZero(r)
+	if uid != 0 {
+		for i, _ := range predictions {
+			UpdateVoteValue(db, uid, &predictions[i])
+		}
+	}
+
+	j, _ := json.Marshal(predictions)
 	fmt.Fprintln(w, string(j))
 }
 
@@ -99,8 +119,14 @@ func GetPredictionsForCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 	vars := mux.Vars(r)
 	catId, _ := strconv.ParseInt(vars["catid"], 10, 64)
-	preds := GetPredictionsForCategoryId(db, catId)
-	j, _ := json.Marshal(preds)
+	predictions := GetPredictionsForCategoryId(db, catId)
+	uid := GetUIDOrZero(r)
+	if uid != 0 {
+		for i, _ := range predictions {
+			UpdateVoteValue(db, uid, &predictions[i])
+		}
+	}
+	j, _ := json.Marshal(predictions)
 	fmt.Fprintln(w, string(j))
 }
 
@@ -132,6 +158,12 @@ func GetUserPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	uid, _ := strconv.ParseInt(vars["id"], 10, 64)
 	predictions := GetUserPrediction(db, int64(uid))
+	cur_uid := GetUIDOrZero(r)
+	if uid != 0 {
+		for i, _ := range predictions {
+			UpdateVoteValue(db, cur_uid, &predictions[i])
+		}
+	}
 	j, _ := json.Marshal(predictions)
 	fmt.Fprintln(w, string(j))
 }
@@ -145,6 +177,12 @@ func GetTaggedPredictionHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	tag := vars["tag"]
 	predictions := GetPredictionsForTag(db, tag)
+	uid := GetUIDOrZero(r)
+	if uid != 0 {
+		for i, _ := range predictions {
+			UpdateVoteValue(db, uid, &predictions[i])
+		}
+	}
 	j, _ := json.Marshal(predictions)
 	fmt.Fprintln(w, string(j))
 }
@@ -170,8 +208,16 @@ func GetPredictionSetHandler(w http.ResponseWriter, r *http.Request) {
 	predictionSets := GetLivePredictionSets(db)
 	for i, _ := range predictionSets {
 		db.First(&predictionSets[i].Prediction1, predictionSets[i].Prediction1Id)
+
 		db.First(&predictionSets[i].Prediction2, predictionSets[i].Prediction2Id)
+
 		db.First(&predictionSets[i].Prediction3, predictionSets[i].Prediction3Id)
+		uid := GetUIDOrZero(r)
+		if uid != 0 {
+			UpdateVoteValue(db, uid, &predictionSets[i].Prediction1)
+			UpdateVoteValue(db, uid, &predictionSets[i].Prediction2)
+			UpdateVoteValue(db, uid, &predictionSets[i].Prediction3)
+		}
 	}
 
 	j, _ := json.Marshal(predictionSets)

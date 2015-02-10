@@ -18,7 +18,9 @@ func GetVoteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer db.Close()
-	v := GetVote(db, uid, predId)
+	pred := PtPrediction{Id: predId}
+	UpdateVoteValue(db, uid, &pred)
+	v := pred.CurUserVote
 	j, _ := json.Marshal(v)
 	fmt.Fprintln(w, string(j))
 }
