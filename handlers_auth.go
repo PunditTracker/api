@@ -135,11 +135,13 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	authedUser, err := CheckUser(db, userMap["email"], userMap["password"])
-	if err.Error() == "no user" {
-		NoUserWithEmailError(w)
-	}
-	if err.Error() == "wrong pass" {
-		IncorrectPasswordError(w)
+	if err != nil {
+		if err.Error() == "no user" {
+			NoUserWithEmailError(w)
+		}
+		if err.Error() == "wrong pass" {
+			IncorrectPasswordError(w)
+		}
 	}
 
 	if authedUser.Id == 0 {
