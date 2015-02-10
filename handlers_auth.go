@@ -234,7 +234,8 @@ func ForgotPassword(w http.ResponseWriter, toEmail string) {
 		return
 	}
 
-	user.ResetKey = uuid.New()
+	user.ResetKey.String = uuid.New()
+	user.ResetKey.Valid = true
 	user.ResetValidUntil = time.Now().Add(time.Hour)
 	db.Save(&user)
 	message := "Please goto " + fmt.Sprintf("foretellr.com/reset/%d/%s", user.Id, user.ResetKey)
@@ -279,8 +280,12 @@ func ResetPasswordEndpoint(w http.ResponseWriter, r *http.Request) {
 		JsonError(w, http.StatusUnauthorized, "reset key expired")
 		return
 	}
+	if !user.ResetKey.Valid {
+		JsonError(w, http.StatusUnauthorized, "no reset key set")
+		return
+	}
 
-	if user.ResetKey != resetKey {
+	if user.ResetKey.String != resetKey {
 		JsonError(w, http.StatusUnauthorized, "reset key incorrect")
 		return
 	}
