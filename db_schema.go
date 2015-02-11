@@ -103,7 +103,7 @@ type PtVote struct {
 	VoteValue     int       `sql:"not null"`
 	Created       time.Time `sql:"not null; DEFAULT:current_timestamp"`
 	Voter         PtUser
-	VotedOn       PtPrediction `json:"-"`
+	VotedOn       PtPrediction
 }
 
 type PtTag struct {
