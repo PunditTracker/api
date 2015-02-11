@@ -11,17 +11,19 @@ import (
 )
 
 func AdminUploadImageHandler(w http.ResponseWriter, r *http.Request) {
-
+	log.Println("begin upload admin image handler")
 	r.ParseForm()
 	file, h, err := r.FormFile("image")
 	if err != nil {
-		log.Println(err.Error())
+		fmt.Fprintln(w, "formfile error", err.Error())
+		log.Println("formfile error", err.Error())
 		return
 	}
 	defer file.Close()
 	data, err := ioutil.ReadAll(file)
 	if err != nil {
-		log.Println(err.Error())
+		fmt.Fprintln(w, "readfile error", err.Error())
+		log.Println("readfile error", err.Error())
 	}
 	uniquestring := fmt.Sprintf("images/%s", h.Filename)
 	bucketName := "assets.pundittracker.com"
@@ -35,7 +37,6 @@ func AdminUploadImageHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func UploadImageHandler(w http.ResponseWriter, r *http.Request) {
-	log.Println("begin upload image handler")
 	uid := GetUIDOrRedirect(w, r)
 	if uid == 0 {
 		return
@@ -55,7 +56,6 @@ func UploadImageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	uniquestring := fmt.Sprintf("prof_pic/%d", uid)
-
 	bucketName := "assets.pundittracker.com"
 	contType := h.Header.Get("Content-Type")
 	link, err := putImageOnS3(bucketName, b, contType, uniquestring)
