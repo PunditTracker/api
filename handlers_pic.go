@@ -13,7 +13,7 @@ import (
 func AdminUploadImageHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("begin upload admin image handler")
 	r.ParseForm()
-	file, h, err := r.FormFile("image")
+	file, h, err := r.FormFile("file")
 	if err != nil {
 		fmt.Fprintln(w, "formfile error", err.Error())
 		log.Println("formfile error", err.Error())
