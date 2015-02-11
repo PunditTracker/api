@@ -4,12 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
 )
 
 func GetVotesForUserHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("start get vote handler")
 	vars := mux.Vars(r)
 	uid, _ := strconv.ParseInt(vars["id"], 10, 64)
 	db := GetDBOrPrintError(w)
@@ -17,6 +19,7 @@ func GetVotesForUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	votes := GetVotesForUser(db, uid)
+	log.Println("votes:", votes)
 	j, _ := json.Marshal(votes)
 	fmt.Fprintln(w, string(j))
 }

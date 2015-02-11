@@ -262,8 +262,9 @@ func UpdateVoteValue(db *gorm.DB, uid int64, pred *PtPrediction) {
 }
 
 func GetVotesForUser(db *gorm.DB, uid int64) []PtVote {
+	db = db.Debug()
 	var votes []PtVote
-	db.Where("voted_id = ?", uid).Find(&votes)
+	db.Where("voter_id = ?", uid).Find(&votes)
 	for i, _ := range votes {
 		db.Where("id = ?", votes[i].VotedOnId).First(&votes[i].VotedOn)
 	}
