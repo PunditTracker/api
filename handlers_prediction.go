@@ -197,17 +197,21 @@ func GetTaggedPredictionHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetHeroPredictionHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	catId, _ := strconv.ParseInt(vars["cat_id"], 10, 64)
 	db := GetDBOrPrintError(w)
 	if db == nil {
 		return
 	}
 	defer db.Close()
-	heros := GetLivePtHeros(db)
+	heros := GetLivePtHeros(db, catId)
 	j, _ := json.Marshal(heros)
 	fmt.Fprintln(w, string(j))
 }
 
 func GetPredictionSetHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	catId, _ := strconv.ParseInt(vars["cat_id"], 10, 64)
 	db := GetDBOrPrintError(w)
 	if db == nil {
 		return
@@ -215,7 +219,7 @@ func GetPredictionSetHandler(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	uid := GetUIDOrZero(r)
-	predictionSets := GetLivePredictionSets(db)
+	predictionSets := GetLivePredictionSets(db, catId)
 	for i, _ := range predictionSets {
 		db.First(&predictionSets[i].Prediction1, predictionSets[i].Prediction1Id)
 		db.First(&predictionSets[i].Prediction2, predictionSets[i].Prediction2Id)

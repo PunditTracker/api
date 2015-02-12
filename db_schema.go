@@ -155,6 +155,7 @@ type PtBracket struct {
 
 type PtPredictionSet struct {
 	Id            int64
+	CategoryId    int64  `sql:"not null; DEFAULT:0"`
 	IsLive        bool   `sql:"not null; DEFAULT:FALSE"`
 	Title         string `sql:"not null"`
 	ImageUrl      string `sql:"not null"`
@@ -168,6 +169,7 @@ type PtPredictionSet struct {
 
 type PtHero struct {
 	Id           int64
+	CategoryId   int64  `sql:"not null; DEFAULT:0"`
 	LocationNum  int64  `sql:"not null"`
 	IsLive       bool   `sql:"not null; DEFAULT:FALSE"`
 	ImageUrl     string `sql:"not null"`
