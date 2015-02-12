@@ -12,12 +12,18 @@ import (
 )
 
 func GetFeaturedPredictionsHandler(w http.ResponseWriter, r *http.Request) {
-	//vars := mux.Vars(r)
-	//limit, e := strconv.Atoi(vars["limit"])
-	/*if e != nil {
-		return
-	}*/
-	limit := 5
+	urlValues := r.URL.Query()
+	var limit int
+	var err error
+	limitStr, exists := urlValues["limit"]
+	if exists {
+		limit, err = strconv.Atoi(limitStr[0])
+		if err != nil {
+			limit = 5
+		}
+	} else {
+		limit = 5
+	}
 
 	db := GetDBOrPrintError(w)
 	if db == nil {
@@ -75,6 +81,9 @@ func AddPredictionHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	prediction.CreatorId = GetUIDOrRedirect(w, r)
+	if prediction.CreatorId == 0 {
+		return
+	}
 	prediction.Created = time.Now()
 	db := GetDBOrPrintError(w)
 	if db == nil {
@@ -205,14 +214,12 @@ func GetPredictionSetHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
+	uid := GetUIDOrZero(r)
 	predictionSets := GetLivePredictionSets(db)
 	for i, _ := range predictionSets {
 		db.First(&predictionSets[i].Prediction1, predictionSets[i].Prediction1Id)
-
 		db.First(&predictionSets[i].Prediction2, predictionSets[i].Prediction2Id)
-
 		db.First(&predictionSets[i].Prediction3, predictionSets[i].Prediction3Id)
-		uid := GetUIDOrZero(r)
 		if uid != 0 {
 			UpdateVoteValue(db, uid, &predictionSets[i].Prediction1)
 			UpdateVoteValue(db, uid, &predictionSets[i].Prediction2)

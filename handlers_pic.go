@@ -13,6 +13,10 @@ import (
 
 func AdminUploadImageHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("begin upload admin image handler")
+	if IsAdminOrRedirect(w, r) {
+		return
+	}
+
 	data, h, err := GetImageDataFromRequest(w, r)
 	if err != nil {
 		return

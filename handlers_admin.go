@@ -11,7 +11,6 @@ import (
 
 func SetStateHandler(w http.ResponseWriter, r *http.Request) {
 	if IsAdminOrRedirect(w, r) {
-		NoCredentialError(w)
 		return
 	}
 	db := GetDBOrPrintError(w)
@@ -34,7 +33,6 @@ func SetStateHandler(w http.ResponseWriter, r *http.Request) {
 
 func SetHeroHandler(w http.ResponseWriter, r *http.Request) {
 	if IsAdminOrRedirect(w, r) {
-		NoCredentialError(w)
 		return
 	}
 	//Parse the Json
@@ -60,7 +58,6 @@ func SetHeroHandler(w http.ResponseWriter, r *http.Request) {
 
 func SetPredictionSetHandler(w http.ResponseWriter, r *http.Request) {
 	if IsAdminOrRedirect(w, r) {
-		NoCredentialError(w)
 		return
 	}
 	//Parse the Json

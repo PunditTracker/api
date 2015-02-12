@@ -42,6 +42,9 @@ func GetVoteHandler(w http.ResponseWriter, r *http.Request) {
 
 func VoteForPredictionHandler(w http.ResponseWriter, r *http.Request) {
 	voterId := GetUIDOrRedirect(w, r)
+	if voterId == 0 {
+		return
+	}
 	vars := mux.Vars(r)
 	predId, _ := strconv.ParseInt(vars["pred_id"], 10, 64)
 	vVal, _ := strconv.Atoi(vars["value"])
