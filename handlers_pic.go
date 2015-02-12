@@ -7,23 +7,15 @@ import (
 	"github.com/mitchellh/goamz/s3"
 	"io/ioutil"
 	"log"
+	"mime/multipart"
 	"net/http"
 )
 
 func AdminUploadImageHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("begin upload admin image handler")
-	r.ParseForm()
-	file, h, err := r.FormFile("file")
+	data, h, err := GetImageDataFromRequest(w, r)
 	if err != nil {
-		fmt.Fprintln(w, "formfile error", err.Error())
-		log.Println("formfile error", err.Error())
 		return
-	}
-	defer file.Close()
-	data, err := ioutil.ReadAll(file)
-	if err != nil {
-		fmt.Fprintln(w, "readfile error", err.Error())
-		log.Println("readfile error", err.Error())
 	}
 	uniquestring := fmt.Sprintf("images/%s", h.Filename)
 	bucketName := "assets.pundittracker.com"
@@ -36,29 +28,37 @@ func AdminUploadImageHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, link)
 }
 
-func UploadImageHandler(w http.ResponseWriter, r *http.Request) {
-	uid := GetUIDOrRedirect(w, r)
-	if uid == 0 {
-		return
-	}
+func GetImageDataFromRequest(w http.ResponseWriter, r *http.Request) ([]byte, *multipart.FileHeader, error) {
 	r.ParseForm()
 	file, h, err := r.FormFile("file")
 	if err != nil {
 		fmt.Fprintln(w, "formfile error", err.Error())
 		log.Println("formfile error", err.Error())
-		return
+		return nil, nil, err
 	}
 	defer file.Close()
-	b, err := ioutil.ReadAll(file)
+	data, err := ioutil.ReadAll(file)
 	if err != nil {
 		fmt.Fprintln(w, "readfile error", err.Error())
 		log.Println("readfile error", err.Error())
+		return nil, nil, err
+	}
+	return data, h, nil
+}
+
+func UploadImageHandler(w http.ResponseWriter, r *http.Request) {
+	uid := GetUIDOrRedirect(w, r)
+	if uid == 0 {
+		return
+	}
+	data, h, err := GetImageDataFromRequest(w, r)
+	if err != nil {
 		return
 	}
 	uniquestring := fmt.Sprintf("prof_pic/%d", uid)
 	bucketName := "assets.pundittracker.com"
 	contType := h.Header.Get("Content-Type")
-	link, err := putImageOnS3(bucketName, b, contType, uniquestring)
+	link, err := putImageOnS3(bucketName, data, contType, uniquestring)
 	if err != nil {
 		log.Println("upload error:", err.Error())
 		fmt.Fprintln(w, "upload error:", err.Error())
