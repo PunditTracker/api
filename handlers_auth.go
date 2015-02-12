@@ -138,9 +138,11 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		if err.Error() == "no user" {
 			NoUserWithEmailError(w)
+			return
 		}
 		if err.Error() == "wrong pass" {
 			IncorrectPasswordError(w)
+			return
 		}
 	}
 
