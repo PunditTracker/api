@@ -13,6 +13,10 @@ import (
 
 func AdminUploadImageHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("begin upload admin image handler")
+	if IsAdminOrRedirect(w, r) {
+		return
+	}
+
 	data, h, err := GetImageDataFromRequest(w, r)
 	if err != nil {
 		return
@@ -25,7 +29,11 @@ func AdminUploadImageHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("upload error:", err.Error())
 		fmt.Fprintln(w, "upload error:", err.Error())
 	}
-	fmt.Fprintln(w, link)
+	j, _ := json.Marshal(&map[string]interface{}{
+		"Message": "Successful Upload",
+		"link":    link,
+	})
+	fmt.Fprintln(w, string(j))
 }
 
 func GetImageDataFromRequest(w http.ResponseWriter, r *http.Request) ([]byte, *multipart.FileHeader, error) {

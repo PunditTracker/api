@@ -196,15 +196,15 @@ func SetScoreForPrediction(db *gorm.DB, predictionId int64, state PtPredictionSt
 	db.Debug().Exec(`update pt_user set score=score+? WHERE id IN (select voter_id FROM pt_vote where voted_on_id=?)`, score, predictionId)
 }
 
-func GetLivePredictionSets(db *gorm.DB) []PtPredictionSet {
+func GetLivePredictionSets(db *gorm.DB, catId int64) []PtPredictionSet {
 	var predictionSets []PtPredictionSet
-	db.Where("is_live=TRUE").Find(&predictionSets)
+	db.Where("is_live=TRUE and category_id = ?", catId).Find(&predictionSets)
 	return predictionSets
 }
 
-func GetLivePtHeros(db *gorm.DB) []PtHero {
+func GetLivePtHeros(db *gorm.DB, catId int64) []PtHero {
 	var heros []PtHero
-	db.Model(&PtHero{}).Where("is_live=TRUE").Find(&heros)
+	db.Model(&PtHero{}).Where("is_live=TRUE and category_id = ?", catId).Find(&heros)
 	return heros
 }
 

@@ -19,6 +19,9 @@ func AddBracketHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	b.Created = time.Now()
 	b.CreatorId = GetUIDOrRedirect(w, r)
+	if b.CreatorId == 0 {
+		return
+	}
 
 	db, err := getDB()
 	defer db.Close()
