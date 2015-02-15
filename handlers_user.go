@@ -15,6 +15,10 @@ func GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 	users := GetAllUsers(db)
+	if users == nil {
+		NoInfoAtEndpointError(w)
+		return
+	}
 	j, _ := json.Marshal(users)
 	fmt.Fprintln(w, string(j))
 }
@@ -29,7 +33,11 @@ func GetSingleUserHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	uid, _ := strconv.ParseInt(vars["id"], 10, 64)
 	user := GetUserByID(db, uid)
-	j, _ := json.Marshal(user)
+	if user == nil {
+		NoInfoAtEndpointError(w)
+		return
+	}
+	j, _ := json.Marshal(*user)
 	fmt.Fprintln(w, string(j))
 }
 
@@ -40,13 +48,15 @@ func GetFeaturedUsersHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 	users := GetFeaturedUsers(db)
+	if users == nil {
+		NoInfoAtEndpointError(w)
+		return
+	}
 	j, _ := json.Marshal(users)
 	fmt.Fprintln(w, string(j))
 }
 
-/*
-
-func GetSingleUserForNameHandler(w http.ResponseWriter, r *http.Request) {
+/*func GetSingleUserForNameHandler(w http.ResponseWriter, r *http.Request) {
 	db := GetDBOrPrintError(w)
 	if db == nil {
 		return

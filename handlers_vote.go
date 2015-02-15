@@ -19,6 +19,10 @@ func GetVotesForUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	votes := GetVotesForUser(db, uid)
+	if votes == nil {
+		NoInfoAtEndpointError(w)
+		return
+	}
 	log.Println("votes:", votes)
 	j, _ := json.Marshal(votes)
 	fmt.Fprintln(w, string(j))

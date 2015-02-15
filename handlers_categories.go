@@ -13,6 +13,10 @@ func GetCategoriesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 	categories := GetCategories(db)
+	if categories == nil {
+		NoInfoAtEndpointError(w)
+		return
+	}
 	j, _ := json.Marshal(categories)
 	fmt.Fprintln(w, string(j))
 }
