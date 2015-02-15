@@ -50,10 +50,11 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	user.Password = userMap["password"]
 	user.ResetValidUntil = time.Now()
 	user.Created = time.Now()
-	SetPassword(db, &user)
-
-	db.First(&user, user.Id)
-
+	err = SetPassword(db, &user)
+	if err != nil {
+		DBError(w, err)
+		return
+	}
 	setSessionForUser(w, &user)
 
 	j, _ := json.Marshal(user)
@@ -80,8 +81,11 @@ func RegisterFacebookHandler(w http.ResponseWriter, r *http.Request) {
 
 	user.Created = time.Now()
 	user.ResetValidUntil = time.Now()
-	SetPassword(db, &user)
-	db.First(&user, user.Id)
+	err = SaveUser(db, &user)
+	if err != nil {
+		DBError(w, err)
+		return
+	}
 	setSessionForUser(w, &user)
 	j, _ := json.Marshal(user)
 	fmt.Fprintln(w, string(j))

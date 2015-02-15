@@ -22,9 +22,14 @@ func SetPassword(db *gorm.DB, user *PtUser) error {
 		return err
 	}
 	user.Password = string(passByte)
-	err = db.Save(user).Error
+	return SaveUser(db, user)
+}
+
+func SaveUser(db *gorm.DB, user *PtUser) error {
+	err := db.Save(user).Error
 	if err != nil {
 		log.Println("save user error:", err.Error())
+		return err
 	}
 	return nil
 }
