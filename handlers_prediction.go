@@ -31,6 +31,10 @@ func GetFeaturedPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 	predictions := GetFeaturedPredictions(db, limit)
+	if predictions == nil {
+		NoInfoAtEndpointError(w)
+		return
+	}
 	uid := GetUIDOrZero(r)
 	if uid != 0 {
 		for i, _ := range predictions {
@@ -48,6 +52,10 @@ func GetAllPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 	predictions := GetAllPredictions(db)
+	if predictions == nil {
+		NoInfoAtEndpointError(w)
+		return
+	}
 	uid := GetUIDOrZero(r)
 	if uid != 0 {
 		for i, _ := range predictions {
@@ -67,8 +75,12 @@ func GetSinglePredictionHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	uid, _ := strconv.ParseInt(vars["id"], 10, 64)
 	prediction := GetPredictionByID(db, uid)
-	UpdateVoteValue(db, GetUIDOrZero(r), &prediction)
-	j, _ := json.Marshal(prediction)
+	if prediction == nil {
+		NoInfoAtEndpointError(w)
+		return
+	}
+	UpdateVoteValue(db, GetUIDOrZero(r), prediction)
+	j, _ := json.Marshal(*prediction)
 	fmt.Fprintln(w, string(j))
 }
 
@@ -109,6 +121,10 @@ func GetLatestPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 	//Get the 10 latest predictions
 	predictions := GetLatestPredictions(db, 10)
+	if predictions == nil {
+		NoInfoAtEndpointError(w)
+		return
+	}
 	uid := GetUIDOrZero(r)
 	if uid != 0 {
 		for i, _ := range predictions {
@@ -129,6 +145,10 @@ func GetPredictionsForCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	catId, _ := strconv.ParseInt(vars["catid"], 10, 64)
 	predictions := GetPredictionsForCategoryId(db, catId)
+	if predictions == nil {
+		NoInfoAtEndpointError(w)
+		return
+	}
 	uid := GetUIDOrZero(r)
 	if uid != 0 {
 		for i, _ := range predictions {
@@ -167,6 +187,10 @@ func GetUserPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	uid, _ := strconv.ParseInt(vars["id"], 10, 64)
 	predictions := GetUserPrediction(db, int64(uid))
+	if predictions == nil {
+		NoInfoAtEndpointError(w)
+		return
+	}
 	cur_uid := GetUIDOrZero(r)
 	if uid != 0 {
 		for i, _ := range predictions {
@@ -186,6 +210,10 @@ func GetTaggedPredictionHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	tag := vars["tag"]
 	predictions := GetPredictionsForTag(db, tag)
+	if predictions == nil {
+		NoInfoAtEndpointError(w)
+		return
+	}
 	uid := GetUIDOrZero(r)
 	if uid != 0 {
 		for i, _ := range predictions {
@@ -205,6 +233,10 @@ func GetHeroPredictionHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 	heros := GetLivePtHeros(db, catId)
+	if heros == nil {
+		NoInfoAtEndpointError(w)
+		return
+	}
 	j, _ := json.Marshal(heros)
 	fmt.Fprintln(w, string(j))
 }
@@ -220,6 +252,10 @@ func GetPredictionSetHandler(w http.ResponseWriter, r *http.Request) {
 
 	uid := GetUIDOrZero(r)
 	predictionSets := GetLivePredictionSets(db, catId)
+	if predictionSets == nil {
+		NoInfoAtEndpointError(w)
+		return
+	}
 	for i, _ := range predictionSets {
 		db.First(&predictionSets[i].Prediction1, predictionSets[i].Prediction1Id)
 		db.First(&predictionSets[i].Prediction2, predictionSets[i].Prediction2Id)

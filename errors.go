@@ -8,6 +8,10 @@ import (
 	"net/http"
 )
 
+func NoInfoAtEndpointError(w http.ResponseWriter) {
+	JsonError(w, http.StatusNotFound, "No data found")
+}
+
 func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 	NotFoundError(w)
 }

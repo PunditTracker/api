@@ -63,10 +63,10 @@ func GetUserPrediction(db *gorm.DB, uid int64) []PtPrediction {
 	return preds
 }
 
-func GetPredictionByID(db *gorm.DB, uid int64) PtPrediction {
-	pred := PtPrediction{}
+func GetPredictionByID(db *gorm.DB, uid int64) *PtPrediction {
+	var pred PtPrediction
 	db.Where("id = ?", uid).First(&pred)
-	return pred
+	return &pred
 }
 
 func GetAllUsers(db *gorm.DB) []PtUser {
@@ -109,13 +109,13 @@ func AddVote(db *gorm.DB, v *PtVote) {
 
 //Category Stuff
 func GetCategories(db *gorm.DB) []PtCategory {
-	categories := []PtCategory{}
+	var categories []PtCategory
 	db.Find(&categories)
 	return categories
 }
 
 func GetPredictionsForCategoryId(db *gorm.DB, catId int64) []PtPrediction {
-	preds := []PtPrediction{}
+	var preds []PtPrediction
 	db.Where("category_id = ?", catId).Find(&preds)
 	return preds
 }
@@ -152,7 +152,7 @@ func GetTagsForPrediction(db *gorm.DB, pid int64) []string {
 }
 
 func GetPredictionsForTag(db *gorm.DB, tag string) []PtPrediction {
-	predictions := []PtPrediction{}
+	var predictions []PtPrediction
 	db.Raw(`select p.* 
 	from prediction_tag_map pmap, pt_prediction p, pt_tag t
 	where pmap.pt_tag_id=t.id
@@ -167,7 +167,7 @@ func AddBracket(db *gorm.DB, b *PtBracket) {
 }
 
 func GetMembersBracket(db *gorm.DB, User_Id int64) PtBracket {
-	bracket := PtBracket{}
+	var bracket PtBracket
 	db.Where("CreatorId = ?", User_Id).First(&bracket)
 	return bracket
 }
