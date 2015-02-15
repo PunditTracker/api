@@ -143,7 +143,40 @@ func GetPredictionsForCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 	vars := mux.Vars(r)
-	catId, _ := strconv.ParseInt(vars["catid"], 10, 64)
+	catId, err := strconv.ParseInt(vars["cat_id"], 10, 64)
+	if err != nil {
+		NoInfoAtEndpointError(w)
+		return
+	}
+	predictions := GetPredictionsForCategoryId(db, catId)
+	if predictions == nil {
+		NoInfoAtEndpointError(w)
+		return
+	}
+	uid := GetUIDOrZero(r)
+	if uid != 0 {
+		for i, _ := range predictions {
+			UpdateVoteValue(db, uid, &predictions[i])
+		}
+	}
+	j, _ := json.Marshal(predictions)
+	fmt.Fprintln(w, string(j))
+}
+
+func GetPredictionsForCategoryNameHandler(w http.ResponseWriter, r *http.Request) {
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
+	defer db.Close()
+	vars := mux.Vars(r)
+	catName := strings.ToUpper(vars["cat_name"])
+	catId := GetIdForCategoryName(db, catName)
+	if catId == 0 {
+		NoInfoAtEndpointError(w)
+		return
+	}
+	log.Println(catId)
 	predictions := GetPredictionsForCategoryId(db, catId)
 	if predictions == nil {
 		NoInfoAtEndpointError(w)

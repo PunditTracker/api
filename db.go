@@ -114,6 +114,12 @@ func GetCategories(db *gorm.DB) []PtCategory {
 	return categories
 }
 
+func GetIdForCategoryName(db *gorm.DB, name string) int64 {
+	var cat PtCategory
+	db.Where("name = ?", name).First(&cat)
+	return cat.Id
+}
+
 func GetPredictionsForCategoryId(db *gorm.DB, catId int64) []PtPrediction {
 	var preds []PtPrediction
 	db.Where("category_id = ?", catId).Find(&preds)
