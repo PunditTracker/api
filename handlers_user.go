@@ -33,11 +33,11 @@ func GetSingleUserHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	uid, _ := strconv.ParseInt(vars["id"], 10, 64)
 	user := GetUserByID(db, uid)
-	if user == nil {
+	if user.Id == 0 {
 		NoInfoAtEndpointError(w)
 		return
 	}
-	j, _ := json.Marshal(*user)
+	j, _ := json.Marshal(user)
 	fmt.Fprintln(w, string(j))
 }
 

@@ -51,10 +51,10 @@ func CheckUserFB(db *gorm.DB, fb_id string) PtUser {
 	return user
 }
 
-func GetUserByID(db *gorm.DB, uid int64) *PtUser {
+func GetUserByID(db *gorm.DB, uid int64) PtUser {
 	var user PtUser
 	db.First(&user, uid)
-	return &user
+	return user
 }
 
 func GetUserPrediction(db *gorm.DB, uid int64) []PtPrediction {
@@ -63,10 +63,10 @@ func GetUserPrediction(db *gorm.DB, uid int64) []PtPrediction {
 	return preds
 }
 
-func GetPredictionByID(db *gorm.DB, uid int64) *PtPrediction {
+func GetPredictionByID(db *gorm.DB, uid int64) PtPrediction {
 	var pred PtPrediction
 	db.Where("id = ?", uid).First(&pred)
-	return &pred
+	return pred
 }
 
 func GetAllUsers(db *gorm.DB) []PtUser {
@@ -166,10 +166,10 @@ func AddBracket(db *gorm.DB, b *PtBracket) {
 	db.Save(b)
 }
 
-func GetMembersBracket(db *gorm.DB, User_Id int64) *PtBracket {
+func GetMembersBracket(db *gorm.DB, User_Id int64) PtBracket {
 	var bracket PtBracket
 	db.Where("CreatorId = ?", User_Id).First(&bracket)
-	return &bracket
+	return bracket
 }
 
 func GetAverageVoteForPredictionId(db *gorm.DB, predId int64) float64 {

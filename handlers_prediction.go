@@ -75,12 +75,12 @@ func GetSinglePredictionHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	uid, _ := strconv.ParseInt(vars["id"], 10, 64)
 	prediction := GetPredictionByID(db, uid)
-	if prediction == nil {
+	if prediction.Id == 0 {
 		NoInfoAtEndpointError(w)
 		return
 	}
-	UpdateVoteValue(db, GetUIDOrZero(r), prediction)
-	j, _ := json.Marshal(*prediction)
+	UpdateVoteValue(db, GetUIDOrZero(r), &prediction)
+	j, _ := json.Marshal(prediction)
 	fmt.Fprintln(w, string(j))
 }
 

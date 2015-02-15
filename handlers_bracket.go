@@ -37,10 +37,10 @@ func GetBracketHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	User_Id, _ := strconv.ParseInt(vars["userId"], 10, 64)
 	bracket := GetMembersBracket(db, User_Id)
-	if bracket == nil {
+	if bracket.Id == 0 {
 		NoInfoAtEndpointError(w)
 		return
 	}
-	j, _ := json.Marshal(*bracket)
+	j, _ := json.Marshal(bracket)
 	fmt.Fprintln(w, string(j))
 }
