@@ -81,6 +81,7 @@ func RegisterFacebookHandler(w http.ResponseWriter, r *http.Request) {
 
 	user.Created = time.Now()
 	user.ResetValidUntil = time.Now()
+	user.Password = "FB"
 	err = SaveUser(db, &user)
 	if err != nil {
 		DBError(w, err)
@@ -178,6 +179,7 @@ func LoginFacebookHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var authedUser PtUser
+	log.Println("attempt login with usermap:", userMap)
 	if userMap["facebookId"] == "" {
 		authedUser, err = CheckUser(db, userMap["email"], userMap["password"])
 		if err != nil {
