@@ -336,6 +336,7 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 	db.Model(PtUser{Id: uid}).Update(user)
+	db.First(&user, uid)
 	j, _ := json.Marshal(user)
 	fmt.Fprintln(w, string(j))
 }
