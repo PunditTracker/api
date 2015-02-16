@@ -59,8 +59,7 @@ func VoteForPredictionHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	if PredictionDeadlinePassed(db, predId) {
-		DeadlinePassedError(w)
+	if PredictionDeadlinePassedOrGraded(db, predId, w) {
 		return
 	}
 

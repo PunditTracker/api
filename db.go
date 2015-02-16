@@ -285,15 +285,21 @@ func VoteExists(db *gorm.DB, uid, pid int64) bool {
 	return v.Id != 0
 }
 
-func PredictionDeadlinePassed(db *gorm.DB, predId int64) bool {
+func PredictionDeadlinePassedOrGraded(db *gorm.DB, predId int64, w http.ResponseWriter) bool {
 	var pred PtPrediction
 	db.Where("id = ?", predId).First(&pred)
-	/*
-		if pred.Deadline.Year() == 1 {
-			retrun false
-		}
-	*/
+
+	if pred.State != InFuture {
+		PredictionGradedError(w)
+		return true
+	}
+
+	if pred.Deadline.Year() == 1 {
+		return false
+	}
+
 	if pred.Deadline.Before(time.Now()) {
+		DeadlinePassedError(w)
 		return true
 	}
 	return false

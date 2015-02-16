@@ -29,6 +29,10 @@ func DeadlinePassedError(w http.ResponseWriter) {
 	JsonError(w, http.StatusConflict, "Can't vote on that prediction, the deadline has passed")
 }
 
+func PredictionGradedError(w http.ResponseWriter) {
+	JsonError(w, http.StatusConflict, "Can't vote on that prediction, its already been graded")
+}
+
 func NotFoundError(w http.ResponseWriter) {
 	JsonError(w, http.StatusNotFound, "Not Found")
 }
