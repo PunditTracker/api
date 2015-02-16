@@ -29,7 +29,8 @@ func addListeners() {
 	router.HandleFunc("/v1/auth/reset/{id:[0-9]+}/{resetKey}", ResetPasswordEndpoint)
 
 	//User
-	router.HandleFunc("/v1/user", GetAllUsersHandler)               //.Methods("GET")
+	router.HandleFunc("/v1/user", GetAllUsersHandler).Methods("GET")
+	router.HandleFunc("/v1/user", UpdateUserHandler).Methods("PATCH")
 	router.HandleFunc("/v1/user/featured", GetFeaturedUsersHandler) //.Methods("GET")
 	router.HandleFunc("/v1/user/{id:[0-9]+}", GetSingleUserHandler) //.Methods("GET")
 	//router.HandleFunc("/v1/user/{name:[a-zA-Z0-9]+}", GetSingleUserForNameHandler) //.Methods("GET")

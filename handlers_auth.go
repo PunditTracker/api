@@ -319,6 +319,65 @@ func ResetPasswordEndpoint(w http.ResponseWriter, r *http.Request) {
 	SetPassword(db, &user)
 }
 
+func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
+	uid := GetUIDOrRedirect(w, r)
+	if uid == 0 {
+		return
+	}
+	var user PtUser
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&user)
+	if err != nil {
+		JsonDecodeError(w, err)
+	}
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
+	defer db.Close()
+	db.Model(PtUser{Id: uid}).Update(user)
+	j, _ := json.Marshal(user)
+	fmt.Fprintln(w, string(j))
+}
+
+func UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
+	uid := GetUIDOrRedirect(w, r)
+	if uid == 0 {
+		return
+	}
+	var userMap map[string]string
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&userMap)
+	if err != nil {
+		JsonDecodeError(w, err)
+	}
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
+	defer db.Close()
+
+	//Check if old password is correct
+	if userMap["newPassword"] == "" || userMap["oldPassword"] == "" {
+		return
+	}
+
+	user, err := CheckUserWithIdAndPass(db, uid, userMap["oldPassword"])
+	if err != nil {
+		fmt.Fprintln(w, "old password incorrect")
+		return
+	}
+	user.Password = userMap["newPassword"]
+	//salt new password and update
+	err = SetPassword(db, &user)
+	if err != nil {
+		log.Println("change pass error", err.Error())
+		return
+	}
+
+	fmt.Fprintln(w, "Password Changed")
+}
+
 func GetUIDOrRedirect(w http.ResponseWriter, r *http.Request) int64 {
 	voterIdStr := getSession(r)["uid"]
 	if voterIdStr == "" {

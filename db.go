@@ -35,6 +35,22 @@ func SaveUser(db *gorm.DB, user *PtUser) error {
 	return nil
 }
 
+func CheckUserWithIdAndPass(db *gorm.DB, id int64, password string) (PtUser, error) {
+	var user PtUser
+	db.First(&user, id)
+	if user.Id == 0 {
+		return PtUser{}, errors.New("no user")
+	}
+	hashedPass := []byte(user.Password)
+	e := bcrypt.CompareHashAndPassword(hashedPass, []byte(password))
+	//Password accepted
+	if e == nil {
+		return user, nil
+	} else {
+		return PtUser{}, errors.New("wrong password")
+	}
+}
+
 func CheckUser(db *gorm.DB, email, password string) (PtUser, error) {
 	var user PtUser
 	db.Where("email = ?", email).First(&user)
@@ -272,6 +288,11 @@ func VoteExists(db *gorm.DB, uid, pid int64) bool {
 func PredictionDeadlinePassed(db *gorm.DB, predId int64) bool {
 	var pred PtPrediction
 	db.Where("id = ?", predId).First(&pred)
+	/*
+		if pred.Deadline.Year() == 1 {
+			retrun false
+		}
+	*/
 	if pred.Deadline.Before(time.Now()) {
 		return true
 	}
