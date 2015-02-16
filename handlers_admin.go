@@ -22,10 +22,12 @@ func SetStateHandler(w http.ResponseWriter, r *http.Request) {
 	predictionId, _ := strconv.ParseInt(vars["predId"], 10, 64)
 	stateVal, _ := strconv.Atoi(vars["state"])
 	newState := PtPredictionState(stateVal)
-	SetState(db, predictionId, newState)
+
+	prediction := SetState(db, predictionId, newState)
 
 	if newState == DidHappen || newState == DidNotHappen {
 		SetScoreForPrediction(db, predictionId, newState)
+		SetPredictorScore(db, prediction.CreatorId, newState)
 	}
 
 	fmt.Fprintln(w, "state set", newState)

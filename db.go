@@ -190,11 +190,12 @@ func GetAverageVoteForPredictionId(db *gorm.DB, predId int64) float64 {
 	return avg
 }
 
-func SetState(db *gorm.DB, predictionId int64, state PtPredictionState) {
+func SetState(db *gorm.DB, predictionId int64, state PtPredictionState) *PtPrediction {
 	prediction := PtPrediction{
 		Id: predictionId,
 	}
 	db.First(&prediction).Update("state", state)
+	return &prediction
 }
 
 func SetScoreForPrediction(db *gorm.DB, predictionId int64, state PtPredictionState) {
@@ -205,6 +206,13 @@ func SetScoreForPrediction(db *gorm.DB, predictionId int64, state PtPredictionSt
 		score = -1
 	}
 	db.Debug().Exec(`update pt_user set score=score+? WHERE id IN (select voter_id FROM pt_vote where voted_on_id=?)`, score, predictionId)
+}
+
+func SetPredictorScore(db *gorm.DB, predictorId int64, state PtPredictionState) {
+	if state == DidHappen {
+		db.Debug().Exec(`update pt_user set PredictionCorrect = PredictionCorrect+1 where id = ?`, predictorId)
+	}
+	db.Debug().Exec(`update pt_user set PredictionGraded = PredictionGraded+1 where id = ?`, predictorId)
 }
 
 func GetLivePredictionSets(db *gorm.DB, catId int64) []PtPredictionSet {
