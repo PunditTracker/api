@@ -25,6 +25,10 @@ func GetDBOrPrintError(w http.ResponseWriter) *gorm.DB {
 	return db
 }
 
+func DeadlinePassedError(w http.ResponseWriter) {
+	JsonError(w, http.StatusConflict, "Can't vote on that prediction, the deadline has passed")
+}
+
 func NotFoundError(w http.ResponseWriter) {
 	JsonError(w, http.StatusNotFound, "Not Found")
 }

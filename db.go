@@ -7,6 +7,7 @@ import (
 	_ "github.com/lib/pq"
 	"log"
 	"net/http"
+	"time"
 )
 
 var (
@@ -266,6 +267,15 @@ func VoteExists(db *gorm.DB, uid, pid int64) bool {
 	var v PtVote
 	db.Where("voter_id = ? and voted_on_id = ?", uid, pid).First(&v)
 	return v.Id != 0
+}
+
+func PredictionDeadlinePassed(db *gorm.DB, predId int64) bool {
+	var pred PtPrediction
+	db.Where("id = ?", predId).First(&pred)
+	if pred.Deadline.Before(time.Now()) {
+		return true
+	}
+	return false
 }
 
 //Returns -1 if vote doesnt exist, otherwise returns the value of the vote

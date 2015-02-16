@@ -58,6 +58,12 @@ func VoteForPredictionHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer db.Close()
+
+	if PredictionDeadlinePassed(db, predId) {
+		DeadlinePassedError(w)
+		return
+	}
+
 	if VoteExists(db, voterId, predId) {
 		MultiVoteError(w)
 		return
