@@ -49,7 +49,7 @@ func GetFeaturedUsersHandler(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 	users := GetFeaturedUsers(db)
 	if users == nil {
-		NoInfoAtEndpointError(w)
+		users = []PtUser{}
 		return
 	}
 	j, _ := json.Marshal(users)

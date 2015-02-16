@@ -32,7 +32,7 @@ func GetFeaturedPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 	predictions := GetFeaturedPredictions(db, limit)
 	if predictions == nil {
-		NoInfoAtEndpointError(w)
+		predictions = []PtPrediction{}
 		return
 	}
 	uid := GetUIDOrZero(r)
@@ -53,7 +53,7 @@ func GetAllPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 	predictions := GetAllPredictions(db)
 	if predictions == nil {
-		NoInfoAtEndpointError(w)
+		predictions = []PtPrediction{}
 		return
 	}
 	uid := GetUIDOrZero(r)
@@ -109,6 +109,10 @@ func AddPredictionHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Println("add prediction", prediction)
 	AddPrediction(db, &prediction)
+
+	//Cur user hasn't voted yet
+	prediction.CurUserVote = -1
+
 	j, _ := json.Marshal(prediction)
 	fmt.Fprintln(w, string(j))
 }
@@ -122,7 +126,7 @@ func GetLatestPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	//Get the 10 latest predictions
 	predictions := GetLatestPredictions(db, 10)
 	if predictions == nil {
-		NoInfoAtEndpointError(w)
+		predictions = []PtPrediction{}
 		return
 	}
 	uid := GetUIDOrZero(r)
@@ -150,7 +154,7 @@ func GetPredictionsForCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	predictions := GetPredictionsForCategoryId(db, catId)
 	if predictions == nil {
-		NoInfoAtEndpointError(w)
+		predictions = []PtPrediction{}
 		return
 	}
 	uid := GetUIDOrZero(r)
@@ -179,7 +183,7 @@ func GetPredictionsForCategoryNameHandler(w http.ResponseWriter, r *http.Request
 	log.Println(catId)
 	predictions := GetPredictionsForCategoryId(db, catId)
 	if predictions == nil {
-		NoInfoAtEndpointError(w)
+		predictions = []PtPrediction{}
 		return
 	}
 	uid := GetUIDOrZero(r)
@@ -221,7 +225,7 @@ func GetUserPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	uid, _ := strconv.ParseInt(vars["id"], 10, 64)
 	predictions := GetUserPrediction(db, int64(uid))
 	if predictions == nil {
-		NoInfoAtEndpointError(w)
+		predictions = []PtPrediction{}
 		return
 	}
 	cur_uid := GetUIDOrZero(r)
@@ -244,7 +248,7 @@ func GetTaggedPredictionHandler(w http.ResponseWriter, r *http.Request) {
 	tag := vars["tag"]
 	predictions := GetPredictionsForTag(db, tag)
 	if predictions == nil {
-		NoInfoAtEndpointError(w)
+		predictions = []PtPrediction{}
 		return
 	}
 	uid := GetUIDOrZero(r)
