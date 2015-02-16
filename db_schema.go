@@ -58,7 +58,7 @@ type PtUser struct {
 	FacebookAuthToken string         `sql:"not null; DEFAULT:''"`
 	FirstName         string         `sql:"not null; DEFAULT:''"`
 	LastName          string         `sql:"not null; DEFAULT:''"`
-	Avatar_URL        string         `sql:"not null; DEFAULT:''"`
+	AvatarUrl         string         `sql:"not null; DEFAULT:''"`
 	Location          string         `sql:"not null; DEFAULT:''"`
 	Predictions       []PtPrediction
 }

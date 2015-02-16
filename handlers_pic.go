@@ -81,7 +81,7 @@ func UploadImageHandler(w http.ResponseWriter, r *http.Request) {
 
 	var user PtUser
 	db.First(&user, uid)
-	user.Avatar_URL = link
+	user.AvatarUrl = link
 	db.Save(&user)
 
 	j, _ := json.Marshal(&map[string]interface{}{

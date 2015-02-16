@@ -16,7 +16,7 @@ func LoadTestDataHandler(w http.ResponseWriter, r *http.Request) {
 		FirstName:  "Ben",
 		LastName:   "Levy",
 		Email:      "bjlgds@gmail.com",
-		Avatar_URL: "https://scontent-a-lga.xx.fbcdn.net/hphotos-xfp1/v/t1.0-9/10310651_10152412999714913_8367590480124742920_n.jpg?oh=ba1ebdc8ab067a410fb3f030bfbddd71&oe=555A0190",
+		AvatarUrl:  "https://scontent-a-lga.xx.fbcdn.net/hphotos-xfp1/v/t1.0-9/10310651_10152412999714913_8367590480124742920_n.jpg?oh=ba1ebdc8ab067a410fb3f030bfbddd71&oe=555A0190",
 		IsFeatured: true,
 		Created:    time.Now(),
 	})
@@ -25,7 +25,7 @@ func LoadTestDataHandler(w http.ResponseWriter, r *http.Request) {
 		FirstName:  "Howard",
 		LastName:   "Akumiah",
 		Email:      "hakumiah@gmail.com",
-		Avatar_URL: "https://fbcdn-sphotos-f-a.akamaihd.net/hphotos-ak-xap1/v/t1.0-9/10891425_10152970931527673_2036531108072244462_n.jpg?oh=f489e2f5f924e50278fa16ac754c3148&oe=5566E2EE&__gda__=1432879035_27f356f3d62060990e8ff694f8e64284",
+		AvatarUrl:  "https://fbcdn-sphotos-f-a.akamaihd.net/hphotos-ak-xap1/v/t1.0-9/10891425_10152970931527673_2036531108072244462_n.jpg?oh=f489e2f5f924e50278fa16ac754c3148&oe=5566E2EE&__gda__=1432879035_27f356f3d62060990e8ff694f8e64284",
 		IsFeatured: true,
 		Created:    time.Now(),
 	})
@@ -33,7 +33,7 @@ func LoadTestDataHandler(w http.ResponseWriter, r *http.Request) {
 		FirstName:  "Jake",
 		LastName:   "Marsh",
 		Email:      "jakemmarsh@gmail.com",
-		Avatar_URL: "https://scontent-b-lga.xx.fbcdn.net/hphotos-xfp1/v/t1.0-9/10433831_10152797092583173_4991169485836557026_n.jpg?oh=a8527fd4974df690a81779e3c3384030&oe=55574156",
+		AvatarUrl:  "https://scontent-b-lga.xx.fbcdn.net/hphotos-xfp1/v/t1.0-9/10433831_10152797092583173_4991169485836557026_n.jpg?oh=a8527fd4974df690a81779e3c3384030&oe=55574156",
 		FacebookId: "621883172",
 		IsFeatured: true,
 		Created:    time.Now(),
