@@ -122,7 +122,7 @@ func GetLatestPredictions(db *gorm.DB, x int) []PtPrediction {
 }
 
 func AddPrediction(db *gorm.DB, p *PtPrediction) {
-	db.Create(p)
+	db.Debug().Create(p)
 }
 
 func AddVote(db *gorm.DB, v *PtVote) {
