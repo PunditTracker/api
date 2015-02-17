@@ -107,7 +107,7 @@ func AddPredictionHandler(w http.ResponseWriter, r *http.Request) {
 			Tag: t,
 		})
 	}
-	log.Println("add prediction", prediction)
+	log.Println("add prediction:\n", prediction)
 	AddPrediction(db, &prediction)
 
 	//Cur user hasn't voted yet
