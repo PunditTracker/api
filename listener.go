@@ -28,6 +28,9 @@ func addListeners() {
 	router.HandleFunc("/v1/auth/forgot", ForgotPasswordEndpoint)
 	router.HandleFunc("/v1/auth/reset/{id:[0-9]+}/{resetKey}", ResetPasswordEndpoint)
 
+	//Email
+	router.HandleFunc("/v1/marchmadness/add", SubscribeToMarchMadnessHandler)
+
 	//User
 	router.HandleFunc("/v1/user", GetAllUsersHandler).Methods("GET")
 	router.HandleFunc("/v1/user", UpdateUserHandler).Methods("PATCH")
