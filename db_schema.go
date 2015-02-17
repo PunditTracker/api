@@ -59,6 +59,7 @@ type PtUser struct {
 	FirstName         string         `sql:"not null; DEFAULT:''"`
 	LastName          string         `sql:"not null; DEFAULT:''"`
 	AvatarUrl         string         `sql:"not null; DEFAULT:''"`
+	Affiliation       string         `sql:"not null; DEFAULT:''"`
 	Location          string         `sql:"not null; DEFAULT:''"`
 	Predictions       []PtPrediction
 }
