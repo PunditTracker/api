@@ -14,9 +14,10 @@ type MCEmail struct {
 }
 
 type MCRequest struct {
-	EmailInfo MCEmail `json:"email"`
-	Id        string  `json:"id"`
-	ApiKey    string  `json:"apikey"`
+	EmailInfo   MCEmail `json:"email"`
+	Id          string  `json:"id"`
+	ApiKey      string  `json:"apikey"`
+	DoubleOptIn bool    `json:"double_optin"`
 }
 
 var (
@@ -33,9 +34,10 @@ func SubscribeToMarchMadnessHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	mailChimpRequest := MCRequest{
-		EmailInfo: MCEmail{Email: email},
-		Id:        mc_list_id,
-		ApiKey:    mc_api_key,
+		EmailInfo:   MCEmail{Email: email},
+		Id:          mc_list_id,
+		ApiKey:      mc_api_key,
+		DoubleOptIn: false,
 	}
 	parts := strings.Split(mc_api_key, "-")
 	dc := parts[1]
@@ -53,10 +55,11 @@ func SubscribeToMarchMadnessHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println(err.Error())
 		return
 	}
-	if err != nil {
-		log.Println(err.Error())
+	defer resp.Body.Close()
+
+	responseMessage := map[string]string{
+		"Message": "succesfully saved email",
 	}
-
-	fmt.Fprintln(w, "succesfully saved email", resp.Body)
-
+	j, _ := json.Marshal(responseMessage)
+	fmt.Fprintln(w, string(j))
 }
