@@ -104,6 +104,7 @@ func AddPredictionHandler(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 	for _, t := range prediction.Tags {
 		prediction.TagVal = append(prediction.TagVal, PtTag{
+			Id:  GetIdWithTag(db, t),
 			Tag: t,
 		})
 	}

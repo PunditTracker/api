@@ -326,3 +326,9 @@ func GetVotesForUser(db *gorm.DB, uid int64) []PtVote {
 	}
 	return votes
 }
+
+func GetIdWithTag(db *gorm.DB, tagName string) int64 {
+	var tag PtTag
+	db.Where("tag = ?", tagName).First(&tag)
+	return tag.Id
+}
