@@ -42,26 +42,26 @@ func getDB() (*gorm.DB, error) {
 }
 
 type PtUser struct {
-	Id                int64
-	Password          string         `sql:"not null" json:"-"`
-	ResetKey          sql.NullString `json:"-" sql:"DEFAULT:null"`
-	ResetValidUntil   time.Time      `json:"-" sql:"DEFAULT:current_timestamp"`
-	Email             string         `sql:"not null; unique"`
-	Created           time.Time      `sql:"not null; DEFAULT:current_timestamp"`
-	Score             int            `sql:"not null; DEFAULT:0"`
-	PredictionGraded  int            `sql:"not null; DEFAULT:0"`
-	PredictionCorrect int            `sql:"not null; DEFAULT:0"`
-	IsAdmin           bool           `sql:"not null; DEFAULT:FALSE"`
-	IsPundit          bool           `sql:"not null; DEFAULT:FALSE"`
-	IsFeatured        bool           `sql:"not null; DEFAULT:FALSE"`
-	FacebookId        string         `sql:"not null; DEFAULT:''"`
-	FacebookAuthToken string         `sql:"not null; DEFAULT:''"`
-	FirstName         string         `sql:"not null; DEFAULT:''"`
-	LastName          string         `sql:"not null; DEFAULT:''"`
-	AvatarUrl         string         `sql:"not null; DEFAULT:''"`
-	Affiliation       string         `sql:"not null; DEFAULT:''"`
-	Location          string         `sql:"not null; DEFAULT:''"`
-	Predictions       []PtPrediction
+	Id                 int64
+	Password           string         `sql:"not null" json:"-"`
+	ResetKey           sql.NullString `json:"-" sql:"DEFAULT:null"`
+	ResetValidUntil    time.Time      `json:"-" sql:"DEFAULT:current_timestamp"`
+	Email              string         `sql:"not null; unique"`
+	Created            time.Time      `sql:"not null; DEFAULT:current_timestamp"`
+	Score              int            `sql:"not null; DEFAULT:0"`
+	PredictionsGraded  int            `sql:"not null; DEFAULT:0"`
+	PredictionsCorrect int            `sql:"not null; DEFAULT:0"`
+	IsAdmin            bool           `sql:"not null; DEFAULT:FALSE"`
+	IsPundit           bool           `sql:"not null; DEFAULT:FALSE"`
+	IsFeatured         bool           `sql:"not null; DEFAULT:FALSE"`
+	FacebookId         string         `sql:"not null; DEFAULT:''"`
+	FacebookAuthToken  string         `sql:"not null; DEFAULT:''"`
+	FirstName          string         `sql:"not null; DEFAULT:''"`
+	LastName           string         `sql:"not null; DEFAULT:''"`
+	AvatarUrl          string         `sql:"not null; DEFAULT:''"`
+	Affiliation        string         `sql:"not null; DEFAULT:''"`
+	Location           string         `sql:"not null; DEFAULT:''"`
+	Predictions        []PtPrediction
 }
 
 type PtCategory struct {
