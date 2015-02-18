@@ -9,7 +9,30 @@ import (
 )
 
 var OscarCategories = []string{
-	"Best Film",
+	"Picture",
+	"Director",
+	"Actor",
+	"Actress",
+	"Supporting Actor",
+	"Supporting Actress",
+	"Original Screenplay",
+	"Adapted Screenplay",
+	"Animated Feature Film",
+	"Foreign Language Film",
+	"Documentary - Feature",
+	"Documentary - Short",
+	"Live Action Short Film",
+	"Animated Short Film",
+	"Original Score",
+	"Original Song",
+	"Sound Editting",
+	"Sound Mixing",
+	"Production Design",
+	"Cinematography",
+	"Makeup and Hairstyling",
+	"Costume Design",
+	"Film Editting",
+	"Visual Effects",
 }
 
 type OscarStruct map[string]string
