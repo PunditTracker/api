@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 )
 
 var OscarCategories = []string{
@@ -30,7 +31,7 @@ func GetOscarPredictions(w http.ResponseWriter, r *http.Request) {
 		if pred.Id == 0 {
 			oscars[v] = ""
 		} else {
-			oscars[v] = pred.Title
+			oscars[v] = strings.Split(pred.Title, " will win")[0]
 		}
 	}
 
