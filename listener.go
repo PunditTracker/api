@@ -77,6 +77,9 @@ func addListeners() {
 	router.HandleFunc("/v1/homepage/hero/{cat_id:[0-9]+}", GetHeroPredictionHandler)
 	router.HandleFunc("/v1/homepage/predictionSet/{cat_id:[0-9]+}", GetPredictionSetHandler)
 
+	//Special
+	router.HandleFunc("/v1/oscars", GetOscarPredictions)
+
 	//Admin Functons
 	router.HandleFunc("/v1/admin/homepage/set/hero", SetHeroHandler)
 	router.HandleFunc("/v1/admin/homepage/set/predictionSet", SetPredictionSetHandler)

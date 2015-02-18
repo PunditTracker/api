@@ -80,20 +80,21 @@ const (
 )
 
 type PtPrediction struct {
-	Id          int64
-	CreatorId   int64             `sql:"not null"`
-	CategoryId  int64             `sql:"not null"`
-	Title       string            `sql:"not null"`
-	State       PtPredictionState `sql:"not null";DEFAULT:0`
-	IsFeatured  bool              `sql:"not null; DEFAULT:FALSE"`
-	Created     time.Time         `sql:"not null; DEFAULT:current_timestamp"`
-	Deadline    time.Time
-	ImageUrl    string
-	Creator     PtUser
-	Category    PtCategory `json:"-"`
-	Tags        []string   `sql:"-"`
-	CurUserVote int        `sql:"-"`
-	TagVal      []PtTag    `gorm:"many2many:prediction_tag_map;"`
+	Id                   int64
+	CreatorId            int64             `sql:"not null"`
+	CategoryId           int64             `sql:"not null"`
+	Title                string            `sql:"not null"`
+	State                PtPredictionState `sql:"not null";DEFAULT:0`
+	IsFeatured           bool              `sql:"not null; DEFAULT:FALSE"`
+	Created              time.Time         `sql:"not null; DEFAULT:current_timestamp"`
+	Deadline             time.Time
+	ImageUrl             string
+	Creator              PtUser
+	SpecialEventCategory sql.NullString
+	Category             PtCategory `json:"-"`
+	Tags                 []string   `sql:"-"`
+	CurUserVote          int        `sql:"-"`
+	TagVal               []PtTag    `gorm:"many2many:prediction_tag_map;"`
 }
 
 type PtVote struct {
