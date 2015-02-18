@@ -36,11 +36,11 @@ func GetFeaturedPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	uid := GetUIDOrZero(r)
-	if uid != 0 {
-		for i, _ := range predictions {
-			UpdateVoteValue(db, uid, &predictions[i])
-		}
+
+	for i, _ := range predictions {
+		UpdateVoteValue(db, uid, &predictions[i])
 	}
+
 	j, _ := json.Marshal(predictions)
 	fmt.Fprintln(w, string(j))
 }
@@ -57,11 +57,11 @@ func GetAllPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	uid := GetUIDOrZero(r)
-	if uid != 0 {
-		for i, _ := range predictions {
-			UpdateVoteValue(db, uid, &predictions[i])
-		}
+
+	for i, _ := range predictions {
+		UpdateVoteValue(db, uid, &predictions[i])
 	}
+
 	j, _ := json.Marshal(predictions)
 	fmt.Fprintln(w, string(j))
 }
@@ -131,10 +131,9 @@ func GetLatestPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	uid := GetUIDOrZero(r)
-	if uid != 0 {
-		for i, _ := range predictions {
-			UpdateVoteValue(db, uid, &predictions[i])
-		}
+
+	for i, _ := range predictions {
+		UpdateVoteValue(db, uid, &predictions[i])
 	}
 
 	j, _ := json.Marshal(predictions)
@@ -159,11 +158,11 @@ func GetPredictionsForCategoryHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	uid := GetUIDOrZero(r)
-	if uid != 0 {
-		for i, _ := range predictions {
-			UpdateVoteValue(db, uid, &predictions[i])
-		}
+
+	for i, _ := range predictions {
+		UpdateVoteValue(db, uid, &predictions[i])
 	}
+
 	j, _ := json.Marshal(predictions)
 	fmt.Fprintln(w, string(j))
 }
@@ -188,11 +187,11 @@ func GetPredictionsForCategoryNameHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 	uid := GetUIDOrZero(r)
-	if uid != 0 {
-		for i, _ := range predictions {
-			UpdateVoteValue(db, uid, &predictions[i])
-		}
+
+	for i, _ := range predictions {
+		UpdateVoteValue(db, uid, &predictions[i])
 	}
+
 	j, _ := json.Marshal(predictions)
 	fmt.Fprintln(w, string(j))
 }
@@ -230,11 +229,11 @@ func GetUserPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	cur_uid := GetUIDOrZero(r)
-	if uid != 0 {
-		for i, _ := range predictions {
-			UpdateVoteValue(db, cur_uid, &predictions[i])
-		}
+
+	for i, _ := range predictions {
+		UpdateVoteValue(db, cur_uid, &predictions[i])
 	}
+
 	j, _ := json.Marshal(predictions)
 	fmt.Fprintln(w, string(j))
 }
@@ -253,11 +252,11 @@ func GetTaggedPredictionHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	uid := GetUIDOrZero(r)
-	if uid != 0 {
-		for i, _ := range predictions {
-			UpdateVoteValue(db, uid, &predictions[i])
-		}
+
+	for i, _ := range predictions {
+		UpdateVoteValue(db, uid, &predictions[i])
 	}
+
 	j, _ := json.Marshal(predictions)
 	fmt.Fprintln(w, string(j))
 }
@@ -298,11 +297,10 @@ func GetPredictionSetHandler(w http.ResponseWriter, r *http.Request) {
 		db.First(&predictionSets[i].Prediction1, predictionSets[i].Prediction1Id)
 		db.First(&predictionSets[i].Prediction2, predictionSets[i].Prediction2Id)
 		db.First(&predictionSets[i].Prediction3, predictionSets[i].Prediction3Id)
-		if uid != 0 {
-			UpdateVoteValue(db, uid, &predictionSets[i].Prediction1)
-			UpdateVoteValue(db, uid, &predictionSets[i].Prediction2)
-			UpdateVoteValue(db, uid, &predictionSets[i].Prediction3)
-		}
+
+		UpdateVoteValue(db, uid, &predictionSets[i].Prediction1)
+		UpdateVoteValue(db, uid, &predictionSets[i].Prediction2)
+		UpdateVoteValue(db, uid, &predictionSets[i].Prediction3)
 	}
 
 	j, _ := json.Marshal(predictionSets)

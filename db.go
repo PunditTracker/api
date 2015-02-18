@@ -307,6 +307,9 @@ func PredictionDeadlinePassedOrGraded(db *gorm.DB, predId int64, w http.Response
 
 //Returns -1 if vote doesnt exist, otherwise returns the value of the vote
 func UpdateVoteValue(db *gorm.DB, uid int64, pred *PtPrediction) {
+	if uid == 0 {
+		pred.CurUserVote = -1
+	}
 	var v PtVote
 	db.Where("voter_id = ? and voted_on_id = ?", uid, pred.Id).First(&v)
 	if v.Id == 0 {
