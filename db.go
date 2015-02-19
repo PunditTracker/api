@@ -215,7 +215,7 @@ func SetState(db *gorm.DB, predictionId int64, state PtPredictionState) *PtPredi
 	return &prediction
 }
 
-func SetScoreForPrediction(db *gorm.DB, predictionId int64, state PtPredictionState) {
+func SetScoreForVotes(db *gorm.DB, predictionId int64, state PtPredictionState) {
 	var score int
 	if state == DidHappen {
 		score = 1

@@ -26,7 +26,7 @@ func SetStateHandler(w http.ResponseWriter, r *http.Request) {
 	prediction := SetState(db, predictionId, newState)
 
 	if newState == DidHappen || newState == DidNotHappen {
-		SetScoreForPrediction(db, predictionId, newState)
+		//SetScoreForVotes(db, predictionId, newState)
 		SetPredictorScore(db, prediction.CreatorId, newState)
 	}
 
