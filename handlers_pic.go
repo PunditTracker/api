@@ -14,11 +14,13 @@ import (
 func AdminUploadImageHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("begin upload admin image handler")
 	if IsAdminOrRedirect(w, r) {
+		log.Println("not admin")
 		return
 	}
 
 	data, h, err := GetImageDataFromRequest(w, r)
 	if err != nil {
+		log.Println("imager err", err.Error())
 		return
 	}
 	uniquestring := fmt.Sprintf("images/%s", h.Filename)
