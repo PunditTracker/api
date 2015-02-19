@@ -36,8 +36,8 @@ func addListeners() {
 	router.HandleFunc("/v1/user", UpdateUserHandler).Methods("PATCH")
 	router.HandleFunc("/v1/user/featured", GetFeaturedUsersHandler) //.Methods("GET")
 	router.HandleFunc("/v1/user/{id:[0-9]+}", GetSingleUserHandler) //.Methods("GET")
-	//router.HandleFunc("/v1/user/{name:[a-zA-Z0-9]+}", GetSingleUserForNameHandler) //.Methods("GET")
 	router.HandleFunc("/v1/user/{id:[0-9]+}/vote", GetVotesForUserHandler)
+	router.HandleFunc("/v1/user/password", UpdatePasswordHandler).Methods("POST")
 
 	//Image Functions
 	router.HandleFunc("/v1/putprofpic", UploadImageHandler)
