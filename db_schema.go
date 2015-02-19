@@ -92,7 +92,7 @@ type PtPrediction struct {
 	Creator               PtUser
 	SpecialEventCategory  sql.NullString
 	SpecialEventSelection sql.NullString
-	SpecialEventYear      sql.NullInt64
+	SpecialEventYear      int64      `sql:"not null;DEFAULT:0`
 	Category              PtCategory `json:"-"`
 	Tags                  []string   `sql:"-"`
 	CurUserVote           int        `sql:"-"`
