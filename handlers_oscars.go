@@ -63,7 +63,7 @@ func GetOscarPredictions(w http.ResponseWriter, uid int64, year int) {
 		return
 	}
 	defer db.Close()
-	var oscars OscarStruct
+	oscars := OscarStruct{}
 	for _, v := range OscarCategories {
 		var pred PtPrediction
 		db.Where("special_event_category = ? and creator_id = ? and special_event_year = ?", v, uid, year).First(&pred)
