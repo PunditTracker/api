@@ -90,8 +90,8 @@ type PtPrediction struct {
 	Deadline              time.Time
 	ImageUrl              string
 	Creator               PtUser
-	SpecialEventCategory  sql.NullString
-	SpecialEventSelection sql.NullString
+	SpecialEventCategory  string     `sql:"not null; DEFAULT:''"`
+	SpecialEventSelection string     `sql:"not null; DEFAULT:''"`
 	SpecialEventYear      int64      `sql:"not null;DEFAULT:0`
 	Category              PtCategory `json:"-"`
 	Tags                  []string   `sql:"-"`
