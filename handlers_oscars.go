@@ -67,8 +67,8 @@ func GetOscarPredictions(w http.ResponseWriter, uid int64, year int) {
 	for _, v := range OscarCategories {
 		var pred PtPrediction
 		db.Where("special_event_category = ? and creator_id = ? and special_event_year = ?", v, uid, year).First(&pred)
-		if pred.Id != 0 && pred.SpecialEventSelection.Valid {
-			oscars[v] = pred.SpecialEventSelection.String
+		if pred.Id != 0 {
+			oscars[v] = pred.SpecialEventSelection
 		} else {
 			oscars[v] = ""
 		}
