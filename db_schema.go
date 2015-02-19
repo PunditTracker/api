@@ -46,7 +46,7 @@ type PtUser struct {
 	Password           string         `sql:"not null" json:"-"`
 	ResetKey           sql.NullString `json:"-" sql:"DEFAULT:null"`
 	ResetValidUntil    time.Time      `json:"-" sql:"DEFAULT:current_timestamp"`
-	Email              string         `sql:"not null; unique"`
+	Email              string         `sql:"not null;"`
 	Created            time.Time      `sql:"not null; DEFAULT:current_timestamp"`
 	Score              int            `sql:"not null; DEFAULT:0"`
 	PredictionsGraded  int            `sql:"not null; DEFAULT:0"`
