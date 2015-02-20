@@ -83,6 +83,10 @@ func UserAlreadyExistsError(w http.ResponseWriter) {
 	JsonError(w, http.StatusConflict, "That user already exists.")
 }
 
+func WrongOldPasswordError(w http.ResponseWriter) {
+	JsonError(w, http.StatusUnauthorized, "Old Password Incorrect")
+}
+
 func JsonError(w http.ResponseWriter, status int, message string) {
 	w.WriteHeader(status)
 	response := map[string]interface{}{"Status": status, "Message": message}

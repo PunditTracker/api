@@ -351,21 +351,23 @@ func UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 	err := decoder.Decode(&userMap)
 	if err != nil {
 		JsonDecodeError(w, err)
-	}
-	db := GetDBOrPrintError(w)
-	if db == nil {
 		return
 	}
-	defer db.Close()
 
 	//Check if old password is correct
 	if userMap["newPassword"] == "" || userMap["oldPassword"] == "" {
 		return
 	}
 
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
+	defer db.Close()
+
 	user, err := CheckUserWithIdAndPass(db, uid, userMap["oldPassword"])
 	if err != nil {
-		fmt.Fprintln(w, "old password incorrect")
+		WrongOldPasswordError(w)
 		return
 	}
 	user.Password = userMap["newPassword"]
@@ -375,8 +377,10 @@ func UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("change pass error", err.Error())
 		return
 	}
-
-	fmt.Fprintln(w, "Password Changed")
+	j, _ := json.Marshal(map[string]string{
+		"Message": "Password Changed",
+	})
+	fmt.Fprintln(w, string(j))
 }
 
 func GetUIDOrRedirect(w http.ResponseWriter, r *http.Request) int64 {
