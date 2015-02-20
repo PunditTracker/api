@@ -105,6 +105,18 @@ func testEmailHandler(w http.ResponseWriter, r *http.Request) {
 	SendWelcomeEmail(&PtUser{Email: "bjlgds@gmail.com"})
 }*/
 
+var (
+	WelcomeSubject = "It's time to play a part in tomorrow!"
+	WelcomeEmail   = `Welcome to PunditTracker.com,
+
+Thanks for joining us! At PunditTracker.com, it is our goal to bring accountability to the prediction industry. Take a look around, get familiar, and begin submitting your own predictions as soon as you're ready. Our system will begin tracking and scoring you as soon as you do.
+
+Remember, #TomorrowMattersToday
+
+Best,
+Team PT`
+)
+
 func SendWelcomeEmail(user *PtUser) {
 	fromEmail := "noreply@pundittracker.com"
 	toEmail := user.Email
@@ -112,15 +124,8 @@ func SendWelcomeEmail(user *PtUser) {
 	_, err := ses.EnvConfig.SendEmail(
 		fromEmail,
 		toEmail,
-		"welcome!",
-		`Welcome to PunditTracker.com!
-
-Thanks for joining us. At PunditTracker.com, it is our goal to bring accountability to the prediction industry. Our system will begin tracking and scoring you as soon as you do.
-
-Remember, #TomorrowMattersToday!
-
-Best,
-Team PT`,
+		WelcomeSubject,
+		WelcomeEmail,
 	)
 	if err != nil {
 		log.Println(err)
