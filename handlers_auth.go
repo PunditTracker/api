@@ -271,7 +271,7 @@ func ForgotPassword(w http.ResponseWriter, toEmail string) {
 	user.ResetKey.Valid = true
 	user.ResetValidUntil = time.Now().Add(time.Hour)
 	db.Save(&user)
-	link := fmt.Sprintf("foretellr.com/reset/%d/%s", user.Id, user.ResetKey.String)
+	link := fmt.Sprintf("pundittracker.com/reset/%d/%s", user.Id, user.ResetKey.String)
 	message := "Please goto " + link
 
 	_, err := ses.EnvConfig.SendEmail(
