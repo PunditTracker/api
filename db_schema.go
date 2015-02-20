@@ -58,7 +58,7 @@ type PtUser struct {
 	FacebookAuthToken  string         `sql:"not null; DEFAULT:''"`
 	FirstName          string         `sql:"not null; DEFAULT:''"`
 	LastName           string         `sql:"not null; DEFAULT:''"`
-	AvatarUrl          string         `sql:"not null; DEFAULT:''"`
+	AvatarUrl          string         `sql:"not null; DEFAULT:'http://assets.pundittracker.com/prof_pic/default_avatar.png'"`
 	Affiliation        string         `sql:"not null; DEFAULT:''"`
 	Location           string         `sql:"not null; DEFAULT:''"`
 	Predictions        []PtPrediction
