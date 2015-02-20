@@ -100,6 +100,11 @@ func RegisterFacebookHandler(w http.ResponseWriter, r *http.Request) {
 	SendWelcomeEmail(&user)
 }
 
+/*
+func testEmailHandler(w http.ResponseWriter, r *http.Request) {
+	SendWelcomeEmail(&PtUser{Email: "bjlgds@gmail.com"})
+}*/
+
 func SendWelcomeEmail(user *PtUser) {
 	fromEmail := "noreply@pundittracker.com"
 	toEmail := user.Email
@@ -107,8 +112,15 @@ func SendWelcomeEmail(user *PtUser) {
 	_, err := ses.EnvConfig.SendEmail(
 		fromEmail,
 		toEmail,
-		"Welcome to Pundit Tracker",
 		"welcome!",
+		`Welcome to PunditTracker.com!
+
+Thanks for joining us. At PunditTracker.com, it is our goal to bring accountability to the prediction industry. Our system will begin tracking and scoring you as soon as you do.
+
+Remember, #TomorrowMattersToday!
+
+Best,
+Team PT`,
 	)
 	if err != nil {
 		log.Println(err)
