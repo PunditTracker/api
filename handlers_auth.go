@@ -370,6 +370,7 @@ func UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 		WrongOldPasswordError(w)
 		return
 	}
+	db.First(&user, user.Id)
 	user.Password = userMap["newPassword"]
 	//salt new password and update
 	err = SetPassword(db, &user)
