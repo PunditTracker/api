@@ -141,6 +141,7 @@ func GetLatestPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetPredictionsForCategoryHandler(w http.ResponseWriter, r *http.Request) {
+	limit := 25
 	db := GetDBOrPrintError(w)
 	if db == nil {
 		return
@@ -152,7 +153,7 @@ func GetPredictionsForCategoryHandler(w http.ResponseWriter, r *http.Request) {
 		NoInfoAtEndpointError(w)
 		return
 	}
-	predictions := GetPredictionsForCategoryId(db, catId)
+	predictions := GetPredictionsForCategoryId(db, catId, limit)
 	if predictions == nil {
 		predictions = []PtPrediction{}
 		return
@@ -168,6 +169,7 @@ func GetPredictionsForCategoryHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetPredictionsForCategoryNameHandler(w http.ResponseWriter, r *http.Request) {
+	limit := 20
 	db := GetDBOrPrintError(w)
 	if db == nil {
 		return
@@ -181,7 +183,7 @@ func GetPredictionsForCategoryNameHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 	log.Println(catId)
-	predictions := GetPredictionsForCategoryId(db, catId)
+	predictions := GetPredictionsForCategoryId(db, catId, limit)
 	if predictions == nil {
 		predictions = []PtPrediction{}
 		return

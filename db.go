@@ -146,9 +146,9 @@ func GetIdForCategoryName(db *gorm.DB, name string) int64 {
 	return cat.Id
 }
 
-func GetPredictionsForCategoryId(db *gorm.DB, catId int64) []PtPrediction {
+func GetPredictionsForCategoryId(db *gorm.DB, catId int64, limit int) []PtPrediction {
 	var preds []PtPrediction
-	db.Where("category_id = ?", catId).Find(&preds)
+	db.Limit(limit).Where("category_id = ?", catId).Find(&preds)
 	return preds
 }
 
