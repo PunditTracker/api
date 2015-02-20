@@ -57,7 +57,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = UpdatePassword(db, &user)
+	err = SaveUser(db, &user)
 	if err != nil {
 		DBError(w, err)
 		return
