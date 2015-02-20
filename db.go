@@ -85,7 +85,7 @@ func GetUserByID(db *gorm.DB, uid int64) PtUser {
 
 func GetUserPrediction(db *gorm.DB, uid int64) []PtPrediction {
 	var preds []PtPrediction
-	db.Where("creator_id = ?", uid).Find(&preds)
+	db.Where("creator_id = ?", uid).Order("created desc").Find(&preds)
 	return preds
 }
 
