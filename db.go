@@ -17,13 +17,17 @@ var (
 	db_logger  *log.Logger
 )
 
-func SetPassword(db *gorm.DB, user *PtUser) error {
+func SetPasswordSalted(db *gorm.DB, user *PtUser) error {
 	passByte, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
 	}
 	user.Password = string(passByte)
-	return SaveUser(db, user)
+	return nil
+}
+
+func UpdatePassword(db *gorm.DB, user *PtUser) error {
+	return db.First(&PtUser{}, user.Id).Update("password", user.Password).Error
 }
 
 func SaveUser(db *gorm.DB, user *PtUser) error {

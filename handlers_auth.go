@@ -50,7 +50,14 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	user.Password = userMap["password"]
 	user.ResetValidUntil = time.Now()
 	user.Created = time.Now()
-	err = SetPassword(db, &user)
+	err = SetPasswordSalted(db, &user)
+	if err != nil {
+		DBError(w, err)
+		//Password hash error
+		return
+	}
+
+	err = UpdatePassword(db, &user)
 	if err != nil {
 		DBError(w, err)
 		return
@@ -316,7 +323,8 @@ func ResetPasswordEndpoint(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	user.Password = newPassword
-	SetPassword(db, &user)
+	SetPasswordSalted(db, &user)
+	UpdatePassword(db, &user)
 }
 
 func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
@@ -373,7 +381,12 @@ func UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 	db.First(&user, user.Id)
 	user.Password = userMap["newPassword"]
 	//salt new password and update
-	err = SetPassword(db, &user)
+	err = SetPasswordSalted(db, &user)
+	if err != nil {
+		log.Println("salt pass err", err.Error())
+		return
+	}
+	err = UpdatePassword(db, &user)
 	if err != nil {
 		log.Println("change pass error", err.Error())
 		return
