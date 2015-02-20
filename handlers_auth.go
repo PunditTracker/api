@@ -332,19 +332,22 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 	if uid == 0 {
 		return
 	}
+
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
 	var user PtUser
+	db.First(&user, uid)
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&user)
 	if err != nil {
 		JsonDecodeError(w, err)
 	}
-	db := GetDBOrPrintError(w)
-	if db == nil {
-		return
-	}
+
 	defer db.Close()
 	db.Model(PtUser{Id: uid}).Update(user)
-	db.First(&user, uid)
+
 	j, _ := json.Marshal(user)
 	fmt.Fprintln(w, string(j))
 }
