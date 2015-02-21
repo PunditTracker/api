@@ -245,6 +245,10 @@ func SetHero(db *gorm.DB, hero *PtHero) {
 	db.Save(hero)
 }
 
+func SetPredictionLocation(db *gorm.DB, predictionLoc *PtPredictionLocation) {
+	db.Save(predictionLoc)
+}
+
 func SetPredictionSet(db *gorm.DB, predictionSet *PtPredictionSet) {
 	db.Save(predictionSet)
 }

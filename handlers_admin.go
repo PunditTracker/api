@@ -77,9 +77,27 @@ func SetPredictionSetHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 	SetPredictionSet(db, &predictionSet)
-	j, err := json.Marshal(predictionSet)
+	j, _ := json.Marshal(predictionSet)
+	fmt.Fprintln(w, string(j))
+}
+
+func SetPredictionLocationHandler(w http.ResponseWriter, r *http.Request) {
+	if IsAdminOrRedirect(w, r) {
+		return
+	}
+	dec := json.NewDecoder(r.Body)
+	var predictionLoc PtPredictionLocation
+	err := dec.Decode(&predictionLoc)
 	if err != nil {
 		JsonDecodeError(w, err)
+		return
 	}
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
+	defer db.Close()
+	SetPredictionLocation(db, &predictionLoc)
+	j, _ := json.Marshal(predictionLoc)
 	fmt.Fprintln(w, string(j))
 }

@@ -183,6 +183,13 @@ type PtHero struct {
 	ButtonUrl    string
 }
 
+type PtPredictionLocation struct {
+	Id           int64
+	CategoryId   int64 `sql:"not null; DEFAULT:0"`
+	LocationNum  int64 `sql:"not null"`
+	PredictionId int64 `sql:"not null"`
+}
+
 func SetUpDB(db *gorm.DB) {
 	db.Debug().AutoMigrate(
 		&PtUser{},
@@ -193,6 +200,7 @@ func SetUpDB(db *gorm.DB) {
 		&PtBracket{},
 		&PtPredictionSet{},
 		&PtHero{},
+		&PtPredictionLocation{},
 	)
 }
 
