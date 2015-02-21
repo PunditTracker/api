@@ -72,7 +72,7 @@ func addListeners() {
 
 	//Homepage Functions
 	router.HandleFunc("/v1/hero", GetLiveHeroPredictionHandler)
-	router.HandleFunc("/v1/homepage/predictionSet", GetLivePredictionSetHandler)
+	router.HandleFunc("/v1/predictionSet", GetLivePredictionSetHandler)
 
 	router.HandleFunc("/v1/hero/{cat_id:[0-9]+}", GetLiveHeroPredictionHandler)
 	router.HandleFunc("/v1/predictionSet/{cat_id:[0-9]+}", GetLivePredictionSetHandler)
