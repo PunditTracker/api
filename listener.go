@@ -84,6 +84,7 @@ func addListeners() {
 	router.HandleFunc("/v1/admin/homepage/set/hero", SetHeroHandler)
 	router.HandleFunc("/v1/admin/homepage/set/predictionSet", SetPredictionSetHandler)
 	router.HandleFunc("/v1/admin/homepage/set/predictionLoc", SetPredictionLocationHandler)
+	router.HandleFunc("/v1/admin/homepage/predictionLoc/{cat_id:[0-9]+}", GetPredictionLocationHandler)
 	router.HandleFunc("/v1/admin/prediction/setstate/{predId:[0-9]+}/{state:[0-9]}", SetStateHandler)
 	router.HandleFunc("/v1/admin/addimage", AdminUploadImageHandler)
 	router.HandleFunc("/v1/admin/prediction/add", AddPredictionAdminHandler)

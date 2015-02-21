@@ -5,6 +5,7 @@ import (
 	_ "encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -99,5 +100,24 @@ func SetPredictionLocationHandler(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 	SetPredictionLocation(db, &predictionLoc)
 	j, _ := json.Marshal(predictionLoc)
+	fmt.Fprintln(w, string(j))
+}
+
+func GetPredictionLocationHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	cat_id, err := strconv.ParseInt(vars["cat_id"], 10, 64)
+	if err != nil {
+		cat_id = 0
+		log.Println("cat_id err", err)
+		return
+	}
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
+	defer db.Close()
+	var locs []PtPredictionLocation
+	db.Order("location_num").Where("categord_id = ?", cat_id).Find(&locs)
+	j, _ := json.Marshal(locs)
 	fmt.Fprintln(w, string(j))
 }
