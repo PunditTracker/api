@@ -88,6 +88,7 @@ func addListeners() {
 	router.HandleFunc("/v1/admin/prediction/setstate/{predId:[0-9]+}/{state:[0-9]}", SetStateHandler)
 	router.HandleFunc("/v1/admin/addimage", AdminUploadImageHandler)
 	router.HandleFunc("/v1/admin/prediction/add", AddPredictionAdminHandler)
+	router.HandleFunc("/v1/admin/add/pundit", AdminPunditCreateHandler)
 
 	router.NotFoundHandler = http.HandlerFunc(notFoundHandler)
 }

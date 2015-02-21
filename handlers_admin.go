@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 func SetStateHandler(w http.ResponseWriter, r *http.Request) {
@@ -120,5 +121,35 @@ func GetPredictionLocationHandler(w http.ResponseWriter, r *http.Request) {
 	var locs []PtPredictionLocation
 	db.Where("category_id = ?", cat_id).Order("location_num").Find(&locs)
 	j, _ := json.Marshal(locs)
+	fmt.Fprintln(w, string(j))
+}
+
+func AdminPunditCreateHandler(w http.ResponseWriter, r *http.Request) {
+	if IsAdminOrRedirect(w, r) {
+		return
+	}
+	var userMap map[string]string
+	dec := json.NewDecoder(r.Body)
+	err := dec.Decode(&userMap)
+	if err != nil {
+		JsonDecodeError(w, err)
+		return
+	}
+	newUser := PtUser{
+		Email:     "None@None.com",
+		Password:  "None",
+		Created:   time.Now(),
+		Location:  userMap["location"],
+		FirstName: userMap["first_name"],
+		LastName:  userMap["last_name"],
+	}
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
+	defer db.Close()
+	db = db.Debug()
+	SaveUser(db, &newUser)
+	j, _ := json.Marshal(newUser)
 	fmt.Fprintln(w, string(j))
 }
