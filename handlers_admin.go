@@ -105,10 +105,12 @@ func SetPredictionLocationHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetPredictionLocationHandler(w http.ResponseWriter, r *http.Request) {
+	if IsAdminOrRedirect(w, r) {
+		return
+	}
 	vars := mux.Vars(r)
 	cat_id, err := strconv.ParseInt(vars["cat_id"], 10, 64)
 	if err != nil {
-		cat_id = 0
 		log.Println("cat_id err", err)
 		return
 	}
@@ -121,6 +123,50 @@ func GetPredictionLocationHandler(w http.ResponseWriter, r *http.Request) {
 	var locs []PtPredictionLocation
 	db.Where("category_id = ?", cat_id).Order("location_num").Find(&locs)
 	j, _ := json.Marshal(locs)
+	fmt.Fprintln(w, string(j))
+}
+
+func GetHeroHandler(w http.ResponseWriter, r *http.Request) {
+	if IsAdminOrRedirect(w, r) {
+		return
+	}
+	vars := mux.Vars(r)
+	cat_id, err := strconv.ParseInt(vars["cat_id"], 10, 64)
+	if err != nil {
+		log.Println("cat_id err", err)
+		return
+	}
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
+	defer db.Close()
+	db = db.Debug()
+	var heros []PtHero
+	db.Where("category_id = ?", cat_id).Order("location_num").Find(&heros)
+	j, _ := json.Marshal(heros)
+	fmt.Fprintln(w, string(j))
+}
+
+func GetPredictionSetHandler(w http.ResponseWriter, r *http.Request) {
+	if IsAdminOrRedirect(w, r) {
+		return
+	}
+	vars := mux.Vars(r)
+	cat_id, err := strconv.ParseInt(vars["cat_id"], 10, 64)
+	if err != nil {
+		log.Println("cat_id err", err)
+		return
+	}
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
+	defer db.Close()
+	db = db.Debug()
+	var sets []PtPredictionSet
+	db.Where("category_id = ?", cat_id).Order("location_num").Find(&sets)
+	j, _ := json.Marshal(sets)
 	fmt.Fprintln(w, string(j))
 }
 

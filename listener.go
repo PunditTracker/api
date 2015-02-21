@@ -71,24 +71,28 @@ func addListeners() {
 	router.HandleFunc("/v1/user/bracket/add", AddBracketHandler)
 
 	//Homepage Functions
-	router.HandleFunc("/v1/homepage/hero", GetHeroPredictionHandler)
-	router.HandleFunc("/v1/homepage/predictionSet", GetPredictionSetHandler)
+	router.HandleFunc("/v1/hero", GetLiveHeroPredictionHandler)
+	router.HandleFunc("/v1/homepage/predictionSet", GetLivePredictionSetHandler)
 
-	router.HandleFunc("/v1/homepage/hero/{cat_id:[0-9]+}", GetHeroPredictionHandler)
-	router.HandleFunc("/v1/homepage/predictionSet/{cat_id:[0-9]+}", GetPredictionSetHandler)
+	router.HandleFunc("/v1/hero/{cat_id:[0-9]+}", GetLiveHeroPredictionHandler)
+	router.HandleFunc("/v1/predictionSet/{cat_id:[0-9]+}", GetLivePredictionSetHandler)
 
 	//Special
 	router.HandleFunc("/v1/event/{event_name:[a-zA-z]+}/{event_year:[0-9]+}", GetSpecialEventPredictionHandler)
 
 	//Admin Functons
-	router.HandleFunc("/v1/admin/homepage/set/hero", SetHeroHandler)
-	router.HandleFunc("/v1/admin/homepage/set/predictionSet", SetPredictionSetHandler)
-	router.HandleFunc("/v1/admin/homepage/set/predictionLoc", SetPredictionLocationHandler)
-	router.HandleFunc("/v1/admin/homepage/predictionLoc/{cat_id:[0-9]+}", GetPredictionLocationHandler)
-	router.HandleFunc("/v1/admin/prediction/setstate/{predId:[0-9]+}/{state:[0-9]}", SetStateHandler)
-	router.HandleFunc("/v1/admin/addimage", AdminUploadImageHandler)
+	router.HandleFunc("/v1/admin/hero/set", SetHeroHandler)
+	router.HandleFunc("/v1/admin/predictionSet/set", SetPredictionSetHandler)
+	router.HandleFunc("/v1/admin/predictionLoc/set", SetPredictionLocationHandler)
+
 	router.HandleFunc("/v1/admin/prediction/add", AddPredictionAdminHandler)
-	router.HandleFunc("/v1/admin/add/pundit", AdminPunditCreateHandler)
+	router.HandleFunc("/v1/admin/pundit/add", AdminPunditCreateHandler)
+	router.HandleFunc("/v1/admin/image/add", AdminUploadImageHandler)
+
+	router.HandleFunc("/v1/admin/hero/{cat_id:[0-9]+}", GetHeroHandler)
+	router.HandleFunc("/v1/admin/predictionSet/{cat_id:[0-9]+}", GetPredictionSetHandler)
+	router.HandleFunc("/v1/admin/predictionLoc/{cat_id:[0-9]+}", GetPredictionLocationHandler)
+	router.HandleFunc("/v1/admin/prediction/setstate/{predId:[0-9]+}/{state:[0-9]}", SetStateHandler)
 
 	router.NotFoundHandler = http.HandlerFunc(notFoundHandler)
 }

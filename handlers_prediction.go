@@ -297,7 +297,7 @@ func GetTaggedPredictionHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, string(j))
 }
 
-func GetHeroPredictionHandler(w http.ResponseWriter, r *http.Request) {
+func GetLiveHeroPredictionHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	catId, _ := strconv.ParseInt(vars["cat_id"], 10, 64)
 	db := GetDBOrPrintError(w)
@@ -314,7 +314,7 @@ func GetHeroPredictionHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, string(j))
 }
 
-func GetPredictionSetHandler(w http.ResponseWriter, r *http.Request) {
+func GetLivePredictionSetHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	catId, _ := strconv.ParseInt(vars["cat_id"], 10, 64)
 	db := GetDBOrPrintError(w)
