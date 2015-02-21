@@ -204,6 +204,7 @@ func StringToTsQuery(input string, connector string) string {
 }
 
 func SearchPredictionsHandler(w http.ResponseWriter, r *http.Request) {
+	limit := 30
 	db := GetDBOrPrintError(w)
 	if db == nil {
 		return
@@ -212,7 +213,7 @@ func SearchPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	searchString := vars["searchstr"]
 	searchString = StringToTsQuery(searchString, " | ")
-	predictions := SearchPredictions(db, searchString)
+	predictions := SearchPredictions(db, searchString, limit)
 
 	if predictions == nil {
 		predictions = []PtPrediction{}

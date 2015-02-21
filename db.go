@@ -152,7 +152,7 @@ func GetPredictionsForCategoryId(db *gorm.DB, catId int64, limit int) []PtPredic
 	return preds
 }
 
-func SearchPredictions(db *gorm.DB, searchString string) []PtPrediction {
+func SearchPredictions(db *gorm.DB, searchString string, limit int) []PtPrediction {
 	db = db.Debug()
 	var preds []PtPrediction
 	db.Raw(`SELECT *
@@ -160,7 +160,9 @@ func SearchPredictions(db *gorm.DB, searchString string) []PtPrediction {
 				  to_tsvector(pt_prediction.title) as document
 			FROM pt_prediction
 			GROUP BY pt_prediction.id) p_search
-			WHERE p_search.document @@ to_tsquery(?);`, searchString).Find(&preds)
+			WHERE p_search.document @@ to_tsquery(?)
+			ORDER BY created DESC
+			LIMIT ?;`, searchString, limit).Find(&preds)
 	return preds
 }
 
