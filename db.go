@@ -103,7 +103,7 @@ func GetAllUsers(db *gorm.DB) []PtUser {
 
 func GetAllPredictions(db *gorm.DB) []PtPrediction {
 	var preds []PtPrediction
-	db.Find(&preds)
+	db.Order("created desc").Find(&preds)
 	return preds
 }
 
@@ -115,13 +115,13 @@ func GetFeaturedUsers(db *gorm.DB) []PtUser {
 
 func GetFeaturedPredictions(db *gorm.DB, l int) []PtPrediction {
 	var predictions []PtPrediction
-	db.Where(&PtPrediction{IsFeatured: true}).Limit(l).Find(&predictions)
+	db.Order("created desc").Where(&PtPrediction{IsFeatured: true}).Limit(l).Find(&predictions)
 	return predictions
 }
 
 func GetLatestPredictions(db *gorm.DB, x int) []PtPrediction {
 	predictions := []PtPrediction{}
-	db.Order("created").Limit(x).Find(&predictions)
+	db.Order("created desc").Limit(x).Find(&predictions)
 	return predictions
 }
 
