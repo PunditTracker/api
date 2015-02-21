@@ -118,6 +118,28 @@ func AddPredictionHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, string(j))
 }
 
+func AddPredictionAdminHandler(w http.ResponseWriter, r *http.Request) {
+	if IsAdminOrRedirect(w, r) {
+		return
+	}
+	dec := json.NewDecoder(r.Body)
+	var prediction PtPrediction
+	err := dec.Decode(&prediction)
+	if err != nil {
+		JsonDecodeError(w, err)
+		return
+	}
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
+	defer db.Close()
+	AddPrediction(db, &prediction)
+	prediction.CurUserVote = -1
+	j, _ := json.Marshal(prediction)
+	fmt.Fprintln(w, string(j))
+}
+
 func GetLatestPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	db := GetDBOrPrintError(w)
 	if db == nil {
