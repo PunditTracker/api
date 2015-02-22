@@ -51,6 +51,7 @@ func GetAllPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer db.Close()
+	db = db.Debug()
 	predictions := GetAllPredictions(db)
 	if predictions == nil {
 		predictions = []PtPrediction{}

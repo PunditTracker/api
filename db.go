@@ -310,6 +310,7 @@ func PredictionDeadlinePassedOrGraded(db *gorm.DB, predId int64, w http.Response
 func UpdateVoteValue(db *gorm.DB, uid int64, pred *PtPrediction) {
 	if uid == 0 {
 		pred.CurUserVote = -1
+		return
 	}
 	var v PtVote
 	db.Where("voter_id = ? and voted_on_id = ?", uid, pred.Id).First(&v)
