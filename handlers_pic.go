@@ -13,21 +13,31 @@ import (
 )
 
 func AdminUploadImageHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	folderName := vars["folder"]
-
-	log.Println("begin upload admin image handler")
 	if IsAdminOrRedirect(w, r) {
 		log.Println("not admin")
 		return
 	}
+
+	vars := mux.Vars(r)
+	uploadType := vars["type"]
+	var folder string
+	if uploadType == "prediction" {
+		folder = "prediction_pic"
+	} else if uploadType == "hero" {
+		folder = "hero_pic"
+	} else {
+		JsonError(w, http.StatusBadRequest, "specify either or prediction or hero")
+		return
+	}
+
+	log.Println("begin upload admin image handler")
 
 	data, h, err := GetImageDataFromRequest(w, r)
 	if err != nil {
 		log.Println("imager err", err.Error())
 		return
 	}
-	uniquestring := fmt.Sprintf("%s/%s", folderName, h.Filename)
+	uniquestring := fmt.Sprintf("%s/%s", folder, h.Filename)
 	bucketName := "assets.pundittracker.com"
 	contType := h.Header.Get("Content-Type")
 	link, err := putImageOnS3(bucketName, data, contType, uniquestring)
