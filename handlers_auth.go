@@ -309,6 +309,11 @@ func ResetPasswordEndpoint(w http.ResponseWriter, r *http.Request) {
 	uid, err := strconv.ParseInt(vars["id"], 10, 64)
 	if err != nil {
 		NoIdIncludedError(w)
+		return
+	}
+	if uid == 0 {
+		NoIdIncludedError(w)
+		return
 	}
 	resetKey := vars["resetKey"]
 	decoder := json.NewDecoder(r.Body)
