@@ -46,13 +46,30 @@ func GetFeaturedPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetAllPredictionsHandler(w http.ResponseWriter, r *http.Request) {
+	offset := int64(0)
+	limit := int64(100)
+	urlValues := r.URL.Query()
+	limitStr, exists := urlValues["limit"]
+	if exists {
+		limitTemp, err := strconv.ParseInt(limitStr[0], 10, 64)
+		if err == nil {
+			limit = limitTemp
+		}
+	}
+	offsetStr, exists := urlValues["offset"]
+	if exists {
+		offsetTemp, err := strconv.ParseInt(offsetStr[0], 10, 64)
+		if err == nil {
+			offset = offsetTemp
+		}
+	}
 	db := GetDBOrPrintError(w)
 	if db == nil {
 		return
 	}
 	defer db.Close()
 	db = db.Debug()
-	predictions := GetAllPredictions(db)
+	predictions := GetAllPredictions(db, limit, offset)
 	if predictions == nil {
 		predictions = []PtPrediction{}
 		return

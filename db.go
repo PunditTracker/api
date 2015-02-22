@@ -101,9 +101,9 @@ func GetAllUsers(db *gorm.DB) []PtUser {
 	return users
 }
 
-func GetAllPredictions(db *gorm.DB) []PtPrediction {
+func GetAllPredictions(db *gorm.DB, limit, offset int64) []PtPrediction {
 	var preds []PtPrediction
-	db.Order("created desc").Find(&preds)
+	db.Order("created desc").Limit(limit).Offset(offset).Find(&preds)
 	return preds
 }
 
