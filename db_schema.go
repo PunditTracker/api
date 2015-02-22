@@ -188,6 +188,7 @@ type PtPredictionLocation struct {
 	CategoryId   int64 `sql:"not null; DEFAULT:0"`
 	LocationNum  int64 `sql:"not null"`
 	PredictionId int64 `sql:"not null"`
+	Prediction   PtPrediction
 }
 
 func SetUpDB(db *gorm.DB) {

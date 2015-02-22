@@ -292,6 +292,21 @@ func GetUserPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, string(j))
 }
 
+func GetHomePagePredictionsHandler(w http.ResponseWriter, r *http.Request) {
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
+	defer db.Close()
+	var locs []PtPredictionLocation
+	db.Where("category_id = 0").Order("location_num").Find(&locs)
+	for i, _ := range locs {
+		db.Where("id = ?", locs[i].PredictionId).First(&locs[i].Prediction)
+	}
+	j, _ := json.Marshal(locs)
+	fmt.Fprintln(w, string(j))
+}
+
 func GetTaggedPredictionHandler(w http.ResponseWriter, r *http.Request) {
 	db := GetDBOrPrintError(w)
 	if db == nil {
