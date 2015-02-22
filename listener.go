@@ -87,7 +87,7 @@ func addListeners() {
 
 	router.HandleFunc("/v1/admin/prediction/add", AddPredictionAdminHandler)
 	router.HandleFunc("/v1/admin/pundit/add", AdminPunditCreateHandler)
-	router.HandleFunc("/v1/admin/image/add", AdminUploadImageHandler)
+	router.HandleFunc("/v1/admin/image/add/{folder}", AdminUploadImageHandler)
 
 	router.HandleFunc("/v1/admin/hero/{cat_id:[0-9]+}", GetHeroHandler)
 	router.HandleFunc("/v1/admin/predictionSet/{cat_id:[0-9]+}", GetPredictionSetHandler)

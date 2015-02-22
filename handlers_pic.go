@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/gorilla/mux"
 	"github.com/mitchellh/goamz/aws"
 	"github.com/mitchellh/goamz/s3"
 	"io/ioutil"
@@ -12,6 +13,9 @@ import (
 )
 
 func AdminUploadImageHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	folderName := vars["folder"]
+
 	log.Println("begin upload admin image handler")
 	if IsAdminOrRedirect(w, r) {
 		log.Println("not admin")
@@ -23,7 +27,7 @@ func AdminUploadImageHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("imager err", err.Error())
 		return
 	}
-	uniquestring := fmt.Sprintf("images/%s", h.Filename)
+	uniquestring := fmt.Sprintf("%s/%s", folderName, h.Filename)
 	bucketName := "assets.pundittracker.com"
 	contType := h.Header.Get("Content-Type")
 	link, err := putImageOnS3(bucketName, data, contType, uniquestring)
