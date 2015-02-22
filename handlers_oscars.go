@@ -25,13 +25,13 @@ var OscarCategories = []string{
 	"Animated Short Film",
 	"Original Score",
 	"Original Song",
-	"Sound Editting",
+	"Sound Editing",
 	"Sound Mixing",
 	"Production Design",
 	"Cinematography",
 	"Makeup and Hairstyling",
 	"Costume Design",
-	"Film Editting",
+	"Film Editing",
 	"Visual Effects",
 }
 
