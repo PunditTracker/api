@@ -38,6 +38,7 @@ func getDB() (*gorm.DB, error) {
 			db.DB()
 			db.SingularTable(true)
 			db.LogMode(false)
+			db := db.Debug()
 			return &db, err
 		}
 		if enviro == "production" {
