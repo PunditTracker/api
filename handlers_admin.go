@@ -199,3 +199,44 @@ func AdminPunditCreateHandler(w http.ResponseWriter, r *http.Request) {
 	j, _ := json.Marshal(newUser)
 	fmt.Fprintln(w, string(j))
 }
+
+type PtSpecialEventReq struct {
+	Year      int
+	Category  string
+	Selection string
+}
+
+func AdminSetResultForCategory(w http.ResponseWriter, r *http.Request) {
+	if IsAdminOrRedirect(w, r) {
+		return
+	}
+	var req PtSpecialEventReq
+	dec := json.NewDecoder(r.Body)
+	err := dec.Decode(&req)
+	if err != nil {
+		JsonDecodeError(w, err)
+		return
+	}
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
+	defer db.Close()
+	db = db.Debug()
+	var predictionsCorrect []PtPrediction
+	var predictionsIncorrect []PtPrediction
+	correct := db.Where("special_event_year = ? and special_event_category = ? and special_event_selection = ?", req.Year, req.Category, req.Selection).Find(&predictionsCorrect).RowsAffected
+	for _, v := range predictionsCorrect {
+		SetPredictorScore(db, v.CreatorId, DidHappen)
+	}
+	incorrect := db.Where("special_event_year = ? and special_event_category = ? and special_event_selection != ?", req.Year, req.Category, req.Selection).Find(&predictionsIncorrect).RowsAffected
+	for _, v := range predictionsIncorrect {
+		SetPredictorScore(db, v.CreatorId, DidNotHappen)
+	}
+	log.Println("correct:", correct, "incorrect:", incorrect)
+	j, _ := json.Marshal(map[string]string{
+		"Message": "Set Result",
+	})
+	fmt.Fprintln(w, string(j))
+	return
+}

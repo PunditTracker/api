@@ -95,6 +95,8 @@ func addListeners() {
 	router.HandleFunc("/v1/admin/predictionLoc/{cat_id:[0-9]+}", GetPredictionLocationHandler)
 	router.HandleFunc("/v1/admin/prediction/setstate/{predId:[0-9]+}/{state:[0-9]}", SetStateHandler)
 
+	router.HandleFunc("/v1/admin/special_event/result/set", AdminSetResultForCategory)
+
 	router.NotFoundHandler = http.HandlerFunc(notFoundHandler)
 }
 
