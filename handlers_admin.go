@@ -226,6 +226,11 @@ func AdminSetResultForCategory(w http.ResponseWriter, r *http.Request) {
 		JsonDecodeError(w, err)
 		return
 	}
+	if req.Selection == "" {
+		JsonDecodeError(w, error("Must specify a selection"))
+		return
+	}
+
 	db := GetDBOrPrintError(w)
 	if db == nil {
 		return
