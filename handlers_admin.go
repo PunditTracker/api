@@ -222,7 +222,6 @@ func AdminSetResultForCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer db.Close()
-	db = db.Debug()
 	var predictionsCorrect []PtPrediction
 	var predictionsIncorrect []PtPrediction
 	correct := db.Where("special_event_year = ? and special_event_category = ? and special_event_selection = ?", req.Year, req.Category, req.Selection).Find(&predictionsCorrect).RowsAffected
