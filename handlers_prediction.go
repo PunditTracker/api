@@ -252,7 +252,7 @@ func SearchPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 	vars := mux.Vars(r)
 	searchString := vars["searchstr"]
-	searchString = StringToTsQuery(searchString, " | ")
+	searchString = StringToTsQuery(searchString, " & ")
 	predictions := SearchPredictions(db, searchString, limit)
 
 	if predictions == nil {
