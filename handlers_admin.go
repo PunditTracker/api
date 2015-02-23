@@ -15,6 +15,7 @@ func SetStateHandler(w http.ResponseWriter, r *http.Request) {
 	if IsAdminOrRedirect(w, r) {
 		return
 	}
+	log.Println("begin set state handler")
 	db := GetDBOrPrintError(w)
 	if db == nil {
 		return
@@ -39,6 +40,7 @@ func SetHeroHandler(w http.ResponseWriter, r *http.Request) {
 	if IsAdminOrRedirect(w, r) {
 		return
 	}
+	log.Println("begin set hero handler")
 	//Parse the Json
 	dec := json.NewDecoder(r.Body)
 	var hero PtHero
@@ -64,6 +66,7 @@ func SetPredictionSetHandler(w http.ResponseWriter, r *http.Request) {
 	if IsAdminOrRedirect(w, r) {
 		return
 	}
+	log.Println("begin set prediction set handler")
 	//Parse the Json
 	dec := json.NewDecoder(r.Body)
 	var predictionSet PtPredictionSet
@@ -87,6 +90,7 @@ func SetPredictionLocationHandler(w http.ResponseWriter, r *http.Request) {
 	if IsAdminOrRedirect(w, r) {
 		return
 	}
+	log.Println("begin set prediction location handler")
 	dec := json.NewDecoder(r.Body)
 	var predictionLoc PtPredictionLocation
 	err := dec.Decode(&predictionLoc)
@@ -108,6 +112,7 @@ func GetPredictionLocationHandler(w http.ResponseWriter, r *http.Request) {
 	if IsAdminOrRedirect(w, r) {
 		return
 	}
+	log.Println("begin get prediction location handler")
 	vars := mux.Vars(r)
 	cat_id, err := strconv.ParseInt(vars["cat_id"], 10, 64)
 	if err != nil {
@@ -130,6 +135,7 @@ func GetHeroHandler(w http.ResponseWriter, r *http.Request) {
 	if IsAdminOrRedirect(w, r) {
 		return
 	}
+	log.Println("begin get hero handler")
 	vars := mux.Vars(r)
 	cat_id, err := strconv.ParseInt(vars["cat_id"], 10, 64)
 	if err != nil {
@@ -152,6 +158,7 @@ func GetPredictionSetHandler(w http.ResponseWriter, r *http.Request) {
 	if IsAdminOrRedirect(w, r) {
 		return
 	}
+	log.Println("begin get prediction set handler")
 	vars := mux.Vars(r)
 	cat_id, err := strconv.ParseInt(vars["cat_id"], 10, 64)
 	if err != nil {
@@ -174,6 +181,7 @@ func AdminPunditCreateHandler(w http.ResponseWriter, r *http.Request) {
 	if IsAdminOrRedirect(w, r) {
 		return
 	}
+	log.Println("begin pundit create handler")
 	var userMap map[string]string
 	dec := json.NewDecoder(r.Body)
 	err := dec.Decode(&userMap)
@@ -210,6 +218,7 @@ func AdminSetResultForCategory(w http.ResponseWriter, r *http.Request) {
 	if IsAdminOrRedirect(w, r) {
 		return
 	}
+	log.Println("begin set result handler")
 	var req PtSpecialEventReq
 	dec := json.NewDecoder(r.Body)
 	err := dec.Decode(&req)
