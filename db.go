@@ -223,10 +223,12 @@ func SetScoreForVotes(db *gorm.DB, predictionId int64, state PtPredictionState) 
 }
 
 func SetPredictorScore(db *gorm.DB, predictorId int64, state PtPredictionState) {
+	log.Println("save predictor score start", predictorId)
+	db = db.Debug()
 	if state == DidHappen {
-		db.Debug().Exec(`update pt_user set PredictionCorrect = PredictionCorrect+1 where id = ?`, predictorId)
+		db.Exec(`update pt_user set PredictionCorrect = PredictionCorrect+1 where id = ?`, predictorId)
 	}
-	db.Debug().Exec(`update pt_user set PredictionGraded = PredictionGraded+1 where id = ?`, predictorId)
+	db.Exec(`update pt_user set PredictionGraded = PredictionGraded+1 where id = ?`, predictorId)
 }
 
 func GetLivePredictionSets(db *gorm.DB, catId int64) []PtPredictionSet {
