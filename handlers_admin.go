@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	_ "encoding/json"
+	"errors"
 	"fmt"
 	"github.com/gorilla/mux"
 	"log"
@@ -227,7 +228,7 @@ func AdminSetResultForCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if req.Selection == "" {
-		JsonDecodeError(w, error("Must specify a selection"))
+		JsonDecodeError(w, errors.New("Must specify a selection"))
 		return
 	}
 
