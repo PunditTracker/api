@@ -22,6 +22,7 @@ func init() {
 
 func getDB() (*gorm.DB, error) {
 	serv := os.Getenv("SERV")
+	enviro := os.Getenv("PT_ENV")
 	if serv == "local" {
 		db, err := gorm.Open("postgres", "sslmode=disable")
 		db.DB()
@@ -29,14 +30,26 @@ func getDB() (*gorm.DB, error) {
 		return &db, err
 	}
 	if serv == "aws" {
-		db, err := gorm.Open("postgres", "host=ptdev.ccm2e8gfsxjt.us-west-2.rds.amazonaws.com dbname=ptdev user=pundittracker password=ptrack20!!")
-		if err != nil {
-			log.Println(err)
+		if enviro == "development" {
+			db, err := gorm.Open("postgres", "host=ptdev.ccm2e8gfsxjt.us-west-2.rds.amazonaws.com dbname=ptdev user=pundittracker password=ptrack20!!")
+			if err != nil {
+				log.Println(err)
+			}
+			db.DB()
+			db.SingularTable(true)
+			db.LogMode(false)
+			return &db, err
 		}
-		db.DB()
-		db.SingularTable(true)
-		db.LogMode(false)
-		return &db, err
+		if enviro == "production" {
+			db, err := gorm.Open("postgres", "host=pt-prod.ccm2e8gfsxjt.us-west-2.rds.amazonaws.com dbname=ptdev user=pundittracker password=ptrack20!!")
+			if err != nil {
+				log.Println(err)
+			}
+			db.DB()
+			db.SingularTable(true)
+			db.LogMode(false)
+			return &db, err
+		}
 	}
 	return nil, errors.New("No SERV specified")
 }
