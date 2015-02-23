@@ -161,7 +161,7 @@ func SearchPredictions(db *gorm.DB, searchString string, limit int) []PtPredicti
 			FROM pt_prediction
 			GROUP BY pt_prediction.id) p_search
 			WHERE p_search.document @@ to_tsquery(?)
-			ORDER BY created DESC
+			ORDER BY RANDOM()
 			LIMIT ?;`, searchString, limit).Find(&preds)
 	return preds
 }
