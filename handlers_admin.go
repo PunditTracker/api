@@ -228,10 +228,12 @@ func AdminSetResultForCategory(w http.ResponseWriter, r *http.Request) {
 	correct := db.Where("special_event_year = ? and special_event_category = ? and special_event_selection = ?", req.Year, req.Category, req.Selection).Find(&predictionsCorrect).RowsAffected
 	for _, v := range predictionsCorrect {
 		SetPredictorScore(db, v.CreatorId, DidHappen)
+		SetState(db, v.Id, DidHappen)
 	}
 	incorrect := db.Where("special_event_year = ? and special_event_category = ? and special_event_selection != ?", req.Year, req.Category, req.Selection).Find(&predictionsIncorrect).RowsAffected
 	for _, v := range predictionsIncorrect {
 		SetPredictorScore(db, v.CreatorId, DidNotHappen)
+		SetState(db, v.Id, DidNotHappen)
 	}
 	log.Println("correct:", correct, "incorrect:", incorrect)
 	j, _ := json.Marshal(map[string]string{
