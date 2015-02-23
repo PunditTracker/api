@@ -38,11 +38,18 @@ func getDB() (*gorm.DB, error) {
 			db.DB()
 			db.SingularTable(true)
 			db.LogMode(false)
-			db = db.Debug()
 			return &db, err
 		}
 		if enviro == "production" {
-			db, err := gorm.Open("postgres", "host=pt-prod.ccm2e8gfsxjt.us-west-2.rds.amazonaws.com dbname=ptdev user=pundittracker password=ptrack20!!")
+			/*db, err := gorm.Open("postgres", "host=pt-prod.ccm2e8gfsxjt.us-west-2.rds.amazonaws.com dbname=ptdev user=pundittracker password=ptrack20!!")
+			if err != nil {
+				log.Println(err)
+			}
+			db.DB()
+			db.SingularTable(true)
+			db.LogMode(false)
+			return &db, err*/
+			db, err := gorm.Open("postgres", "host=ptdev.ccm2e8gfsxjt.us-west-2.rds.amazonaws.com dbname=ptdev user=pundittracker password=ptrack20!!")
 			if err != nil {
 				log.Println(err)
 			}
