@@ -1,10 +1,12 @@
 package main
 
 import (
+	_ "expvar"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	_ "net/http/pprof"
 )
 
 var (
@@ -96,6 +98,10 @@ func addListeners() {
 	router.HandleFunc("/v1/admin/prediction/setstate/{predId:[0-9]+}/{state:[0-9]}", SetStateHandler)
 
 	router.HandleFunc("/v1/admin/special_event/result/set", AdminSetResultForCategory)
+
+	router.Handle("/debug/vars", http.DefaultServeMux)
+	router.Handle("/debug/pprof/", http.DefaultServeMux)
+	router.Handle("/debug/pprof/{x}", http.DefaultServeMux)
 
 	router.NotFoundHandler = http.HandlerFunc(notFoundHandler)
 }
