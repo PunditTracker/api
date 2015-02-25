@@ -338,6 +338,10 @@ func GetHomePagePredictionsHandler(w http.ResponseWriter, r *http.Request) {
 		db.Where("id = ?", locs[i].PredictionId).First(&locs[i].Prediction)
 		FinalLocations[locs[i].LocationNum] = locs[i]
 	}
+	uid := GetUIDOrZero(r)
+	for i, _ := range FinalLocations {
+		UpdateVoteValue(db, uid, &FinalLocations[i].Prediction)
+	}
 	j, err := json.Marshal(FinalLocations)
 	if err != nil {
 		fmt.Println(err)
