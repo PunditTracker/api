@@ -17,6 +17,16 @@ var (
 	db_logger  *log.Logger
 )
 
+func GetPertinentPredictions(db *gorm.DB, CategoryId int64, limit int) []PtPrediction {
+	var preds []PtPrediction
+	if CategoryId == 0 {
+		db.Order("created desc").Limit(limit).Find(&preds)
+	} else {
+		db.Where("category_id = ?", CategoryId).Order("created desc").Limit(limit).Find(&preds)
+	}
+	return preds
+}
+
 func SetPasswordSalted(db *gorm.DB, user *PtUser) error {
 	passByte, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {

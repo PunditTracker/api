@@ -27,7 +27,7 @@ func getDB() (*gorm.DB, error) {
 		db, err := gorm.Open("postgres", "sslmode=disable")
 		db.DB()
 		db.SingularTable(true)
-		return &db, err
+		return db.Debug(), err
 	}
 	if serv == "aws" {
 		if enviro == "development" {

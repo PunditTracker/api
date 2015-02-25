@@ -319,10 +319,16 @@ func GetHomePagePredictionsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer db.Close()
-	FinalLocations := make(map[int64]PtPredictionLocation)
+
+	filler := GetPertinentPredictions(db, int64(category_id), limit)
+	FinalLocations := make([]PtPredictionLocation, limit)
 	for i := 0; i < limit; i++ {
-		FinalLocations[int64(i)] = PtPredictionLocation{
-			LocationNum: int64(i),
+		FinalLocations[i] = PtPredictionLocation{
+			Id:           -1,
+			LocationNum:  int64(i),
+			Prediction:   filler[i],
+			CategoryId:   int64(category_id),
+			PredictionId: filler[i].Id,
 		}
 	}
 
@@ -332,7 +338,10 @@ func GetHomePagePredictionsHandler(w http.ResponseWriter, r *http.Request) {
 		db.Where("id = ?", locs[i].PredictionId).First(&locs[i].Prediction)
 		FinalLocations[locs[i].LocationNum] = locs[i]
 	}
-	j, _ := json.Marshal(FinalLocations)
+	j, err := json.Marshal(FinalLocations)
+	if err != nil {
+		fmt.Println(err)
+	}
 	fmt.Fprintln(w, string(j))
 }
 
