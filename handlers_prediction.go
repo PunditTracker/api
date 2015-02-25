@@ -292,18 +292,47 @@ func GetUserPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, string(j))
 }
 
+func GetQueryValueInt(r *http.Request, def int) int {
+	urlValues := r.URL.Query()
+	limitStr, exists := urlValues["limit"]
+	if exists {
+		limit, err := strconv.Atoi(limitStr[0])
+		if err != nil {
+			return def
+		}
+		return limit
+	} else {
+		return def
+	}
+}
+
 func GetHomePagePredictionsHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	category_id, err := strconv.Atoi(vars["cat_id"])
+	if err != nil {
+		category_id = 0
+	}
+
+	limit := GetQueryValueInt(r, 10)
 	db := GetDBOrPrintError(w)
 	if db == nil {
 		return
 	}
 	defer db.Close()
+	FinalLocations := make(map[int64]PtPredictionLocation)
+	for i := 0; i < limit; i++ {
+		FinalLocations[int64(i)] = PtPredictionLocation{
+			LocationNum: int64(i),
+		}
+	}
+
 	var locs []PtPredictionLocation
-	db.Where("category_id = 0").Order("location_num").Find(&locs)
+	db.Where("category_id = ?", category_id).Order("location_num").Find(&locs)
 	for i, _ := range locs {
 		db.Where("id = ?", locs[i].PredictionId).First(&locs[i].Prediction)
+		FinalLocations[locs[i].LocationNum] = locs[i]
 	}
-	j, _ := json.Marshal(locs)
+	j, _ := json.Marshal(FinalLocations)
 	fmt.Fprintln(w, string(j))
 }
 

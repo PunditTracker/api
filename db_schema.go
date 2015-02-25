@@ -187,7 +187,7 @@ type PtPredictionSet struct {
 type PtHero struct {
 	Id           int64
 	CategoryId   int64  `sql:"not null; DEFAULT:0"`
-	LocationNum  int64  `sql:"not null"`
+	LocationNum  int    `sql:"not null"`
 	IsLive       bool   `sql:"not null; DEFAULT:FALSE"`
 	ImageUrl     string `sql:"not null"`
 	Title        string `sql:"not null"`
