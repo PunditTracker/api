@@ -128,6 +128,9 @@ func GetPredictionLocationHandler(w http.ResponseWriter, r *http.Request) {
 	db = db.Debug()
 	var locs []PtPredictionLocation
 	db.Where("category_id = ?", cat_id).Order("location_num").Find(&locs)
+	for i, _ := range locs {
+		db.First(&locs[i].Prediction, locs[i].PredictionId)
+	}
 	j, _ := json.Marshal(locs)
 	fmt.Fprintln(w, string(j))
 }
