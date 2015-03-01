@@ -24,7 +24,7 @@ func GetPertinentPredictions(db *gorm.DB, CategoryId int64, limit int) []PtPredi
 	if CategoryId == 0 {
 		db.Where("created >= ?", createdCutOff).Order("random()").Limit(limit).Find(&preds)
 	} else {
-		db.Where("category_id = ? and created>=", CategoryId, createdCutOff).Order("random()").Limit(limit).Find(&preds)
+		db.Where("category_id = ? and created>= ?", CategoryId, createdCutOff).Order("random()").Limit(limit).Find(&preds)
 	}
 	return preds
 }
