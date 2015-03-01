@@ -20,7 +20,7 @@ var (
 func GetPertinentPredictions(db *gorm.DB, CategoryId int64, limit int) []PtPrediction {
 	var preds []PtPrediction
 	db = db.Debug()
-	createdCutOff := time.Now().Add(-time.Duration(7 * 24 * time.Hour))
+	createdCutOff := time.Now().Add(-time.Duration(31 * 24 * time.Hour))
 	if CategoryId == 0 {
 		db.Where("created >= ?", createdCutOff).Order("random()").Limit(limit).Find(&preds)
 	} else {
