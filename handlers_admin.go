@@ -105,6 +105,7 @@ func SetPredictionLocationHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 	SetPredictionLocation(db, &predictionLoc)
+	db.First(&predictionLoc.Prediction, predictionLoc.PredictionId)
 	j, _ := json.Marshal(predictionLoc)
 	fmt.Fprintln(w, string(j))
 }
