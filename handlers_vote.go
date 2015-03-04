@@ -10,6 +10,10 @@ import (
 	"time"
 )
 
+/*
+	Get Votes Handlers
+*/
+
 func GetVotesForUserHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("start get vote handler")
 	vars := mux.Vars(r)
@@ -44,6 +48,27 @@ func GetVoteHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, string(j))
 }
 
+func AverageForPredictionHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	predId, _ := strconv.ParseInt(vars["pred_id"], 10, 64)
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
+	defer db.Close()
+	avg := GetAverageVoteForPredictionId(db, predId)
+	response := map[string]interface{}{
+		"predictionId": predId,
+		"average":      avg,
+	}
+	j, _ := json.Marshal(response)
+	fmt.Fprintln(w, string(j))
+}
+
+/*
+	Cast Vote
+*/
+
 func VoteForPredictionHandler(w http.ResponseWriter, r *http.Request) {
 	voterId := GetUIDOrRedirect(w, r)
 	if voterId == 0 {
@@ -59,6 +84,7 @@ func VoteForPredictionHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
+	//error handling in the function
 	if PredictionDeadlinePassedOrGraded(db, predId, w) {
 		return
 	}
@@ -77,21 +103,4 @@ func VoteForPredictionHandler(w http.ResponseWriter, r *http.Request) {
 		Created:       time.Now(),
 	}
 	AddVote(db, &vote)
-}
-
-func AverageForPredictionHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	predId, _ := strconv.ParseInt(vars["pred_id"], 10, 64)
-	db := GetDBOrPrintError(w)
-	if db == nil {
-		return
-	}
-	defer db.Close()
-	avg := GetAverageVoteForPredictionId(db, predId)
-	response := map[string]interface{}{
-		"predictionId": predId,
-		"average":      avg,
-	}
-	j, _ := json.Marshal(response)
-	fmt.Fprintln(w, string(j))
 }
