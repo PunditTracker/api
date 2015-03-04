@@ -12,63 +12,9 @@ import (
 	"net/http"
 )
 
-func AdminUploadImageHandler(w http.ResponseWriter, r *http.Request) {
-	if IsAdminOrRedirect(w, r) {
-		log.Println("not admin")
-		return
-	}
-
-	vars := mux.Vars(r)
-	uploadType := vars["type"]
-	var folder string
-	if uploadType == "prediction" {
-		folder = "prediction_pic"
-	} else if uploadType == "hero" {
-		folder = "hero_pic"
-	} else {
-		JsonError(w, http.StatusBadRequest, "specify either or prediction or hero")
-		return
-	}
-
-	log.Println("begin upload admin image handler")
-
-	data, h, err := GetImageDataFromRequest(w, r)
-	if err != nil {
-		log.Println("imager err", err.Error())
-		return
-	}
-	uniquestring := fmt.Sprintf("%s/%s", folder, h.Filename)
-	bucketName := "assets.pundittracker.com"
-	contType := h.Header.Get("Content-Type")
-	link, err := putImageOnS3(bucketName, data, contType, uniquestring)
-	if err != nil {
-		log.Println("upload error:", err.Error())
-		fmt.Fprintln(w, "upload error:", err.Error())
-	}
-	j, _ := json.Marshal(&map[string]interface{}{
-		"Message": "Successful Upload",
-		"link":    link,
-	})
-	fmt.Fprintln(w, string(j))
-}
-
-func GetImageDataFromRequest(w http.ResponseWriter, r *http.Request) ([]byte, *multipart.FileHeader, error) {
-	r.ParseForm()
-	file, h, err := r.FormFile("file")
-	if err != nil {
-		fmt.Fprintln(w, "formfile error", err.Error())
-		log.Println("formfile error", err.Error())
-		return nil, nil, err
-	}
-	defer file.Close()
-	data, err := ioutil.ReadAll(file)
-	if err != nil {
-		fmt.Fprintln(w, "readfile error", err.Error())
-		log.Println("readfile error", err.Error())
-		return nil, nil, err
-	}
-	return data, h, nil
-}
+/*
+	Upload Handlers
+*/
 
 func UploadImageHandler(w http.ResponseWriter, r *http.Request) {
 	uid := GetUIDOrRedirect(w, r)
@@ -107,8 +53,68 @@ func UploadImageHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, string(j))
 }
 
+func AdminUploadImageHandler(w http.ResponseWriter, r *http.Request) {
+	if IsAdminOrRedirect(w, r) {
+		return
+	}
+	log.Println("begin upload admin image handler")
+
+	vars := mux.Vars(r)
+	uploadType := vars["type"]
+	var folder string
+	if uploadType == "prediction" {
+		folder = "prediction_pic"
+	} else if uploadType == "hero" {
+		folder = "hero_pic"
+	} else {
+		JsonError(w, http.StatusBadRequest, "specify either or prediction or hero")
+		return
+	}
+
+	data, h, err := GetImageDataFromRequest(w, r)
+	if err != nil {
+		log.Println("imager data err", err.Error())
+		return
+	}
+	uniquestring := fmt.Sprintf("%s/%s", folder, h.Filename)
+	bucketName := "assets.pundittracker.com"
+	contType := h.Header.Get("Content-Type")
+	link, err := putImageOnS3(bucketName, data, contType, uniquestring)
+	if err != nil {
+		log.Println("upload error:", err.Error())
+		fmt.Fprintln(w, "upload error:", err.Error())
+	}
+	j, _ := json.Marshal(&map[string]interface{}{
+		"Message": "Successful Upload",
+		"link":    link,
+	})
+	fmt.Fprintln(w, string(j))
+}
+
+/*
+	Helper
+*/
+
 func fileformHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, `<html><body><form enctype="multipart/form-data" action='/v1/putprofpic' method='post'><input type='file' name='file'><input type='submit'></form></body>`)
+}
+
+func GetImageDataFromRequest(w http.ResponseWriter, r *http.Request) ([]byte, *multipart.FileHeader, error) {
+	r.ParseForm()
+	file, h, err := r.FormFile("file")
+	if err != nil {
+		fmt.Fprintln(w, "formfile error", err.Error())
+		log.Println("formfile error", err.Error())
+		return nil, nil, err
+	}
+	defer file.Close()
+	data, err := ioutil.ReadAll(file)
+	if err != nil {
+		fmt.Fprintln(w, "readfile error", err.Error())
+		log.Println("readfile error", err.Error())
+		return nil, nil, err
+	}
+	return data, h, nil
 }
 
 func putImageOnS3(bucketName string, data []byte, imageType string, uniqueIdentifier string) (string, error) {
