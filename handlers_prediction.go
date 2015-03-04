@@ -12,18 +12,7 @@ import (
 )
 
 func GetFeaturedPredictionsHandler(w http.ResponseWriter, r *http.Request) {
-	urlValues := r.URL.Query()
-	var limit int
-	var err error
-	limitStr, exists := urlValues["limit"]
-	if exists {
-		limit, err = strconv.Atoi(limitStr[0])
-		if err != nil {
-			limit = 5
-		}
-	} else {
-		limit = 5
-	}
+	limit := GetQueryValueInt(r, "limit", 10)
 
 	db := GetDBOrPrintError(w)
 	if db == nil {
@@ -46,23 +35,8 @@ func GetFeaturedPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetAllPredictionsHandler(w http.ResponseWriter, r *http.Request) {
-	offset := int64(0)
-	limit := int64(100)
-	urlValues := r.URL.Query()
-	limitStr, exists := urlValues["limit"]
-	if exists {
-		limitTemp, err := strconv.ParseInt(limitStr[0], 10, 64)
-		if err == nil {
-			limit = limitTemp
-		}
-	}
-	offsetStr, exists := urlValues["offset"]
-	if exists {
-		offsetTemp, err := strconv.ParseInt(offsetStr[0], 10, 64)
-		if err == nil {
-			offset = offsetTemp
-		}
-	}
+	offset := GetQueryValueInt64(r, "offset", 0)
+	limit := GetQueryValueInt64(r, "offset", 100)
 	db := GetDBOrPrintError(w)
 	if db == nil {
 		return
@@ -238,11 +212,6 @@ func GetPredictionsForCategoryNameHandler(w http.ResponseWriter, r *http.Request
 	fmt.Fprintln(w, string(j))
 }
 
-func StringToTsQuery(input string, connector string) string {
-	toReturn := strings.Join(strings.Split(input, " "), connector)
-	return toReturn
-}
-
 func SearchPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	limit := 30
 	db := GetDBOrPrintError(w)
@@ -292,28 +261,13 @@ func GetUserPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, string(j))
 }
 
-func GetQueryValueInt(r *http.Request, def int) int {
-	urlValues := r.URL.Query()
-	limitStr, exists := urlValues["limit"]
-	if exists {
-		limit, err := strconv.Atoi(limitStr[0])
-		if err != nil {
-			return def
-		}
-		return limit
-	} else {
-		return def
-	}
-}
-
 func GetHomePagePredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	category_id, err := strconv.Atoi(vars["cat_id"])
 	if err != nil {
 		category_id = 0
 	}
-
-	limit := GetQueryValueInt(r, 10)
+	limit := GetQueryValueInt(r, "limit", 10)
 	db := GetDBOrPrintError(w)
 	if db == nil {
 		return
