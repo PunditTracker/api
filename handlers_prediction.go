@@ -36,7 +36,7 @@ func GetFeaturedPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 
 func GetAllPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	offset := GetQueryValueInt64(r, "offset", 0)
-	limit := GetQueryValueInt64(r, "offset", 100)
+	limit := GetQueryValueInt64(r, "limit", 100)
 	db := GetDBOrPrintError(w)
 	if db == nil {
 		return
@@ -155,7 +155,7 @@ func GetLatestPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetPredictionsForCategoryHandler(w http.ResponseWriter, r *http.Request) {
-	limit := 25
+	limit := GetQueryValueInt(r, "limit", 25)
 	db := GetDBOrPrintError(w)
 	if db == nil {
 		return
@@ -183,7 +183,7 @@ func GetPredictionsForCategoryHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetPredictionsForCategoryNameHandler(w http.ResponseWriter, r *http.Request) {
-	limit := 20
+	limit := GetQueryValueInt(r, "limit", 20)
 	db := GetDBOrPrintError(w)
 	if db == nil {
 		return
@@ -213,7 +213,7 @@ func GetPredictionsForCategoryNameHandler(w http.ResponseWriter, r *http.Request
 }
 
 func SearchPredictionsHandler(w http.ResponseWriter, r *http.Request) {
-	limit := 30
+	limit := GetQueryValueInt(r, "limit", 25)
 	db := GetDBOrPrintError(w)
 	if db == nil {
 		return
