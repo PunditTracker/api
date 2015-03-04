@@ -12,18 +12,22 @@ import (
 	"time"
 )
 
-func LogoutHandler(w http.ResponseWriter, r *http.Request) {
-	clearSession(w)
-	fmt.Fprintln(w, "logout")
-}
+var (
+	FromEmail      = "noreply@pundittracker.com"
+	WelcomeSubject = "It's time to play a part in tomorrow!"
+	WelcomeEmail   = `Welcome to PunditTracker.com,
 
-func isStringAllNumbers(s string) bool {
-	_, err := strconv.Atoi(s)
-	if err != nil {
-		return false
-	}
-	return true
-}
+Thanks for joining us! At PunditTracker.com, it is our goal to bring accountability to the prediction industry. Take a look around, get familiar, and begin submitting your own predictions as soon as you're ready. Our system will begin tracking and scoring you as soon as you do.
+
+Remember, #TomorrowMattersToday
+
+Best,
+Team PT`
+)
+
+/*
+	Registration Handlers
+*/
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	dec := json.NewDecoder(r.Body)
@@ -100,30 +104,11 @@ func RegisterFacebookHandler(w http.ResponseWriter, r *http.Request) {
 	SendWelcomeEmail(&user)
 }
 
-/*
-func testEmailHandler(w http.ResponseWriter, r *http.Request) {
-	SendWelcomeEmail(&PtUser{Email: "bjlgds@gmail.com"})
-}*/
-
-var (
-	WelcomeSubject = "It's time to play a part in tomorrow!"
-	WelcomeEmail   = `Welcome to PunditTracker.com,
-
-Thanks for joining us! At PunditTracker.com, it is our goal to bring accountability to the prediction industry. Take a look around, get familiar, and begin submitting your own predictions as soon as you're ready. Our system will begin tracking and scoring you as soon as you do.
-
-Remember, #TomorrowMattersToday
-
-Best,
-Team PT`
-)
-
 func SendWelcomeEmail(user *PtUser) {
-	fromEmail := "noreply@pundittracker.com"
-	toEmail := user.Email
-
+	ToEmail := user.Email
 	_, err := ses.EnvConfig.SendEmail(
-		fromEmail,
-		toEmail,
+		FromEmail,
+		ToEmail,
 		WelcomeSubject,
 		WelcomeEmail,
 	)
@@ -144,6 +129,10 @@ func setSessionForUser(w http.ResponseWriter, authedUser *PtUser) {
 	}
 	setSession(kv, w)
 }
+
+/*
+	Login Handlers
+*/
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	db := GetDBOrPrintError(w)
@@ -236,23 +225,14 @@ func LoginFacebookHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, string(j))
 }
 
-func CheckAuthHandler(w http.ResponseWriter, r *http.Request) {
-	uid := GetUIDOrRedirect(w, r)
-	if uid == 0 {
-		return
-	}
-
-	db := GetDBOrPrintError(w)
-	if db == nil {
-		return
-	}
-	defer db.Close()
-
-	var user PtUser
-	db.First(&user, uid)
-	j, _ := json.Marshal(user)
-	fmt.Fprintln(w, string(j))
+func LogoutHandler(w http.ResponseWriter, r *http.Request) {
+	clearSession(w)
+	fmt.Fprintln(w, "logout")
 }
+
+/*
+	Forgot Password reset workflow
+*/
 
 func ForgotPasswordEndpoint(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
@@ -262,9 +242,8 @@ func ForgotPasswordEndpoint(w http.ResponseWriter, r *http.Request) {
 		JsonDecodeError(w, err)
 		return
 	}
-	toEmail := argMap["email"]
-
 	//Send an email to the user
+	toEmail := argMap["email"]
 	ForgotPassword(w, toEmail)
 }
 
@@ -355,6 +334,10 @@ func ResetPasswordEndpoint(w http.ResponseWriter, r *http.Request) {
 	UpdatePassword(db, &user)
 }
 
+/*
+	Change User Endpoints
+*/
+
 func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 	uid := GetUIDOrRedirect(w, r)
 	if uid == 0 {
@@ -426,6 +409,26 @@ func UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 	j, _ := json.Marshal(map[string]string{
 		"Message": "Password Changed",
 	})
+	fmt.Fprintln(w, string(j))
+}
+
+/*
+	Auth Helper Functions
+*/
+
+func CheckAuthHandler(w http.ResponseWriter, r *http.Request) {
+	uid := GetUIDOrRedirect(w, r)
+	if uid == 0 {
+		return
+	}
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
+	defer db.Close()
+	var user PtUser
+	db.First(&user, uid)
+	j, _ := json.Marshal(user)
 	fmt.Fprintln(w, string(j))
 }
 
