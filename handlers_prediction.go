@@ -11,15 +11,20 @@ import (
 	"time"
 )
 
-func GetFeaturedPredictionsHandler(w http.ResponseWriter, r *http.Request) {
-	limit := GetQueryValueInt(r, "limit", 10)
+/*
+	Get Prediction Functions
+*/
 
+func GetAllPredictionsHandler(w http.ResponseWriter, r *http.Request) {
+	offset := GetQueryValueInt64(r, "offset", 0)
+	limit := GetQueryValueInt64(r, "limit", 100)
 	db := GetDBOrPrintError(w)
 	if db == nil {
 		return
 	}
 	defer db.Close()
-	predictions := GetFeaturedPredictions(db, limit)
+	db = db.Debug()
+	predictions := GetAllPredictions(db, limit, offset)
 	if predictions == nil {
 		predictions = []PtPrediction{}
 		return
@@ -34,16 +39,15 @@ func GetFeaturedPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, string(j))
 }
 
-func GetAllPredictionsHandler(w http.ResponseWriter, r *http.Request) {
-	offset := GetQueryValueInt64(r, "offset", 0)
-	limit := GetQueryValueInt64(r, "limit", 100)
+func GetFeaturedPredictionsHandler(w http.ResponseWriter, r *http.Request) {
+	limit := GetQueryValueInt(r, "limit", 10)
+
 	db := GetDBOrPrintError(w)
 	if db == nil {
 		return
 	}
 	defer db.Close()
-	db = db.Debug()
-	predictions := GetAllPredictions(db, limit, offset)
+	predictions := GetFeaturedPredictions(db, limit)
 	if predictions == nil {
 		predictions = []PtPrediction{}
 		return
@@ -73,168 +77,6 @@ func GetSinglePredictionHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	UpdateVoteValue(db, GetUIDOrZero(r), &prediction)
 	j, _ := json.Marshal(prediction)
-	fmt.Fprintln(w, string(j))
-}
-
-func AddPredictionHandler(w http.ResponseWriter, r *http.Request) {
-	dec := json.NewDecoder(r.Body)
-	var prediction PtPrediction
-	err := dec.Decode(&prediction)
-	if err != nil {
-		JsonDecodeError(w, err)
-		return
-	}
-	prediction.CreatorId = GetUIDOrRedirect(w, r)
-	if prediction.CreatorId == 0 {
-		return
-	}
-	prediction.Created = time.Now()
-	db := GetDBOrPrintError(w)
-	if db == nil {
-		return
-	}
-	defer db.Close()
-	for _, t := range prediction.Tags {
-		prediction.TagVal = append(prediction.TagVal, PtTag{
-			Id:  GetIdWithTag(db, t),
-			Tag: t,
-		})
-	}
-	log.Println("add prediction:\n", prediction)
-	AddPrediction(db, &prediction)
-
-	//Cur user hasn't voted yet
-	prediction.CurUserVote = -1
-
-	j, _ := json.Marshal(prediction)
-	fmt.Fprintln(w, string(j))
-}
-
-func AddPredictionAdminHandler(w http.ResponseWriter, r *http.Request) {
-	if IsAdminOrRedirect(w, r) {
-		return
-	}
-	dec := json.NewDecoder(r.Body)
-	var prediction PtPrediction
-	err := dec.Decode(&prediction)
-	if err != nil {
-		JsonDecodeError(w, err)
-		return
-	}
-	db := GetDBOrPrintError(w)
-	if db == nil {
-		return
-	}
-	defer db.Close()
-	AddPrediction(db, &prediction)
-	prediction.CurUserVote = -1
-	j, _ := json.Marshal(prediction)
-	fmt.Fprintln(w, string(j))
-}
-
-func GetLatestPredictionsHandler(w http.ResponseWriter, r *http.Request) {
-	db := GetDBOrPrintError(w)
-	if db == nil {
-		return
-	}
-	defer db.Close()
-	//Get the 10 latest predictions
-	predictions := GetLatestPredictions(db, 10)
-	if predictions == nil {
-		predictions = []PtPrediction{}
-		return
-	}
-	uid := GetUIDOrZero(r)
-
-	for i, _ := range predictions {
-		UpdateVoteValue(db, uid, &predictions[i])
-	}
-
-	j, _ := json.Marshal(predictions)
-	fmt.Fprintln(w, string(j))
-}
-
-func GetPredictionsForCategoryHandler(w http.ResponseWriter, r *http.Request) {
-	limit := GetQueryValueInt(r, "limit", 25)
-	db := GetDBOrPrintError(w)
-	if db == nil {
-		return
-	}
-	defer db.Close()
-	vars := mux.Vars(r)
-	catId, err := strconv.ParseInt(vars["cat_id"], 10, 64)
-	if err != nil {
-		NoInfoAtEndpointError(w)
-		return
-	}
-	predictions := GetPredictionsForCategoryId(db, catId, limit)
-	if predictions == nil {
-		predictions = []PtPrediction{}
-		return
-	}
-	uid := GetUIDOrZero(r)
-
-	for i, _ := range predictions {
-		UpdateVoteValue(db, uid, &predictions[i])
-	}
-
-	j, _ := json.Marshal(predictions)
-	fmt.Fprintln(w, string(j))
-}
-
-func GetPredictionsForCategoryNameHandler(w http.ResponseWriter, r *http.Request) {
-	limit := GetQueryValueInt(r, "limit", 20)
-	db := GetDBOrPrintError(w)
-	if db == nil {
-		return
-	}
-	defer db.Close()
-	vars := mux.Vars(r)
-	catName := strings.ToUpper(vars["cat_name"])
-	catId := GetIdForCategoryName(db, catName)
-	if catId == 0 {
-		NoInfoAtEndpointError(w)
-		return
-	}
-	log.Println(catId)
-	predictions := GetPredictionsForCategoryId(db, catId, limit)
-	if predictions == nil {
-		predictions = []PtPrediction{}
-		return
-	}
-	uid := GetUIDOrZero(r)
-
-	for i, _ := range predictions {
-		UpdateVoteValue(db, uid, &predictions[i])
-	}
-
-	j, _ := json.Marshal(predictions)
-	fmt.Fprintln(w, string(j))
-}
-
-func SearchPredictionsHandler(w http.ResponseWriter, r *http.Request) {
-	limit := GetQueryValueInt(r, "limit", 25)
-	db := GetDBOrPrintError(w)
-	if db == nil {
-		return
-	}
-	defer db.Close()
-	vars := mux.Vars(r)
-	searchString := vars["searchstr"]
-	searchString = StringToTsQuery(searchString, " & ")
-	predictions := SearchPredictions(db, searchString, limit)
-
-	if predictions == nil {
-		predictions = []PtPrediction{}
-		return
-	}
-	uid := GetUIDOrZero(r)
-
-	for i, _ := range predictions {
-		UpdateVoteValue(db, uid, &predictions[i])
-	}
-
-	j, _ := json.Marshal(predictions)
 	fmt.Fprintln(w, string(j))
 }
 
@@ -307,6 +149,154 @@ func GetHomePagePredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, string(j))
 }
 
+func GetLatestPredictionsHandler(w http.ResponseWriter, r *http.Request) {
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
+	defer db.Close()
+	//Get the 10 latest predictions
+	predictions := GetLatestPredictions(db, 10)
+	if predictions == nil {
+		predictions = []PtPrediction{}
+		return
+	}
+	uid := GetUIDOrZero(r)
+
+	for i, _ := range predictions {
+		UpdateVoteValue(db, uid, &predictions[i])
+	}
+
+	j, _ := json.Marshal(predictions)
+	fmt.Fprintln(w, string(j))
+}
+
+/*
+	Cateogry Predictions
+*/
+
+func GetPredictionsForCategoryHandler(w http.ResponseWriter, r *http.Request) {
+	limit := GetQueryValueInt(r, "limit", 25)
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
+	defer db.Close()
+	vars := mux.Vars(r)
+	catId, err := strconv.ParseInt(vars["cat_id"], 10, 64)
+	if err != nil {
+		NoInfoAtEndpointError(w)
+		return
+	}
+	predictions := GetPredictionsForCategoryId(db, catId, limit)
+	if predictions == nil {
+		predictions = []PtPrediction{}
+		return
+	}
+	uid := GetUIDOrZero(r)
+
+	for i, _ := range predictions {
+		UpdateVoteValue(db, uid, &predictions[i])
+	}
+
+	j, _ := json.Marshal(predictions)
+	fmt.Fprintln(w, string(j))
+}
+
+func GetPredictionsForCategoryNameHandler(w http.ResponseWriter, r *http.Request) {
+	limit := GetQueryValueInt(r, "limit", 20)
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
+	defer db.Close()
+	vars := mux.Vars(r)
+	catName := strings.ToUpper(vars["cat_name"])
+	catId := GetIdForCategoryName(db, catName)
+	if catId == 0 {
+		NoInfoAtEndpointError(w)
+		return
+	}
+	log.Println(catId)
+	predictions := GetPredictionsForCategoryId(db, catId, limit)
+	if predictions == nil {
+		predictions = []PtPrediction{}
+		return
+	}
+	uid := GetUIDOrZero(r)
+
+	for i, _ := range predictions {
+		UpdateVoteValue(db, uid, &predictions[i])
+	}
+
+	j, _ := json.Marshal(predictions)
+	fmt.Fprintln(w, string(j))
+}
+
+/*
+	Add Prediction Functions
+*/
+
+func AddPredictionHandler(w http.ResponseWriter, r *http.Request) {
+	dec := json.NewDecoder(r.Body)
+	var prediction PtPrediction
+	err := dec.Decode(&prediction)
+	if err != nil {
+		JsonDecodeError(w, err)
+		return
+	}
+	prediction.CreatorId = GetUIDOrRedirect(w, r)
+	if prediction.CreatorId == 0 {
+		return
+	}
+	prediction.Created = time.Now()
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
+	defer db.Close()
+	for _, t := range prediction.Tags {
+		prediction.TagVal = append(prediction.TagVal, PtTag{
+			Id:  GetIdWithTag(db, t),
+			Tag: t,
+		})
+	}
+	log.Println("add prediction:\n", prediction)
+	AddPrediction(db, &prediction)
+
+	//Cur user hasn't voted yet
+	prediction.CurUserVote = -1
+
+	j, _ := json.Marshal(prediction)
+	fmt.Fprintln(w, string(j))
+}
+
+func AddPredictionAdminHandler(w http.ResponseWriter, r *http.Request) {
+	if IsAdminOrRedirect(w, r) {
+		return
+	}
+	dec := json.NewDecoder(r.Body)
+	var prediction PtPrediction
+	err := dec.Decode(&prediction)
+	if err != nil {
+		JsonDecodeError(w, err)
+		return
+	}
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
+	defer db.Close()
+	AddPrediction(db, &prediction)
+	prediction.CurUserVote = -1
+	j, _ := json.Marshal(prediction)
+	fmt.Fprintln(w, string(j))
+}
+
+/*
+	Tag and Search Functions
+*/
+
 func GetTaggedPredictionHandler(w http.ResponseWriter, r *http.Request) {
 	db := GetDBOrPrintError(w)
 	if db == nil {
@@ -329,6 +319,36 @@ func GetTaggedPredictionHandler(w http.ResponseWriter, r *http.Request) {
 	j, _ := json.Marshal(predictions)
 	fmt.Fprintln(w, string(j))
 }
+
+func SearchPredictionsHandler(w http.ResponseWriter, r *http.Request) {
+	limit := GetQueryValueInt(r, "limit", 25)
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
+	defer db.Close()
+	vars := mux.Vars(r)
+	searchString := vars["searchstr"]
+	searchString = StringToTsQuery(searchString, " & ")
+	predictions := SearchPredictions(db, searchString, limit)
+
+	if predictions == nil {
+		predictions = []PtPrediction{}
+		return
+	}
+	uid := GetUIDOrZero(r)
+
+	for i, _ := range predictions {
+		UpdateVoteValue(db, uid, &predictions[i])
+	}
+
+	j, _ := json.Marshal(predictions)
+	fmt.Fprintln(w, string(j))
+}
+
+/*
+	Prediction Set and Hero
+*/
 
 func GetLiveHeroPredictionHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
