@@ -50,10 +50,10 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	user.Password = userMap["password"]
 	user.ResetValidUntil = time.Now()
 	user.Created = time.Now()
-	err = SetPasswordSalted(db, &user)
+	err = SaltUserPassword(&user)
 	if err != nil {
-		DBError(w, err)
-		//Password hash error
+		JsonError(w, http.StatusBadRequest, "Password Salting failed"+err.Error())
+		log.Println("Salt error: ", err.Error())
 		return
 	}
 
@@ -346,7 +346,12 @@ func ResetPasswordEndpoint(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	user.Password = newPassword
-	SetPasswordSalted(db, &user)
+	err = SaltUserPassword(&user)
+	if err != nil {
+		JsonError(w, http.StatusBadRequest, "Password Salting failed"+err.Error())
+		log.Println("Salt error: ", err.Error())
+		return
+	}
 	UpdatePassword(db, &user)
 }
 
@@ -407,9 +412,10 @@ func UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 	db.First(&user, user.Id)
 	user.Password = userMap["newPassword"]
 	//salt new password and update
-	err = SetPasswordSalted(db, &user)
+	err = SaltUserPassword(&user)
 	if err != nil {
-		log.Println("salt pass err", err.Error())
+		JsonError(w, http.StatusBadRequest, "Password Salting failed"+err.Error())
+		log.Println("Salt error: ", err.Error())
 		return
 	}
 	err = UpdatePassword(db, &user)

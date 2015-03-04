@@ -1,6 +1,7 @@
 package main
 
 import (
+	"code.google.com/p/go.crypto/bcrypt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -37,4 +38,13 @@ func GetQueryValueInt64(r *http.Request, name string, defaultVal int64) int64 {
 func StringToTsQuery(input string, connector string) string {
 	toReturn := strings.Join(strings.Split(input, " "), connector)
 	return toReturn
+}
+
+func SaltUserPassword(user *PtUser) error {
+	passByte, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+	user.Password = string(passByte)
+	return nil
 }

@@ -29,15 +29,6 @@ func GetPertinentPredictions(db *gorm.DB, CategoryId int64, limit int) []PtPredi
 	return preds
 }
 
-func SetPasswordSalted(db *gorm.DB, user *PtUser) error {
-	passByte, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-	if err != nil {
-		return err
-	}
-	user.Password = string(passByte)
-	return nil
-}
-
 func UpdatePassword(db *gorm.DB, user *PtUser) error {
 	return db.First(&PtUser{}, user.Id).Update("password", user.Password).Error
 }
