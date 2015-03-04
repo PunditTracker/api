@@ -10,6 +10,13 @@ import (
 	"time"
 )
 
+var (
+	DBID       = "ptdev"
+	DBUSERNAME = "pundittracker"
+	DBPASSWORD = "ptrack20!!"
+	db_logger  *log.Logger
+)
+
 func init() {
 	db, err := getDB()
 	if err != nil {
