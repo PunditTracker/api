@@ -117,9 +117,12 @@ func GetHomePagePredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	filler := GetPertinentPredictions(db, int64(category_id), limit)
-	if len(filler) != limit {
+	if len(filler) == 0 {
 		JsonError(w, http.StatusBadRequest, "No predictions from the last week")
 		return
+	}
+	if len(filler) != limit {
+		limit = len(filler)
 	}
 	FinalLocations := make([]PtPredictionLocation, limit)
 	for i := 0; i < limit; i++ {
