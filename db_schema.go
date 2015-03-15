@@ -116,6 +116,7 @@ type PtPrediction struct {
 	Category              PtCategory `json:"-"`
 	Tags                  []string   `sql:"-"`
 	CurUserVote           int        `sql:"-"`
+	VoteHistory           []PtVote   `sql:"-"`
 	TagVal                []PtTag    `gorm:"many2many:prediction_tag_map;"`
 }
 

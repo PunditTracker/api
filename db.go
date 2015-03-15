@@ -190,6 +190,11 @@ func GetAverageVoteForPredictionId(db *gorm.DB, predId int64) float64 {
 
 //Returns -1 if vote doesnt exist, otherwise returns the value of the vote
 func UpdateVoteValue(db *gorm.DB, uid int64, pred *PtPrediction) {
+	UpdateCurUserVote(db, uid, pred)
+	UpdateHistoricalVoteValues(db, pred)
+}
+
+func UpdateCurUserVote(db *gorm.DB, uid int64, pred *PtPrediction) {
 	if uid == 0 {
 		pred.CurUserVote = -1
 		return
@@ -201,6 +206,11 @@ func UpdateVoteValue(db *gorm.DB, uid int64, pred *PtPrediction) {
 		return
 	}
 	pred.CurUserVote = v.VoteValue
+	return
+}
+
+func UpdateHistoricalVoteValues(db *gorm.DB, pred *PtPrediction) {
+	db.Order("created").Where("voted_on_id = ?", pred.Id).Find(&pred.VoteHistory)
 	return
 }
 
