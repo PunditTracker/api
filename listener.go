@@ -54,6 +54,7 @@ func addListeners() {
 	router.HandleFunc("/v1/prediction/page/{cat_id:[0-9]+}", GetHomePagePredictionsHandler)
 
 	router.HandleFunc("/v1/prediction/search/{searchstr}", SearchPredictionsHandler)
+	router.HandleFunc("/v1/user/search/{searchstr}", SearchUsersHandler)
 	router.HandleFunc("/v1/prediction/user/{id:[0-9]+}", GetUserPredictionsHandler)
 	router.HandleFunc("/v1/prediction/tag/{tag}", GetTaggedPredictionHandler)
 

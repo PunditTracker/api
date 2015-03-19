@@ -56,6 +56,27 @@ func GetFeaturedUsersHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, string(j))
 }
 
+/*
+	Search Handler
+*/
+
+func SearchUsersHandler(w http.ResponseWriter, r *http.Request) {
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
+	defer db.Close()
+	vars := mux.Vars(r)
+	searchString := vars["searchstr"]
+	searchString = StringToTsQuery(searchString, " & ")
+	users := SearchUsers(db, searchString)
+	if users == nil {
+		users = []PtUser{}
+	}
+	j, _ := json.Marshal(users)
+	fmt.Fprintln(w, string(j))
+}
+
 /*func GetSingleUserForNameHandler(w http.ResponseWriter, r *http.Request) {
 	db := GetDBOrPrintError(w)
 	if db == nil {

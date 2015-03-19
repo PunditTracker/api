@@ -130,6 +130,20 @@ func SearchPredictions(db *gorm.DB, searchString string, limit int) []PtPredicti
 	return preds
 }
 
+func SearchUsers(db *gorm.DB, searchString string) []PtUser {
+	var users []PtUser
+	db.Raw(`SELECT * 
+			FROM (SELECT *,
+					to_tsvector(pt_user.first_name) ||
+					to_tsvector(pt_user.last_name) ||
+					to_tsvector(pt_user.affiliation) as document
+			FROM pt_user
+			GROUP BY pt_user.id) u_search
+			WHERE u_search.document @@ to_tsquery(?)
+			ORDER BY RANDOM()`, searchString).Find(&users)
+	return users
+}
+
 func GetTagsForPrediction(db *gorm.DB, pid int64) []string {
 	ptTags := []PtTag{}
 	db.Raw(`select t.* from prediction_tag_map pmap, pt_prediction p, pt_tag t where (pmap.pt_prediction_id = ?) and pmap.pt_tag_id=t.id group by t.id`, pid).Find(&ptTags)
