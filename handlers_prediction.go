@@ -325,6 +325,9 @@ func GetTaggedPredictionHandler(w http.ResponseWriter, r *http.Request) {
 
 func SearchPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	limit := GetQueryValueInt(r, "limit", 25)
+	before := GetQueryValueTime(r, "before", time.Now())
+	boutaYearAgo := time.Now().Add(-time.Duration(365 * 24 * time.Hour))
+	after := GetQueryValueTime(r, "after", boutaYearAgo)
 	db := GetDBOrPrintError(w)
 	if db == nil {
 		return
@@ -333,11 +336,10 @@ func SearchPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	searchString := vars["searchstr"]
 	searchString = StringToTsQuery(searchString, " & ")
-	predictions := SearchPredictions(db, searchString, limit)
+	predictions := SearchPredictions(db, searchString, before, after, limit)
 
 	if predictions == nil {
 		predictions = []PtPrediction{}
-		return
 	}
 	uid := GetUIDOrZero(r)
 

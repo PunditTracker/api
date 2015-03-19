@@ -3,6 +3,7 @@ package main
 import (
 	"code.google.com/p/go.crypto/bcrypt"
 	"errors"
+	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
 	"log"
@@ -116,17 +117,22 @@ func GetPredictionsForCategoryId(db *gorm.DB, catId int64, limit int) []PtPredic
 	Search and Tags
 */
 
-func SearchPredictions(db *gorm.DB, searchString string, limit int) []PtPrediction {
+func SearchPredictions(db *gorm.DB, searchString string, before, after time.Time, limit int) []PtPrediction {
 	db = db.Debug()
 	var preds []PtPrediction
-	db.Raw(`SELECT *
+	err := db.Raw(`SELECT *
 			FROM (SELECT *,
 				  to_tsvector(pt_prediction.title) as document
 			FROM pt_prediction
+			WHERE pt_prediction.created > ? AND
+			pt_prediction.created < ?
 			GROUP BY pt_prediction.id) p_search
 			WHERE p_search.document @@ to_tsquery(?)
 			ORDER BY RANDOM()
-			LIMIT ?;`, searchString, limit).Find(&preds)
+			LIMIT ?;`, after.UTC(), before.UTC(), searchString, limit).Find(&preds).Error
+	if err != nil {
+		fmt.Println("err: ", err)
+	}
 	return preds
 }
 

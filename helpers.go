@@ -5,7 +5,23 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 )
+
+func GetQueryValueTime(r *http.Request, name string, defaultVal time.Time) time.Time {
+	urlValues := r.URL.Query()
+	valStr, exists := urlValues[name]
+	if exists {
+		form := time.RFC3339
+		val, err := time.Parse(form, valStr[0])
+		if err != nil {
+			return defaultVal
+		}
+		return val
+	} else {
+		return defaultVal
+	}
+}
 
 func GetQueryValueInt(r *http.Request, name string, defaultVal int) int {
 	urlValues := r.URL.Query()
