@@ -227,7 +227,10 @@ func LoginFacebookHandler(w http.ResponseWriter, r *http.Request) {
 
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	clearSession(w)
-	fmt.Fprintln(w, "logout")
+	j, _ := json.Marshal(map[string]string{
+		"message": "user logged out",
+	})
+	fmt.Fprintln(w, string(j))
 }
 
 /*
