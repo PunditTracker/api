@@ -50,7 +50,6 @@ func GetFeaturedUsersHandler(w http.ResponseWriter, r *http.Request) {
 	users := GetFeaturedUsers(db)
 	if users == nil {
 		users = []PtUser{}
-		return
 	}
 	j, _ := json.Marshal(users)
 	fmt.Fprintln(w, string(j))
