@@ -128,7 +128,7 @@ func SearchPredictions(db *gorm.DB, searchString string, before, after time.Time
 			pt_prediction.created < ?
 			GROUP BY pt_prediction.id) p_search
 			WHERE p_search.document @@ to_tsquery(?)
-			ORDER BY RANDOM()
+			ORDER BY p_search.created desc
 			LIMIT ?;`, after.UTC(), before.UTC(), searchString, limit).Find(&preds).Error
 	if err != nil {
 		fmt.Println("err: ", err)
