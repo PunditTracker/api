@@ -76,6 +76,19 @@ func SearchUsersHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, string(j))
 }
 
+func SearchUsersPredictionsHandler(w http.ResponseWriter, r *http.Request) {
+	db := GetDBOrPrintError(w)
+	if db == nil {
+		return
+	}
+	defer db.Close()
+	vars := mux.Vars(r)
+	searchString := vars["searchstr"]
+	preds := SearchUsersPredictions(db, searchString)
+	j, _ := json.Marshal(preds)
+	fmt.Fprintln(w, string(j))
+}
+
 /*func GetSingleUserForNameHandler(w http.ResponseWriter, r *http.Request) {
 	db := GetDBOrPrintError(w)
 	if db == nil {
