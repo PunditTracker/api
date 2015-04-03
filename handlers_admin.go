@@ -127,7 +127,7 @@ func GetPredictionLocationHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 	db = db.Debug()
-	var locs []PtPredictionLocation
+	locs := []PtPredictionLocation{}
 	db.Where("category_id = ?", cat_id).Order("location_num").Find(&locs)
 	for i, _ := range locs {
 		db.First(&locs[i].Prediction, locs[i].PredictionId)
@@ -195,12 +195,13 @@ func AdminPunditCreateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	newUser := PtUser{
-		Email:     "None@None.com",
-		Password:  "None",
-		Created:   time.Now(),
-		Location:  userMap["location"],
-		FirstName: userMap["first_name"],
-		LastName:  userMap["last_name"],
+		Email:       "None@None.com",
+		Password:    "None",
+		Created:     time.Now(),
+		Location:    userMap["location"],
+		FirstName:   userMap["first_name"],
+		LastName:    userMap["last_name"],
+		Affiliation: userMap["affiliation"],
 	}
 	db := GetDBOrPrintError(w)
 	if db == nil {
