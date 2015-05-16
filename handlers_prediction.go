@@ -118,14 +118,21 @@ func GetHomePagePredictionsHandler(w http.ResponseWriter, r *http.Request) {
 
 	filler := GetPertinentPredictions(db, int64(category_id), limit)
 	if len(filler) == 0 {
-		JsonError(w, http.StatusBadRequest, "No predictions from the last week")
+		FinalLocations := make([]PtPredictionLocation, 0)
+		j, err := json.Marshal(FinalLocations)
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Fprintln(w, string(j))
 		return
 	}
+	newLim := limit
 	if len(filler) != limit {
-		limit = len(filler)
+		newLim = len(filler)
 	}
+
 	FinalLocations := make([]PtPredictionLocation, limit)
-	for i := 0; i < limit; i++ {
+	for i := 0; i < newLim; i++ {
 		FinalLocations[i] = PtPredictionLocation{
 			Id:           -1,
 			LocationNum:  int64(i),
@@ -145,6 +152,7 @@ func GetHomePagePredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	for i, _ := range FinalLocations {
 		UpdateVoteValue(db, uid, &FinalLocations[i].Prediction)
 	}
+
 	j, err := json.Marshal(FinalLocations)
 	if err != nil {
 		fmt.Println(err)
@@ -194,7 +202,6 @@ func GetPredictionsForCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	predictions := GetPredictionsForCategoryId(db, catId, limit)
 	if predictions == nil {
 		predictions = []PtPrediction{}
-		return
 	}
 	uid := GetUIDOrZero(r)
 
