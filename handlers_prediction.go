@@ -81,6 +81,8 @@ func GetSinglePredictionHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetUserPredictionsHandler(w http.ResponseWriter, r *http.Request) {
+	offset := GetQueryValueInt64(r, "offset", 0)
+	limit := GetQueryValueInt64(r, "limit", 100)
 	db := GetDBOrPrintError(w)
 	if db == nil {
 		return
@@ -88,10 +90,9 @@ func GetUserPredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 	vars := mux.Vars(r)
 	uid, _ := strconv.ParseInt(vars["id"], 10, 64)
-	predictions := GetUserPrediction(db, int64(uid))
+	predictions := GetUserPrediction(db, int64(uid), limit, offset)
 	if predictions == nil {
 		predictions = []PtPrediction{}
-		return
 	}
 	cur_uid := GetUIDOrZero(r)
 

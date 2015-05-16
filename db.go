@@ -43,9 +43,9 @@ func GetPredictionByID(db *gorm.DB, uid int64) PtPrediction {
 	return pred
 }
 
-func GetUserPrediction(db *gorm.DB, uid int64) []PtPrediction {
+func GetUserPrediction(db *gorm.DB, uid int64, limit, offset int64) []PtPrediction {
 	var preds []PtPrediction
-	db.Where("creator_id = ?", uid).Order("created desc").Find(&preds)
+	db.Where("creator_id = ?", uid).Order("created desc").Limit(limit).Offset(offset).Find(&preds)
 	return preds
 }
 

@@ -53,15 +53,18 @@ func addListeners() {
 	router.HandleFunc("/v1/prediction/category/{cat_name:[a-zA-z]+}", GetPredictionsForCategoryNameHandler)
 	router.HandleFunc("/v1/prediction/page/{cat_id:[0-9]+}", GetHomePagePredictionsHandler)
 
+	//Search
 	router.HandleFunc("/v1/prediction/search/{searchstr}", SearchPredictionsHandler)
 	router.HandleFunc("/v1/user/search/{searchstr}", SearchUsersHandler)
 	router.HandleFunc("/v1/user/prediction/search/{searchstr}", SearchUsersPredictionsHandler)
+
+	//User Predictions
 	router.HandleFunc("/v1/prediction/user/{id:[0-9]+}", GetUserPredictionsHandler)
-	router.HandleFunc("/v1/prediction/tag/{tag}", GetTaggedPredictionHandler)
 
 	//Tags
 	router.HandleFunc("/v1/predictions/cat/{id:[0-9]+}/tag/{tag}", GetTaggedPredictionHandler)
 	router.HandleFunc("/v1/tag/getSuggestedTags", GetSuggestedTagHandler)
+	router.HandleFunc("/v1/prediction/tag/{tag}", GetTaggedPredictionHandler)
 
 	//Voting
 	router.HandleFunc("/v1/prediction/vote/{pred_id:[0-9]+}/{value:[0-9]}", VoteForPredictionHandler) //.Methods("PUT")
