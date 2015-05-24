@@ -62,7 +62,7 @@ Endpoints:
 `/v1/prediction/category/{id:[0-9]+}` - Get all predictions for a category where category_id= `id`
 `/v1/prediction/category/{name:[a-zA-z]+}` - Get all predictions for a category where category_name = `name`
 
-`/v1/prediction/page/{cat_id:[0-9]+}` - Get predictions to fill a category page.  Returns homepage predictions if `id` = 0
+`/v1/prediction/page/{cat_id:[0-9]+} [?limit=#]` - Get predictions to fill a category page.  Gets the number of predictions specified by limit, will return 10 predictions if no limit is specified.  Returns homepage predictions if `id` = 0
 
 `/v1/prediction/user/{id:[0-9]+}` - Get all predictions for the user where userid = `id`
 
