@@ -110,7 +110,7 @@ func GetHomePagePredictionsHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		category_id = 0
 	}
-	limit := GetQueryValueInt(r, "limit", 10)
+	limit := GetQueryValueInt(r, "limit", 20)
 	db := GetDBOrPrintError(w)
 	if db == nil {
 		return
