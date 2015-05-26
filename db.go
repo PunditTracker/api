@@ -247,6 +247,9 @@ func UpdateCurUserVote(db *gorm.DB, uid int64, pred *PtPrediction) {
 
 func UpdateHistoricalVoteValues(db *gorm.DB, pred *PtPrediction) {
 	db.Order("created").Where("voted_on_id = ?", pred.Id).Find(&pred.VoteHistory)
+	if pred.VoteHistory == nil {
+		pred.VoteHistory = make([]PtVote, 0)
+	}
 	return
 }
 
